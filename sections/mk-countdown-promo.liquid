@@ -28,14 +28,14 @@
 </section>
 
 {% stylesheet %}
-  .mk-countdown-promo { padding: 80px 0; background: var(--color-background-secondary, #f5f5f5); text-align: center; }
+  .mk-countdown-promo { padding: 80px 0; background: var(--color-background-secondary, var(--mk-color-bg-secondary)); text-align: center; }
   .mk-countdown-promo__container { max-width: 800px; margin: 0 auto; padding: 0 32px; }
-  .mk-countdown-promo__badge { display: inline-block; padding: 6px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #fff; background: #e94560; border-radius: 100px; margin-bottom: 16px; }
-  .mk-countdown-promo__title { margin: 0 0 32px 0; font-size: 32px; font-weight: 700; }
+  .mk-countdown-promo__badge { display: inline-block; padding: var(--mk-spacing-xs) 16px; font-size: var(--mk-font-size-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #fff; background: #e94560; border-radius: 100px; margin-bottom: 16px; }
+  .mk-countdown-promo__title { margin: 0 0 32px 0; font-size: var(--mk-font-size-4xl); font-weight: 700; }
   .mk-countdown-promo__countdown { display: flex; justify-content: center; gap: 20px; }
-  .mk-countdown-promo__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .mk-countdown-promo__num { min-width: 80px; padding: 20px 12px; background: var(--color-background); border-radius: 12px; font-size: 36px; font-weight: 700; }
-  .mk-countdown-promo__label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-secondary, #666); }
+  .mk-countdown-promo__item { display: flex; flex-direction: column; align-items: center; gap: var(--mk-spacing-sm); }
+  .mk-countdown-promo__num { min-width: 80px; padding: var(--mk-spacing-xl) 12px; background: var(--color-background); border-radius: var(--mk-radius-md); font-size: var(--mk-font-size-5xl); font-weight: 700; }
+  .mk-countdown-promo__label { font-size: var(--mk-font-size-xs); text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-secondary, #666); }
 {% endstylesheet %}
 
 {% javascript %}

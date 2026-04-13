@@ -32,7 +32,7 @@
   .mk-header-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   .mk-header-actions__item {
@@ -43,12 +43,12 @@
     width: 44px;
     height: 44px;
     color: var(--color-foreground);
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
     transition: background-color 0.2s ease;
   }
 
   .mk-header-actions__item:hover {
-    background-color: var(--color-background-secondary, #f5f5f5);
+    background-color: var(--color-background-secondary, var(--mk-color-bg-secondary));
   }
 
   .mk-header-actions__item svg {
@@ -63,7 +63,7 @@
     min-width: 18px;
     height: 18px;
     padding: 0 4px;
-    font-size: 10px;
+    font-size: var(--mk-font-size-xs);
     font-weight: 700;
     color: #fff;
     background-color: var(--color-sale, #e53935);

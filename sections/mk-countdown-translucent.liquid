@@ -35,12 +35,12 @@
   .mk-countdown-translucent__bg { position: absolute; inset: 0; }
   .mk-countdown-translucent__image { width: 100%; height: 100%; object-fit: cover; }
   .mk-countdown-translucent__overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
-  .mk-countdown-translucent__container { position: relative; z-index: 1; width: 100%; max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 64px 32px; text-align: center; }
-  .mk-countdown-translucent__title { margin: 0 0 40px 0; font-size: 36px; font-weight: 700; color: #fff; }
-  .mk-countdown-translucent__countdown { display: flex; justify-content: center; gap: 24px; }
-  .mk-countdown-translucent__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .mk-countdown-translucent__num { min-width: 90px; padding: 20px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 16px; font-size: 40px; font-weight: 700; color: #fff; }
-  .mk-countdown-translucent__label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.8); }
+  .mk-countdown-translucent__container { position: relative; z-index: 1; width: 100%; max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: var(--mk-spacing-6xl) 32px; text-align: center; }
+  .mk-countdown-translucent__title { margin: 0 0 40px 0; font-size: var(--mk-font-size-5xl); font-weight: 700; color: #fff; }
+  .mk-countdown-translucent__countdown { display: flex; justify-content: center; gap: var(--mk-spacing-2xl); }
+  .mk-countdown-translucent__item { display: flex; flex-direction: column; align-items: center; gap: var(--mk-spacing-sm); }
+  .mk-countdown-translucent__num { min-width: 90px; padding: var(--mk-spacing-xl); background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: var(--mk-radius-lg); font-size: 40px; font-weight: 700; color: #fff; }
+  .mk-countdown-translucent__label { font-size: var(--mk-font-size-xs); text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.8); }
 {% endstylesheet %}
 
 {% javascript %}

@@ -33,7 +33,7 @@
 {%- endif -%}
 
 {% stylesheet %}
-  .mk-slideshow-controls { display: flex; justify-content: center; gap: 8px; }
+  .mk-slideshow-controls { display: flex; justify-content: center; gap: var(--mk-spacing-sm); }
   .mk-slideshow-controls__dot { width: 8px; height: 8px; padding: 0; background: var(--color-border); border: none; border-radius: 50%; cursor: pointer; transition: all 0.2s ease; }
   .mk-slideshow-controls__dot.active { background: var(--color-primary, #000); transform: scale(1.2); }
 {% endstylesheet %}

@@ -57,16 +57,16 @@
   .mk-promo-grid { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
   @media (min-width: 750px) { .mk-promo-grid { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
   .mk-promo-grid__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
-  .mk-promo-grid__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
-  .mk-promo-grid__items { display: grid; grid-template-columns: 1fr; gap: 24px; }
-  @media (min-width: 750px) { .mk-promo-grid__items { grid-template-columns: repeat(3, 1fr); gap: 32px; } }
+  .mk-promo-grid__title { margin: 0 0 32px 0; font-size: var(--mk-font-size-3xl); font-weight: 700; text-align: center; }
+  .mk-promo-grid__items { display: grid; grid-template-columns: 1fr; gap: var(--mk-spacing-2xl); }
+  @media (min-width: 750px) { .mk-promo-grid__items { grid-template-columns: repeat(3, 1fr); gap: var(--mk-spacing-3xl); } }
   .mk-promo-grid__item { display: flex; flex-direction: column; }
-  .mk-promo-grid__image { aspect-ratio: 4/3; overflow: hidden; border-radius: 16px; margin-bottom: 16px; }
+  .mk-promo-grid__image { aspect-ratio: 4/3; overflow: hidden; border-radius: var(--mk-radius-lg); margin-bottom: 16px; }
   .mk-promo-grid__image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
   .mk-promo-grid__item:hover .mk-promo-grid__image img { transform: scale(1.03); }
-  .mk-promo-grid__item-title { margin: 0 0 8px 0; font-size: 18px; font-weight: 600; }
-  .mk-promo-grid__text { margin: 0 0 12px 0; font-size: 14px; color: var(--color-text-secondary, #666); }
-  .mk-promo-grid__link { font-size: 14px; font-weight: 600; color: var(--color-primary, #000); text-decoration: none; }
+  .mk-promo-grid__item-title { margin: 0 0 8px 0; font-size: var(--mk-font-size-xl); font-weight: 600; }
+  .mk-promo-grid__text { margin: 0 0 12px 0; font-size: var(--mk-font-size-md); color: var(--color-text-secondary, #666); }
+  .mk-promo-grid__link { font-size: var(--mk-font-size-md); font-weight: 600; color: var(--color-primary, #000); text-decoration: none; }
   .mk-promo-grid__link:hover { text-decoration: underline; }
 {% endstylesheet %}
 

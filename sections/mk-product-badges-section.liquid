@@ -31,11 +31,11 @@
 </section>
 
 {% stylesheet %}
-  .mk-product-badges-section { padding: 20px 0; }
-  .mk-product-badges-section__container { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .mk-product-badges-section__title { margin: 0; font-size: 14px; font-weight: 600; }
-  .mk-product-badges-section__badges { display: flex; gap: 8px; flex-wrap: wrap; }
-  .mk-product-badges-section__badge { padding: 6px 12px; font-size: 12px; font-weight: 600; color: #fff; background: var(--color-primary, #000); border-radius: 100px; }
+  .mk-product-badges-section { padding: var(--mk-spacing-xl) 0; }
+  .mk-product-badges-section__container { display: flex; align-items: center; gap: var(--mk-spacing-md); flex-wrap: wrap; }
+  .mk-product-badges-section__title { margin: 0; font-size: var(--mk-font-size-md); font-weight: 600; }
+  .mk-product-badges-section__badges { display: flex; gap: var(--mk-spacing-sm); flex-wrap: wrap; }
+  .mk-product-badges-section__badge { padding: var(--mk-spacing-xs) 12px; font-size: var(--mk-font-size-sm); font-weight: 600; color: #fff; background: var(--color-primary, #000); border-radius: 100px; }
 {% endstylesheet %}
 
 {% schema %}

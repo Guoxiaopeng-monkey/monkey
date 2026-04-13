@@ -52,20 +52,20 @@
   .mk-promo-popup { position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center; }
   .mk-promo-popup.active { display: flex; }
   .mk-promo-popup__overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); }
-  .mk-promo-popup__content { position: relative; max-width: 440px; width: calc(100% - 48px); background: var(--color-background); border-radius: 16px; overflow: hidden; }
+  .mk-promo-popup__content { position: relative; max-width: 440px; width: calc(100% - 48px); background: var(--color-background); border-radius: var(--mk-radius-lg); overflow: hidden; }
   .mk-promo-popup__close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: var(--color-background-secondary); border: none; border-radius: 50%; cursor: pointer; z-index: 1; }
   .mk-promo-popup__close svg { width: 16px; height: 16px; }
   .mk-promo-popup__image img { width: 100%; height: auto; display: block; }
-  .mk-promo-popup__body { padding: 24px; text-align: center; }
-  .mk-promo-popup__badge { display: inline-block; padding: 4px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #fff; background: var(--color-primary, #000); border-radius: 100px; margin-bottom: 12px; }
-  .mk-promo-popup__title { margin: 0 0 8px 0; font-size: 22px; font-weight: 700; }
-  .mk-promo-popup__text { margin: 0 0 16px 0; font-size: 14px; color: var(--color-text-secondary, #666); }
-  .mk-promo-popup__code { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: var(--color-background-secondary); border-radius: 8px; margin-bottom: 16px; }
-  .mk-promo-popup__code span { font-size: 18px; font-weight: 700; letter-spacing: 2px; }
-  .mk-promo-popup__copy { padding: 6px 12px; font-size: 12px; font-weight: 600; background: var(--color-primary, #000); color: #fff; border: none; border-radius: 4px; cursor: pointer; }
-  .mk-promo-popup__form { display: flex; flex-direction: column; gap: 8px; }
-  .mk-promo-popup__input { padding: 12px 16px; font-size: 14px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); }
-  .mk-promo-popup__btn { padding: 14px; font-size: 14px; font-weight: 600; color: #fff; background: var(--color-primary, #000); border: none; border-radius: 8px; cursor: pointer; }
+  .mk-promo-popup__body { padding: var(--mk-spacing-2xl); text-align: center; }
+  .mk-promo-popup__badge { display: inline-block; padding: var(--mk-spacing-xs) 12px; font-size: var(--mk-font-size-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #fff; background: var(--color-primary, #000); border-radius: 100px; margin-bottom: 12px; }
+  .mk-promo-popup__title { margin: 0 0 8px 0; font-size: var(--mk-font-size-2xl); font-weight: 700; }
+  .mk-promo-popup__text { margin: 0 0 16px 0; font-size: var(--mk-font-size-md); color: var(--color-text-secondary, #666); }
+  .mk-promo-popup__code { display: flex; align-items: center; justify-content: center; gap: var(--mk-spacing-sm); padding: var(--mk-spacing-md); background: var(--color-background-secondary); border-radius: var(--mk-radius-sm); margin-bottom: 16px; }
+  .mk-promo-popup__code span { font-size: var(--mk-font-size-xl); font-weight: 700; letter-spacing: 2px; }
+  .mk-promo-popup__copy { padding: var(--mk-spacing-xs) 12px; font-size: var(--mk-font-size-sm); font-weight: 600; background: var(--color-primary, #000); color: #fff; border: none; border-radius: var(--mk-radius-xs); cursor: pointer; }
+  .mk-promo-popup__form { display: flex; flex-direction: column; gap: var(--mk-spacing-sm); }
+  .mk-promo-popup__input { padding: var(--mk-spacing-md) 16px; font-size: var(--mk-font-size-md); border: 1px solid var(--color-border); border-radius: var(--mk-radius-sm); background: var(--color-background); }
+  .mk-promo-popup__btn { padding: 14px; font-size: var(--mk-font-size-md); font-weight: 600; color: #fff; background: var(--color-primary, #000); border: none; border-radius: var(--mk-radius-sm); cursor: pointer; }
 {% endstylesheet %}
 
 {% javascript %}

@@ -106,41 +106,41 @@
   }
   .mk-account-drawer__header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 20px; border-bottom: 1px solid var(--color-border);
+    padding: var(--mk-spacing-xl); border-bottom: 1px solid var(--color-border);
   }
-  .mk-account-drawer__title { margin: 0; font-size: 18px; font-weight: 600; }
+  .mk-account-drawer__title { margin: 0; font-size: var(--mk-font-size-xl); font-weight: 600; }
   .mk-account-drawer__close {
     display: flex; width: 36px; height: 36px; background: transparent; border: none;
     border-radius: 50%; cursor: pointer; color: var(--color-foreground);
   }
   .mk-account-drawer__close svg { width: 18px; height: 18px; }
-  .mk-account-drawer__content { flex: 1; overflow-y: auto; padding: 20px; }
-  .mk-account-drawer__tabs { display: flex; gap: 4px; padding: 4px; background: var(--color-background-secondary, #f5f5f5); border-radius: 8px; margin-bottom: 24px; }
+  .mk-account-drawer__content { flex: 1; overflow-y: auto; padding: var(--mk-spacing-xl); }
+  .mk-account-drawer__tabs { display: flex; gap: var(--mk-spacing-xs); padding: var(--mk-spacing-xs); background: var(--color-background-secondary, var(--mk-color-bg-secondary)); border-radius: var(--mk-radius-sm); margin-bottom: 24px; }
   .mk-account-drawer__tab {
-    flex: 1; padding: 10px; font-size: 14px; font-weight: 500; background: transparent; border: none;
+    flex: 1; padding: var(--mk-spacing-sm); font-size: var(--mk-font-size-md); font-weight: 500; background: transparent; border: none;
     border-radius: 6px; cursor: pointer; transition: all 0.2s ease;
   }
   .mk-account-drawer__tab.active { background: var(--color-background); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
   .mk-account-drawer__tab-content[hidden] { display: none; }
-  .mk-account-drawer__form { display: flex; flex-direction: column; gap: 16px; }
+  .mk-account-drawer__form { display: flex; flex-direction: column; gap: var(--mk-spacing-lg); }
   .mk-account-drawer__field { display: flex; flex-direction: column; gap: 6px; }
-  .mk-account-drawer__label { font-size: 14px; font-weight: 500; }
+  .mk-account-drawer__label { font-size: var(--mk-font-size-md); font-weight: 500; }
   .mk-account-drawer__input {
-    padding: 12px 14px; font-size: 14px; border: 1px solid var(--color-border);
-    border-radius: 8px; transition: border-color 0.2s ease;
+    padding: var(--mk-spacing-md) 14px; font-size: var(--mk-font-size-md); border: 1px solid var(--color-border);
+    border-radius: var(--mk-radius-sm); transition: border-color 0.2s ease;
   }
   .mk-account-drawer__input:focus { outline: none; border-color: var(--color-primary, #000); }
   .mk-account-drawer__submit {
-    padding: 14px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff);
-    background: var(--color-primary, #000); border: none; border-radius: 8px; cursor: pointer;
+    padding: 14px; font-size: var(--mk-font-size-md); font-weight: 600; color: var(--color-on-primary, #fff);
+    background: var(--color-primary, #000); border: none; border-radius: var(--mk-radius-sm); cursor: pointer;
   }
   .mk-account-drawer__logged-in { display: flex; flex-direction: column; gap: 20px; }
-  .mk-account-drawer__welcome { margin: 0; font-size: 16px; font-weight: 500; }
-  .mk-account-drawer__nav { display: flex; flex-direction: column; gap: 4px; }
+  .mk-account-drawer__welcome { margin: 0; font-size: var(--mk-font-size-lg); font-weight: 500; }
+  .mk-account-drawer__nav { display: flex; flex-direction: column; gap: var(--mk-spacing-xs); }
   .mk-account-drawer__link {
-    display: flex; align-items: center; gap: 12px; padding: 14px; font-size: 14px;
+    display: flex; align-items: center; gap: var(--mk-spacing-md); padding: 14px; font-size: var(--mk-font-size-md);
     font-weight: 500; color: var(--color-foreground); text-decoration: none;
-    background: var(--color-background); border: 1px solid var(--color-border); border-radius: 8px;
+    background: var(--color-background); border: 1px solid var(--color-border); border-radius: var(--mk-radius-sm);
   }
   .mk-account-drawer__link svg { width: 20px; height: 20px; }
   .mk-account-drawer__link--logout { color: var(--color-error, #e53935); }

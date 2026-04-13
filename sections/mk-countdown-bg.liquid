@@ -51,12 +51,12 @@
   .mk-countdown-bg__image { width: 100%; height: 100%; object-fit: cover; }
   .mk-countdown-bg__overlay { position: absolute; inset: 0; background: rgba(0,0,0,{{ ss.overlay_opacity | default: 0.6 }}); }
   .mk-countdown-bg__container { position: relative; z-index: 1; max-width: var(--container-max-width, 800px); margin: 0 auto; padding: 0 var(--container-padding, 32px); text-align: center; }
-  .mk-countdown-bg__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; color: #fff; }
-  .mk-countdown-bg__countdown { display: flex; justify-content: center; gap: 24px; }
-  .mk-countdown-bg__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .mk-countdown-bg__num { min-width: 72px; padding: 16px; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 12px; font-size: 32px; font-weight: 700; color: #fff; text-align: center; }
+  .mk-countdown-bg__title { margin: 0 0 32px 0; font-size: var(--mk-font-size-3xl); font-weight: 700; color: #fff; }
+  .mk-countdown-bg__countdown { display: flex; justify-content: center; gap: var(--mk-spacing-2xl); }
+  .mk-countdown-bg__item { display: flex; flex-direction: column; align-items: center; gap: var(--mk-spacing-sm); }
+  .mk-countdown-bg__num { min-width: 72px; padding: var(--mk-spacing-lg); background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: var(--mk-radius-md); font-size: var(--mk-font-size-4xl); font-weight: 700; color: #fff; text-align: center; }
   @media (min-width: 750px) { .mk-countdown-bg__num { font-size: 40px; } }
-  .mk-countdown-bg__label { font-size: 11px; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+  .mk-countdown-bg__label { font-size: var(--mk-font-size-xs); text-transform: uppercase; color: rgba(255,255,255,0.7); }
 {% endstylesheet %}
 
 {% javascript %}

@@ -140,7 +140,7 @@
   .mk-variant-picker__label {
     display: block;
     margin-bottom: 8px;
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     font-weight: 500;
     color: var(--color-foreground);
   }
@@ -154,12 +154,12 @@
   .mk-variant-picker__select {
     width: 100%;
     max-width: 300px;
-    padding: 12px 16px;
-    font-size: 14px;
+    padding: var(--mk-spacing-md) 16px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-foreground);
     background-color: var(--color-background);
     border: 1px solid var(--color-border);
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
     cursor: pointer;
     transition: border-color 0.2s ease;
   }
@@ -173,18 +173,18 @@
   .mk-variant-picker__buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   .mk-variant-picker__button {
     min-width: 44px;
-    padding: 10px 16px;
-    font-size: 13px;
+    padding: var(--mk-spacing-sm) 16px;
+    font-size: var(--mk-font-size-sm);
     font-weight: 500;
     color: var(--color-foreground);
     background-color: var(--color-background);
     border: 1px solid var(--color-border);
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
     cursor: pointer;
     transition: all 0.2s ease;
   }
@@ -209,18 +209,18 @@
   .mk-variant-picker__swatches {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   .mk-variant-picker__swatch {
     min-width: 44px;
-    padding: 10px 16px;
-    font-size: 13px;
+    padding: var(--mk-spacing-sm) 16px;
+    font-size: var(--mk-font-size-sm);
     font-weight: 500;
     color: var(--color-foreground);
     background-color: var(--color-background);
     border: 2px solid transparent;
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
     cursor: pointer;
     transition: all 0.2s ease;
   }

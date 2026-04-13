@@ -45,8 +45,8 @@
   .mk-collection-card {
     position: relative;
     overflow: hidden;
-    border-radius: 12px;
-    background-color: var(--color-background-secondary, #f5f5f5);
+    border-radius: var(--mk-radius-md);
+    background-color: var(--color-background-secondary, var(--mk-color-bg-secondary));
   }
 
   .mk-collection-card__link {
@@ -76,7 +76,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--color-background-secondary, #f5f5f5);
+    background-color: var(--color-background-secondary, var(--mk-color-bg-secondary));
   }
 
   .mk-collection-card__placeholder-svg {
@@ -86,25 +86,25 @@
   }
 
   .mk-collection-card__content {
-    padding: 16px;
+    padding: var(--mk-spacing-lg);
     text-align: center;
   }
 
   .mk-collection-card__title {
     margin: 0 0 4px 0;
-    font-size: 16px;
+    font-size: var(--mk-font-size-lg);
     font-weight: 600;
     color: var(--color-foreground);
   }
 
   .mk-collection-card__description {
     margin: 0 0 8px 0;
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     color: var(--color-text-secondary, #666);
   }
 
   .mk-collection-card__count {
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     color: var(--color-text-secondary, #666);
   }
 

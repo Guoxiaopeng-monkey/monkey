@@ -118,7 +118,7 @@
 
   .mk-product-specs__label {
     margin: 0 0 12px 0;
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1.5px;
@@ -134,7 +134,7 @@
 
   .mk-product-specs__description {
     margin: 0;
-    font-size: 16px;
+    font-size: var(--mk-font-size-lg);
     line-height: 1.6;
     opacity: 0.85;
   }
@@ -143,7 +143,7 @@
   .mk-product-specs__table-wrapper {
     max-width: 900px;
     margin: 0 auto;
-    border-radius: 12px;
+    border-radius: var(--mk-radius-md);
     overflow: hidden;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   }
@@ -163,19 +163,19 @@
   }
 
   .mk-product-specs__label {
-    padding: 16px 24px;
-    font-size: 14px;
+    padding: var(--mk-spacing-lg) 24px;
+    font-size: var(--mk-font-size-md);
     font-weight: 600;
     text-align: left;
-    background: var(--color-background-secondary, #f9f9f9);
+    background: var(--color-background-secondary, var(--mk-color-bg-tertiary));
     color: var(--color-text-secondary, #666);
     vertical-align: top;
     width: 30%;
   }
 
   .mk-product-specs__value {
-    padding: 16px 24px;
-    font-size: 15px;
+    padding: var(--mk-spacing-lg) 24px;
+    font-size: var(--mk-font-size-md);
     line-height: 1.5;
     vertical-align: top;
   }
@@ -194,7 +194,7 @@
 
   .mk-product-specs__downloads-title {
     margin: 0 0 24px 0;
-    font-size: 18px;
+    font-size: var(--mk-font-size-xl);
     font-weight: 600;
   }
 
@@ -202,7 +202,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 16px;
+    gap: var(--mk-spacing-lg);
   }
 
   .mk-product-specs__download-item {
@@ -210,12 +210,12 @@
     align-items: center;
     gap: 10px;
     padding: 14px 20px;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     font-weight: 500;
     text-decoration: none;
     color: var(--color-primary, #000);
-    background: var(--color-background-secondary, #f9f9f9);
-    border-radius: 8px;
+    background: var(--color-background-secondary, var(--mk-color-bg-tertiary));
+    border-radius: var(--mk-radius-sm);
     transition: all 0.2s ease;
   }
 
@@ -236,7 +236,7 @@
   }
 
   .mk-product-specs__download-size {
-    font-size: 12px;
+    font-size: var(--mk-font-size-sm);
     opacity: 0.7;
   }
 {% endstylesheet %}

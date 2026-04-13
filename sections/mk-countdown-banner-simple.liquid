@@ -25,10 +25,10 @@
 </div>
 
 {% stylesheet %}
-  .mk-countdown-banner-simple { padding: 12px 0; background: var(--color-primary, #000); color: #fff; }
-  .mk-countdown-banner-simple__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 32px; display: flex; align-items: center; justify-content: center; gap: 16px; }
-  .mk-countdown-banner-simple__text { font-size: 14px; font-weight: 600; }
-  .mk-countdown-banner-simple__time { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .mk-countdown-banner-simple { padding: var(--mk-spacing-md) 0; background: var(--color-primary, #000); color: #fff; }
+  .mk-countdown-banner-simple__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 32px; display: flex; align-items: center; justify-content: center; gap: var(--mk-spacing-lg); }
+  .mk-countdown-banner-simple__text { font-size: var(--mk-font-size-md); font-weight: 600; }
+  .mk-countdown-banner-simple__time { font-size: var(--mk-font-size-md); font-weight: 700; font-variant-numeric: tabular-nums; }
 {% endstylesheet %}
 
 {% javascript %}

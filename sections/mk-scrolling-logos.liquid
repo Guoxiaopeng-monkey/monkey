@@ -47,7 +47,7 @@
   .mk-scrolling-logos { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; overflow: hidden; }
   @media (min-width: 750px) { .mk-scrolling-logos { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
   .mk-scrolling-logos__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
-  .mk-scrolling-logos__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-scrolling-logos__title { margin: 0 0 32px 0; font-size: var(--mk-font-size-3xl); font-weight: 700; text-align: center; }
   .mk-scrolling-logos__wrapper { position: relative; }
   .mk-scrolling-logos__track { display: flex; gap: 48px; animation: scroll-logos var(--duration, 30s) linear infinite; }
   .mk-scrolling-logos__item { flex-shrink: 0; }

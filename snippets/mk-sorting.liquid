@@ -47,11 +47,11 @@
   .mk-sorting {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--mk-spacing-md);
   }
 
   .mk-sorting__label {
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     font-weight: 500;
     color: var(--color-foreground);
     white-space: nowrap;
@@ -63,12 +63,12 @@
 
   .mk-sorting__select {
     appearance: none;
-    padding: 10px 36px 10px 14px;
-    font-size: 14px;
+    padding: var(--mk-spacing-sm) 36px 10px 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-foreground);
     background-color: var(--color-background);
     border: 1px solid var(--color-border);
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
     cursor: pointer;
     transition: border-color 0.2s ease;
     min-width: 180px;

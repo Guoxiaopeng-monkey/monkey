@@ -34,7 +34,7 @@
   .mk-shipping-notice {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--mk-spacing-md);
   }
 
   @media (min-width: 750px) {
@@ -47,7 +47,7 @@
   .mk-shipping-notice__item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   .mk-shipping-notice__icon {
@@ -63,7 +63,7 @@
   }
 
   .mk-shipping-notice__text {
-    font-size: 12px;
+    font-size: var(--mk-font-size-sm);
     color: var(--color-text-secondary, #666);
   }
 {% endstylesheet %}

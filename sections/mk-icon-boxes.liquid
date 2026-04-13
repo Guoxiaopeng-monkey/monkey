@@ -9,7 +9,7 @@
 
 {%- liquid
   assign ss = section.settings
-  assign bg_color = ss.background_color | default: '#f9f9f9'
+  assign bg_color = ss.background_color | default: 'var(--mk-color-bg-tertiary)'
   
   assign columns = ss.columns | default: 4
   assign icon_size = ss.icon_size | default: 40
@@ -74,7 +74,7 @@
   .mk-icon-boxes__grid {
     display: grid;
     grid-template-columns: repeat(var(--icon-boxes-cols, 4), 1fr);
-    gap: 16px;
+    gap: var(--mk-spacing-lg);
     align-items: center;
   }
 
@@ -94,8 +94,8 @@
   .mk-icon-boxes__item {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 16px;
+    gap: var(--mk-spacing-lg);
+    padding: var(--mk-spacing-lg);
   }
 
   @media (max-width: 749px) {
@@ -135,7 +135,7 @@
   }
 
   .mk-icon-boxes__title {
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     font-weight: 600;
     line-height: 1.4;
   }
@@ -204,7 +204,7 @@
       "type": "color",
       "id": "background_color",
       "label": "背景颜色",
-      "default": "#f9f9f9"
+      "default": "var(--mk-color-bg-tertiary)"
     }
   ],
   "blocks": [

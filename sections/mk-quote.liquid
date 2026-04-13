@@ -50,13 +50,13 @@
   .mk-quote__content {
     position: relative;
     margin: 0;
-    padding: 32px;
+    padding: var(--mk-spacing-3xl);
     text-align: center;
   }
 
   @media (min-width: 750px) {
     .mk-quote__content {
-      padding: 48px;
+      padding: var(--mk-spacing-5xl);
     }
   }
 
@@ -75,7 +75,7 @@
 
   .mk-quote__text {
     margin: 0 0 24px 0;
-    font-size: 20px;
+    font-size: var(--mk-font-size-2xl);
     font-weight: 400;
     font-style: italic;
     line-height: 1.7;
@@ -84,25 +84,25 @@
 
   @media (min-width: 750px) {
     .mk-quote__text {
-      font-size: 26px;
+      font-size: var(--mk-font-size-3xl);
     }
   }
 
   .mk-quote__footer {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: var(--mk-spacing-xs);
   }
 
   .mk-quote__author {
-    font-size: 16px;
+    font-size: var(--mk-font-size-lg);
     font-weight: 600;
     font-style: normal;
     color: var(--color-foreground);
   }
 
   .mk-quote__title {
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-text-secondary, #666);
   }
 {% endstylesheet %}

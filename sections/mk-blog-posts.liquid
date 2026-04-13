@@ -186,7 +186,7 @@
 
   .mk-blog-posts__description {
     margin: 0;
-    font-size: 16px;
+    font-size: var(--mk-font-size-lg);
     line-height: 1.6;
     opacity: 0.85;
   }
@@ -195,12 +195,12 @@
   .mk-blog-posts__grid {
     display: grid;
     grid-template-columns: repeat(var(--blog-cols-mob, 1), 1fr);
-    gap: 32px;
+    gap: var(--mk-spacing-3xl);
   }
 
   @media (min-width: 480px) {
     .mk-blog-posts__grid {
-      gap: 24px;
+      gap: var(--mk-spacing-2xl);
     }
   }
 
@@ -213,7 +213,7 @@
   @media (min-width: 990px) {
     .mk-blog-posts__grid {
       grid-template-columns: repeat(var(--blog-cols-desk, 3), 1fr);
-      gap: 32px;
+      gap: var(--mk-spacing-3xl);
     }
   }
 
@@ -229,7 +229,7 @@
     display: block;
     text-decoration: none;
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: var(--mk-radius-md);
     margin-bottom: 20px;
   }
 
@@ -239,7 +239,7 @@
   }
 
   .mk-blog-posts__media--placeholder {
-    background: var(--color-background-secondary, #f5f5f5);
+    background: var(--color-background-secondary, var(--mk-color-bg-secondary));
   }
 
   .mk-blog-posts__image {
@@ -270,9 +270,9 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 12px;
+    gap: var(--mk-spacing-md);
     margin-bottom: 12px;
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     color: var(--color-text-secondary, #666);
   }
 
@@ -288,7 +288,7 @@
   /* Title */
   .mk-blog-posts__title {
     margin: 0 0 12px 0;
-    font-size: 18px;
+    font-size: var(--mk-font-size-xl);
     font-weight: 600;
     line-height: 1.4;
   }
@@ -306,7 +306,7 @@
   /* Excerpt */
   .mk-blog-posts__excerpt {
     margin: 0 0 16px 0;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     line-height: 1.6;
     opacity: 0.85;
     flex: 1;
@@ -317,7 +317,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     font-weight: 600;
     text-decoration: none;
     color: var(--color-primary, #000);
@@ -344,14 +344,14 @@
   .mk-blog-posts__view-all {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
     padding: 14px 28px;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     font-weight: 600;
     text-decoration: none;
     color: var(--color-primary, #000);
     border: 1.5px solid var(--color-primary, #000);
-    border-radius: 4px;
+    border-radius: var(--mk-radius-xs);
     transition: all 0.2s ease;
   }
 

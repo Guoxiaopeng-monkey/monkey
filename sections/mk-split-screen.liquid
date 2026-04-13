@@ -88,7 +88,7 @@
   .mk-split-screen__media {
     position: relative;
     overflow: hidden;
-    background-color: var(--color-background-secondary, #f5f5f5);
+    background-color: var(--color-background-secondary, var(--mk-color-bg-secondary));
   }
 
   @media (min-width: 750px) {
@@ -139,7 +139,7 @@
 
   .mk-split-screen__subtitle {
     margin: 0 0 8px 0;
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -148,20 +148,20 @@
 
   .mk-split-screen__title {
     margin: 0 0 16px 0;
-    font-size: 28px;
+    font-size: var(--mk-font-size-3xl);
     font-weight: 700;
     line-height: 1.2;
   }
 
   @media (min-width: 750px) {
     .mk-split-screen__title {
-      font-size: 36px;
+      font-size: var(--mk-font-size-5xl);
     }
   }
 
   .mk-split-screen__text {
     margin: 0 0 24px 0;
-    font-size: 16px;
+    font-size: var(--mk-font-size-lg);
     line-height: 1.7;
     color: var(--color-text-secondary, #666);
   }
@@ -179,11 +179,11 @@
     align-items: center;
     justify-content: center;
     padding: 14px 32px;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     font-weight: 600;
     color: var(--color-on-primary, #fff);
     background-color: var(--color-primary, #000);
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
     text-decoration: none;
     transition: all 0.2s ease;
     align-self: flex-start;

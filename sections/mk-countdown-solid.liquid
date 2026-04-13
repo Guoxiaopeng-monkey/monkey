@@ -27,11 +27,11 @@
 {% stylesheet %}
   .mk-countdown-solid { padding: 80px 0; text-align: center; }
   .mk-countdown-solid__container { max-width: 900px; margin: 0 auto; padding: 0 32px; }
-  .mk-countdown-solid__title { margin: 0 0 40px 0; font-size: 36px; font-weight: 700; }
+  .mk-countdown-solid__title { margin: 0 0 40px 0; font-size: var(--mk-font-size-5xl); font-weight: 700; }
   .mk-countdown-solid__countdown { display: flex; justify-content: center; gap: 20px; }
-  .mk-countdown-solid__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .mk-countdown-solid__num { min-width: 90px; padding: 20px; border-radius: 12px; font-size: 42px; font-weight: 700; color: #000; background: #fff; }
-  .mk-countdown-solid__label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.7); }
+  .mk-countdown-solid__item { display: flex; flex-direction: column; align-items: center; gap: var(--mk-spacing-sm); }
+  .mk-countdown-solid__num { min-width: 90px; padding: var(--mk-spacing-xl); border-radius: var(--mk-radius-md); font-size: 42px; font-weight: 700; color: #000; background: #fff; }
+  .mk-countdown-solid__label { font-size: var(--mk-font-size-xs); text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.7); }
 {% endstylesheet %}
 
 {% javascript %}

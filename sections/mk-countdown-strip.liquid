@@ -30,12 +30,12 @@
 </div>
 
 {% stylesheet %}
-  .mk-countdown-strip { padding: 12px 0; background: var(--color-primary, #000); color: #fff; }
-  .mk-countdown-strip__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
-  .mk-countdown-strip__text { font-size: 14px; font-weight: 600; }
-  .mk-countdown-strip__countdown { display: flex; align-items: center; gap: 4px; font-size: 14px; }
+  .mk-countdown-strip { padding: var(--mk-spacing-md) 0; background: var(--color-primary, #000); color: #fff; }
+  .mk-countdown-strip__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); display: flex; align-items: center; justify-content: center; gap: var(--mk-spacing-lg); flex-wrap: wrap; }
+  .mk-countdown-strip__text { font-size: var(--mk-font-size-md); font-weight: 600; }
+  .mk-countdown-strip__countdown { display: flex; align-items: center; gap: var(--mk-spacing-xs); font-size: var(--mk-font-size-md); }
   .mk-countdown-strip__countdown span { font-weight: 700; }
-  .mk-countdown-strip__btn { padding: 8px 20px; font-size: 13px; font-weight: 600; color: var(--color-on-primary, #fff); background: rgba(255,255,255,0.2); border-radius: 6px; text-decoration: none; }
+  .mk-countdown-strip__btn { padding: var(--mk-spacing-sm) 20px; font-size: var(--mk-font-size-sm); font-weight: 600; color: var(--color-on-primary, #fff); background: rgba(255,255,255,0.2); border-radius: 6px; text-decoration: none; }
   .mk-countdown-strip__btn:hover { background: rgba(255,255,255,0.3); }
 {% endstylesheet %}
 

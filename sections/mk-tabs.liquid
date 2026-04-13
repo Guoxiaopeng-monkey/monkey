@@ -144,7 +144,7 @@
   /* Nav */
   .mk-tabs__nav {
     display: flex;
-    gap: 4px;
+    gap: var(--mk-spacing-xs);
     margin-bottom: 32px;
     border-bottom: 2px solid rgba(var(--color-border), 0.15);
     overflow-x: auto;
@@ -158,8 +158,8 @@
 
   .mk-tabs__tab {
     flex-shrink: 0;
-    padding: 16px 24px;
-    font-size: 15px;
+    padding: var(--mk-spacing-lg) 24px;
+    font-size: var(--mk-font-size-md);
     font-weight: 500;
     color: var(--color-text-secondary, #666);
     background: transparent;
@@ -190,7 +190,7 @@
   }
 
   .mk-tabs__panel-content {
-    font-size: 16px;
+    font-size: var(--mk-font-size-lg);
     line-height: 1.7;
   }
 
@@ -206,27 +206,27 @@
   .mk-tabs__panel-image {
     width: 100%;
     height: auto;
-    border-radius: 12px;
+    border-radius: var(--mk-radius-md);
   }
 
   /* Video */
   .mk-tabs__panel-video {
     width: 100%;
     height: auto;
-    border-radius: 12px;
+    border-radius: var(--mk-radius-md);
   }
 
   /* Products */
   .mk-tabs__panel-products {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    gap: var(--mk-spacing-lg);
   }
 
   @media (min-width: 750px) {
     .mk-tabs__panel-products {
       grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
+      gap: var(--mk-spacing-2xl);
     }
   }
 {% endstylesheet %}

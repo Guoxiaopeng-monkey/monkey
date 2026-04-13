@@ -30,14 +30,14 @@
 </section>
 
 {% stylesheet %}
-  .mk-newsletter-bar { padding: 24px 0; }
-  .mk-newsletter-bar__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center; }
+  .mk-newsletter-bar { padding: var(--mk-spacing-2xl) 0; }
+  .mk-newsletter-bar__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); display: flex; flex-direction: column; gap: var(--mk-spacing-lg); align-items: center; text-align: center; }
   @media (min-width: 750px) { .mk-newsletter-bar__container { flex-direction: row; justify-content: space-between; text-align: left; } }
-  .mk-newsletter-bar__title { margin: 0; font-size: 18px; font-weight: 600; }
-  .mk-newsletter-bar__text { margin: 4px 0 0 0; font-size: 14px; color: var(--color-text-secondary, #666); }
-  .mk-newsletter-bar__form { display: flex; gap: 8px; flex-shrink: 0; }
-  .mk-newsletter-bar__input { width: 240px; padding: 12px 16px; font-size: 14px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); }
-  .mk-newsletter-bar__button { padding: 12px 24px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border: none; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+  .mk-newsletter-bar__title { margin: 0; font-size: var(--mk-font-size-xl); font-weight: 600; }
+  .mk-newsletter-bar__text { margin: 4px 0 0 0; font-size: var(--mk-font-size-md); color: var(--color-text-secondary, #666); }
+  .mk-newsletter-bar__form { display: flex; gap: var(--mk-spacing-sm); flex-shrink: 0; }
+  .mk-newsletter-bar__input { width: 240px; padding: var(--mk-spacing-md) 16px; font-size: var(--mk-font-size-md); border: 1px solid var(--color-border); border-radius: var(--mk-radius-sm); background: var(--color-background); }
+  .mk-newsletter-bar__button { padding: var(--mk-spacing-md) 24px; font-size: var(--mk-font-size-md); font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border: none; border-radius: var(--mk-radius-sm); cursor: pointer; white-space: nowrap; }
   .mk-newsletter-bar__button:hover { opacity: 0.85; }
 {% endstylesheet %}
 

@@ -32,12 +32,12 @@
   .mk-newsletter-simple { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
   @media (min-width: 750px) { .mk-newsletter-simple { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
   .mk-newsletter-simple__container { max-width: var(--container-max-width, 600px); margin: 0 auto; padding: 0 var(--container-padding, 32px); text-align: center; }
-  .mk-newsletter-simple__title { margin: 0 0 20px 0; font-size: 28px; font-weight: 700; }
-  .mk-newsletter-simple__form { display: flex; gap: 8px; }
-  .mk-newsletter-simple__input { flex: 1; padding: 14px 16px; font-size: 14px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); }
-  .mk-newsletter-simple__btn { padding: 14px 28px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border: none; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+  .mk-newsletter-simple__title { margin: 0 0 20px 0; font-size: var(--mk-font-size-3xl); font-weight: 700; }
+  .mk-newsletter-simple__form { display: flex; gap: var(--mk-spacing-sm); }
+  .mk-newsletter-simple__input { flex: 1; padding: 14px 16px; font-size: var(--mk-font-size-md); border: 1px solid var(--color-border); border-radius: var(--mk-radius-sm); background: var(--color-background); }
+  .mk-newsletter-simple__btn { padding: 14px 28px; font-size: var(--mk-font-size-md); font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border: none; border-radius: var(--mk-radius-sm); cursor: pointer; white-space: nowrap; }
   .mk-newsletter-simple__btn:hover { opacity: 0.85; }
-  .mk-newsletter-simple__privacy { margin: 12px 0 0 0; font-size: 12px; color: var(--color-text-secondary, #666); }
+  .mk-newsletter-simple__privacy { margin: var(--mk-spacing-md) 0 0 0; font-size: var(--mk-font-size-sm); color: var(--color-text-secondary, #666); }
 {% endstylesheet %}
 
 {% schema %}

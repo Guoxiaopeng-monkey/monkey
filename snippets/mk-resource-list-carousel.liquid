@@ -35,7 +35,7 @@
 
 {% stylesheet %}
   .mk-resource-list-carousel { overflow: hidden; }
-  .mk-resource-list-carousel__track { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .mk-resource-list-carousel__track { display: flex; gap: var(--mk-spacing-lg); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
   .mk-resource-list-carousel__track::-webkit-scrollbar { display: none; }
   .mk-resource-list-carousel__item { flex: 0 0 280px; scroll-snap-align: start; }
   @media (max-width: 768px) { .mk-resource-list-carousel__item { flex: 0 0 200px; } }

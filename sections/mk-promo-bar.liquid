@@ -31,12 +31,12 @@
 </div>
 
 {% stylesheet %}
-  .mk-promo-bar { padding: 10px 0; background: var(--color-primary, #000); color: #fff; }
-  .mk-promo-bar__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; }
+  .mk-promo-bar { padding: var(--mk-spacing-sm) 0; background: var(--color-primary, #000); color: #fff; }
+  .mk-promo-bar__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); display: flex; align-items: center; justify-content: center; gap: var(--mk-spacing-sm); position: relative; }
   .mk-promo-bar__icon { display: flex; flex-shrink: 0; }
   .mk-promo-bar__icon svg { width: 16px; height: 16px; }
-  .mk-promo-bar__text { margin: 0; font-size: 13px; text-align: center; }
-  .mk-promo-bar__link { font-size: 13px; font-weight: 600; color: #fff; text-decoration: underline; }
+  .mk-promo-bar__text { margin: 0; font-size: var(--mk-font-size-sm); text-align: center; }
+  .mk-promo-bar__link { font-size: var(--mk-font-size-sm); font-weight: 600; color: #fff; text-decoration: underline; }
   .mk-promo-bar__close { position: absolute; right: 0; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; background: transparent; border: none; cursor: pointer; color: #fff; }
   .mk-promo-bar__close svg { width: 14px; height: 14px; }
 {% endstylesheet %}

@@ -45,16 +45,16 @@
   .mk-instagram { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
   @media (min-width: 750px) { .mk-instagram { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
   .mk-instagram__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
-  .mk-instagram__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
-  .mk-instagram__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  @media (min-width: 750px) { .mk-instagram__grid { grid-template-columns: repeat(6, 1fr); gap: 16px; } }
-  .mk-instagram__item { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 8px; }
+  .mk-instagram__title { margin: 0 0 32px 0; font-size: var(--mk-font-size-3xl); font-weight: 700; text-align: center; }
+  .mk-instagram__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--mk-spacing-sm); }
+  @media (min-width: 750px) { .mk-instagram__grid { grid-template-columns: repeat(6, 1fr); gap: var(--mk-spacing-lg); } }
+  .mk-instagram__item { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: var(--mk-radius-sm); }
   .mk-instagram__image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
   .mk-instagram__item:hover .mk-instagram__image { transform: scale(1.05); }
   .mk-instagram__overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.2s ease; }
   .mk-instagram__item:hover .mk-instagram__overlay { opacity: 1; }
   .mk-instagram__overlay svg { width: 32px; height: 32px; color: #fff; }
-  .mk-instagram__follow { display: inline-flex; margin-top: 32px; padding: 14px 32px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+  .mk-instagram__follow { display: inline-flex; margin-top: 32px; padding: 14px 32px; font-size: var(--mk-font-size-md); font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: var(--mk-radius-sm); text-decoration: none; }
   .mk-instagram__follow:hover { opacity: 0.85; }
 {% endstylesheet %}
 

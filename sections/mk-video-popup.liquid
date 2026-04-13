@@ -136,7 +136,7 @@
   /* Grid */
   .mk-video-popup__grid {
     display: grid;
-    gap: 24px;
+    gap: var(--mk-spacing-2xl);
   }
 
   @media (min-width: 480px) {
@@ -148,7 +148,7 @@
   @media (min-width: 990px) {
     .mk-video-popup__grid {
       grid-template-columns: repeat(3, 1fr);
-      gap: 32px;
+      gap: var(--mk-spacing-3xl);
     }
   }
 
@@ -164,7 +164,7 @@
     width: 100%;
     padding: 0;
     border: none;
-    border-radius: 16px;
+    border-radius: var(--mk-radius-lg);
     overflow: hidden;
     cursor: pointer;
     background: none;
@@ -220,8 +220,8 @@
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 20px;
-    font-size: 16px;
+    padding: var(--mk-spacing-xl);
+    font-size: var(--mk-font-size-lg);
     font-weight: 600;
     color: #fff;
     background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
@@ -235,7 +235,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 24px;
+    padding: var(--mk-spacing-2xl);
   }
 
   .mk-video-popup__modal[hidden] {
@@ -286,7 +286,7 @@
     width: 100%;
     aspect-ratio: 16 / 9;
     background: #000;
-    border-radius: 12px;
+    border-radius: var(--mk-radius-md);
     overflow: hidden;
   }
 

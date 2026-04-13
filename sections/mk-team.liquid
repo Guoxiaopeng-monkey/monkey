@@ -69,14 +69,14 @@
 
   .mk-team__title {
     margin: 0 0 12px 0;
-    font-size: 28px;
+    font-size: var(--mk-font-size-3xl);
     font-weight: 700;
     text-align: center;
   }
 
   .mk-team__subtitle {
     margin: 0 0 40px 0;
-    font-size: 16px;
+    font-size: var(--mk-font-size-lg);
     color: var(--color-text-secondary, #666);
     text-align: center;
   }
@@ -84,7 +84,7 @@
   .mk-team__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 32px;
+    gap: var(--mk-spacing-3xl);
   }
 
   @media (min-width: 750px) {
@@ -117,14 +117,14 @@
 
   .mk-team__name {
     margin: 0 0 4px 0;
-    font-size: 16px;
+    font-size: var(--mk-font-size-lg);
     font-weight: 600;
     color: var(--color-foreground);
   }
 
   .mk-team__role {
     margin: 0;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-text-secondary, #666);
   }
 {% endstylesheet %}

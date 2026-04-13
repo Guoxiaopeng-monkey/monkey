@@ -40,14 +40,14 @@
   .mk-image-text { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
   @media (min-width: 750px) { .mk-image-text { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
   .mk-image-text__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
-  .mk-image-text__row { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: center; }
+  .mk-image-text__row { display: grid; grid-template-columns: 1fr; gap: var(--mk-spacing-3xl); align-items: center; }
   @media (min-width: 750px) { .mk-image-text__row { grid-template-columns: 1fr 1fr; gap: 64px; } .mk-image-text__row--reverse { direction: rtl; } .mk-image-text__row--reverse > * { direction: ltr; } }
-  .mk-image-text__image { width: 100%; height: auto; border-radius: 16px; }
-  .mk-image-text__subtitle { margin: 0 0 12px 0; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--color-primary, #000); }
-  .mk-image-text__title { margin: 0 0 16px 0; font-size: 28px; font-weight: 700; }
-  @media (min-width: 750px) { .mk-image-text__title { font-size: 36px; } }
-  .mk-image-text__text { margin: 0 0 24px 0; font-size: 15px; color: var(--color-text-secondary, #666); line-height: 1.6; }
-  .mk-image-text__button { display: inline-flex; padding: 14px 32px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+  .mk-image-text__image { width: 100%; height: auto; border-radius: var(--mk-radius-lg); }
+  .mk-image-text__subtitle { margin: 0 0 12px 0; font-size: var(--mk-font-size-sm); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--color-primary, #000); }
+  .mk-image-text__title { margin: 0 0 16px 0; font-size: var(--mk-font-size-3xl); font-weight: 700; }
+  @media (min-width: 750px) { .mk-image-text__title { font-size: var(--mk-font-size-5xl); } }
+  .mk-image-text__text { margin: 0 0 24px 0; font-size: var(--mk-font-size-md); color: var(--color-text-secondary, #666); line-height: 1.6; }
+  .mk-image-text__button { display: inline-flex; padding: 14px 32px; font-size: var(--mk-font-size-md); font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: var(--mk-radius-sm); text-decoration: none; }
   .mk-image-text__button:hover { opacity: 0.85; }
 {% endstylesheet %}
 

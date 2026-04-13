@@ -51,10 +51,10 @@
 </section>
 
 {% stylesheet %}
-  .mk-breadcrumbs-section { padding: 16px 0; }
+  .mk-breadcrumbs-section { padding: var(--mk-spacing-lg) 0; }
   .mk-breadcrumbs-section__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
-  .mk-breadcrumbs-section__list { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; padding: 0; list-style: none; }
-  .mk-breadcrumbs-section__item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--color-text-secondary, #666); }
+  .mk-breadcrumbs-section__list { display: flex; flex-wrap: wrap; align-items: center; gap: var(--mk-spacing-sm); margin: 0; padding: 0; list-style: none; }
+  .mk-breadcrumbs-section__item { display: flex; align-items: center; gap: var(--mk-spacing-sm); font-size: var(--mk-font-size-sm); color: var(--color-text-secondary, #666); }
   .mk-breadcrumbs-section__item:not(:last-child)::after { content: '/'; color: var(--color-border); }
   .mk-breadcrumbs-section__link { color: var(--color-text-secondary, #666); text-decoration: none; }
   .mk-breadcrumbs-section__link:hover { color: var(--color-foreground); }

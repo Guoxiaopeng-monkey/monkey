@@ -20,12 +20,12 @@
 
 {% stylesheet %}
   .mk-recently-viewed {
-    padding: 32px 0;
+    padding: var(--mk-spacing-3xl) 0;
   }
 
   .mk-recently-viewed__title {
     margin: 0 0 20px 0;
-    font-size: 18px;
+    font-size: var(--mk-font-size-xl);
     font-weight: 600;
     color: var(--color-foreground);
   }
@@ -33,13 +33,13 @@
   .mk-recently-viewed__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    gap: var(--mk-spacing-lg);
   }
 
   @media (min-width: 750px) {
     .mk-recently-viewed__grid {
       grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
+      gap: var(--mk-spacing-2xl);
     }
   }
 {% endstylesheet %}

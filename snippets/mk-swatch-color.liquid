@@ -71,7 +71,7 @@
   }
 
   .mk-swatch-color__label {
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     font-weight: 500;
     color: var(--color-foreground);
   }
@@ -84,7 +84,7 @@
   .mk-swatch-color__swatches {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   .mk-swatch-color__swatch {
@@ -129,6 +129,6 @@
     height: 100%;
     background-color: var(--swatch-color);
     border-radius: 50%;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 0 0 1px var(--mk-shadow-md));
   }
 {% endstylesheet %}

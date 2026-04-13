@@ -96,7 +96,7 @@
 
   .mk-video-section__title {
     margin: 0 0 24px 0;
-    font-size: 24px;
+    font-size: var(--mk-font-size-3xl);
     font-weight: 700;
     text-align: center;
   }
@@ -106,7 +106,7 @@
     width: 100%;
     aspect-ratio: {{ ss.aspect_ratio | default: '16/9' }};
     background-color: #000;
-    border-radius: 12px;
+    border-radius: var(--mk-radius-md);
     overflow: hidden;
   }
 
@@ -134,8 +134,8 @@
   }
 
   .mk-video-section__description {
-    margin: 16px 0 0 0;
-    font-size: 14px;
+    margin: var(--mk-spacing-lg) 0 0 0;
+    font-size: var(--mk-font-size-md);
     color: var(--color-text-secondary, #666);
     text-align: center;
   }

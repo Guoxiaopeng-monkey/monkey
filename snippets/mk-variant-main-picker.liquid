@@ -43,12 +43,12 @@
 {% stylesheet %}
   .mk-variant-main-picker { display: flex; flex-direction: column; gap: 20px; }
   .mk-variant-main-picker__option { display: flex; flex-direction: column; gap: 10px; }
-  .mk-variant-main-picker__label { font-size: 13px; font-weight: 500; }
-  .mk-variant-main-picker__values { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mk-variant-main-picker__label { font-size: var(--mk-font-size-sm); font-weight: 500; }
+  .mk-variant-main-picker__values { display: flex; flex-wrap: wrap; gap: var(--mk-spacing-sm); }
   .mk-variant-main-picker__value {
-    min-width: 44px; padding: 10px 16px; font-size: 13px; font-weight: 500;
+    min-width: 44px; padding: var(--mk-spacing-sm) 16px; font-size: var(--mk-font-size-sm); font-weight: 500;
     color: var(--color-foreground); background: var(--color-background);
-    border: 1px solid var(--color-border); border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
+    border: 1px solid var(--color-border); border-radius: var(--mk-radius-sm); cursor: pointer; transition: all 0.2s ease;
   }
   .mk-variant-main-picker__value:hover { border-color: var(--color-foreground); }
   .mk-variant-main-picker__value.selected { color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-color: var(--color-primary, #000); }

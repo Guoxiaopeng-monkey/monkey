@@ -74,7 +74,7 @@
 
   .mk-about-us__image {
     margin-bottom: 32px;
-    border-radius: 16px;
+    border-radius: var(--mk-radius-lg);
     overflow: hidden;
   }
 
@@ -91,7 +91,7 @@
 
   .mk-about-us__subtitle {
     margin: 0 0 8px 0;
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -100,19 +100,19 @@
 
   .mk-about-us__title {
     margin: 0 0 16px 0;
-    font-size: 28px;
+    font-size: var(--mk-font-size-3xl);
     font-weight: 700;
     line-height: 1.2;
   }
 
   @media (min-width: 750px) {
     .mk-about-us__title {
-      font-size: 36px;
+      font-size: var(--mk-font-size-5xl);
     }
   }
 
   .mk-about-us__text {
-    font-size: 16px;
+    font-size: var(--mk-font-size-lg);
     line-height: 1.7;
     color: var(--color-text-secondary, #666);
     margin-bottom: 24px;
@@ -131,11 +131,11 @@
     align-items: center;
     justify-content: center;
     padding: 14px 32px;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     font-weight: 600;
     color: var(--color-on-primary, #fff);
     background-color: var(--color-primary, #000);
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
     text-decoration: none;
     transition: all 0.2s ease;
   }
@@ -148,7 +148,7 @@
   .mk-about-us__features {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    gap: var(--mk-spacing-lg);
     max-width: 600px;
     margin: 0 auto;
   }
@@ -162,7 +162,7 @@
   .mk-about-us__feature {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   .mk-about-us__feature-icon {
@@ -178,7 +178,7 @@
   }
 
   .mk-about-us__feature-text {
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-foreground);
   }
 {% endstylesheet %}

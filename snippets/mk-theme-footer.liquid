@@ -57,14 +57,14 @@
 
 {% stylesheet %}
   .mk-theme-footer {
-    padding: 48px 0 24px;
+    padding: var(--mk-spacing-5xl) 0 24px;
     border-top: 1px solid var(--color-border);
   }
 
   .mk-theme-footer__row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 32px;
+    gap: var(--mk-spacing-3xl);
     max-width: var(--container-max-width, 1200px);
     margin: 0 auto;
     padding: 0 var(--container-padding, 32px);
@@ -78,7 +78,7 @@
 
   .mk-theme-footer__title {
     margin: 0 0 16px 0;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     font-weight: 600;
     color: var(--color-foreground);
   }
@@ -94,7 +94,7 @@
   }
 
   .mk-theme-footer__links a {
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     color: var(--color-text-secondary, #666);
     text-decoration: none;
     transition: color 0.2s ease;
@@ -108,10 +108,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: var(--mk-spacing-lg);
     max-width: var(--container-max-width, 1200px);
-    margin: 32px auto 0;
-    padding: 24px var(--container-padding, 32px) 0;
+    margin: var(--mk-spacing-3xl) auto 0;
+    padding: var(--mk-spacing-2xl) var(--container-padding, 32px) 0;
     border-top: 1px solid var(--color-border);
   }
 
@@ -124,7 +124,7 @@
 
   .mk-theme-footer__copyright {
     margin: 0;
-    font-size: 12px;
+    font-size: var(--mk-font-size-sm);
     color: var(--color-text-secondary, #666);
   }
 {% endstylesheet %}

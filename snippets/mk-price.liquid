@@ -52,11 +52,11 @@
   .mk-price {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: var(--mk-spacing-xs);
   }
 
   .mk-price__current {
-    font-size: 16px;
+    font-size: var(--mk-font-size-lg);
     font-weight: 600;
     color: var(--color-price, #000);
   }
@@ -69,11 +69,11 @@
   .mk-price__compare {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   .mk-price__compare-amount {
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     font-weight: 400;
     color: var(--color-text-secondary, #999);
     text-decoration: line-through;
@@ -83,18 +83,18 @@
     display: inline-flex;
     align-items: center;
     padding: 2px 6px;
-    font-size: 11px;
+    font-size: var(--mk-font-size-xs);
     font-weight: 600;
     color: var(--color-on-sale, #fff);
     background-color: var(--color-sale, #e53935);
-    border-radius: 4px;
+    border-radius: var(--mk-radius-xs);
   }
 
   /* 水平排列 */
   .mk-price--horizontal {
     flex-direction: row;
     align-items: center;
-    gap: 12px;
+    gap: var(--mk-spacing-md);
   }
 
   .mk-price--horizontal .mk-price__compare {
@@ -103,24 +103,24 @@
 
   /* 大号价格 */
   .mk-price--large .mk-price__current {
-    font-size: 24px;
+    font-size: var(--mk-font-size-3xl);
   }
 
   .mk-price--large .mk-price__compare-amount {
-    font-size: 16px;
+    font-size: var(--mk-font-size-lg);
   }
 
   /* 小号价格 */
   .mk-price--small .mk-price__current {
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
   }
 
   .mk-price--small .mk-price__compare-amount {
-    font-size: 11px;
+    font-size: var(--mk-font-size-xs);
   }
 
   .mk-price--small .mk-price__badge {
-    font-size: 10px;
+    font-size: var(--mk-font-size-xs);
     padding: 1px 4px;
   }
 {% endstylesheet %}

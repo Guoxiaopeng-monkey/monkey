@@ -38,13 +38,13 @@
   .mk-countdown-center-2__bg { position: absolute; inset: 0; }
   .mk-countdown-center-2__image { width: 100%; height: 100%; object-fit: cover; }
   .mk-countdown-center-2__overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); }
-  .mk-countdown-center-2__content { position: relative; z-index: 1; text-align: center; padding: 64px 32px; }
+  .mk-countdown-center-2__content { position: relative; z-index: 1; text-align: center; padding: var(--mk-spacing-6xl) 32px; }
   .mk-countdown-center-2__title { margin: 0 0 40px 0; font-size: 40px; font-weight: 700; color: #fff; }
   .mk-countdown-center-2__countdown { display: flex; justify-content: center; gap: 20px; margin-bottom: 32px; }
-  .mk-countdown-center-2__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .mk-countdown-center-2__num { min-width: 80px; padding: 16px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 12px; font-size: 36px; font-weight: 700; color: #fff; }
-  .mk-countdown-center-2__label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.8); }
-  .mk-countdown-center-2__btn { display: inline-flex; padding: 16px 40px; font-size: 14px; font-weight: 600; color: #000; background: #fff; border-radius: 8px; text-decoration: none; }
+  .mk-countdown-center-2__item { display: flex; flex-direction: column; align-items: center; gap: var(--mk-spacing-sm); }
+  .mk-countdown-center-2__num { min-width: 80px; padding: var(--mk-spacing-lg); background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: var(--mk-radius-md); font-size: var(--mk-font-size-5xl); font-weight: 700; color: #fff; }
+  .mk-countdown-center-2__label { font-size: var(--mk-font-size-xs); text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.8); }
+  .mk-countdown-center-2__btn { display: inline-flex; padding: var(--mk-spacing-lg) 40px; font-size: var(--mk-font-size-md); font-weight: 600; color: #000; background: #fff; border-radius: var(--mk-radius-sm); text-decoration: none; }
 {% endstylesheet %}
 
 {% javascript %}

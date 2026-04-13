@@ -123,8 +123,8 @@
     width: 280px;
     background-color: var(--color-background);
     border: 1px solid var(--color-border);
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border-radius: var(--mk-radius-md);
+    box-shadow: 0 4px 20px var(--mk-shadow-md)5);
     z-index: 100;
     overflow: hidden;
   }
@@ -137,12 +137,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px;
+    padding: var(--mk-spacing-md) 16px;
     border-bottom: 1px solid var(--color-border);
   }
 
   .mk-share-button__title {
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     font-weight: 600;
   }
 
@@ -162,7 +162,7 @@
   }
 
   .mk-share-button__close:hover {
-    background-color: var(--color-background-secondary, #f5f5f5);
+    background-color: var(--color-background-secondary, var(--mk-color-bg-secondary));
   }
 
   .mk-share-button__close svg {
@@ -173,8 +173,8 @@
   .mk-share-button__platforms {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    padding: 16px;
+    gap: var(--mk-spacing-sm);
+    padding: var(--mk-spacing-lg);
   }
 
   .mk-share-button__platform {
@@ -182,10 +182,10 @@
     flex-direction: column;
     align-items: center;
     gap: 6px;
-    padding: 12px 8px;
+    padding: var(--mk-spacing-md) 8px;
     background: transparent;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
     cursor: pointer;
     text-decoration: none;
     color: var(--color-foreground);
@@ -193,7 +193,7 @@
   }
 
   .mk-share-button__platform:hover {
-    background-color: var(--color-background-secondary, #f5f5f5);
+    background-color: var(--color-background-secondary, var(--mk-color-bg-secondary));
   }
 
   .mk-share-button__platform svg {
@@ -202,32 +202,32 @@
   }
 
   .mk-share-button__platform span {
-    font-size: 11px;
+    font-size: var(--mk-font-size-xs);
     color: var(--color-text-secondary, #666);
   }
 
   .mk-share-button__copy {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 12px 16px;
+    gap: var(--mk-spacing-sm);
+    padding: var(--mk-spacing-md) 16px;
     border-top: 1px solid var(--color-border);
   }
 
   .mk-share-button__input {
     width: 100%;
-    padding: 10px 12px;
-    font-size: 12px;
+    padding: var(--mk-spacing-sm) 12px;
+    font-size: var(--mk-font-size-sm);
     color: var(--color-text-secondary, #666);
-    background-color: var(--color-background-secondary, #f5f5f5);
+    background-color: var(--color-background-secondary, var(--mk-color-bg-secondary));
     border: none;
     border-radius: 6px;
   }
 
   .mk-share-button__copy-btn {
     width: 100%;
-    padding: 10px 16px;
-    font-size: 13px;
+    padding: var(--mk-spacing-sm) 16px;
+    font-size: var(--mk-font-size-sm);
     font-weight: 500;
     color: var(--color-primary, #000);
     background-color: transparent;

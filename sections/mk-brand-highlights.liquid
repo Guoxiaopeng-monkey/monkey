@@ -61,7 +61,7 @@
 
   .mk-brand-highlights__title {
     margin: 0 0 40px 0;
-    font-size: 28px;
+    font-size: var(--mk-font-size-3xl);
     font-weight: 700;
     text-align: center;
   }
@@ -69,7 +69,7 @@
   .mk-brand-highlights__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 32px;
+    gap: var(--mk-spacing-3xl);
   }
 
   @media (min-width: 750px) {
@@ -90,7 +90,7 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 12px;
+    gap: var(--mk-spacing-md);
   }
 
   .mk-brand-highlights__icon {
@@ -109,14 +109,14 @@
 
   .mk-brand-highlights__heading {
     margin: 0;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     font-weight: 600;
     color: var(--color-foreground);
   }
 
   .mk-brand-highlights__text {
     margin: 0;
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     line-height: 1.6;
     color: var(--color-text-secondary, #666);
   }

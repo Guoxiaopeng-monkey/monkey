@@ -43,12 +43,12 @@
   @media (min-width: 750px) { .mk-text-over-image__wrapper { min-height: {{ ss.height_desktop | default: 600 }}px; } }
   .mk-text-over-image__image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .mk-text-over-image__overlay { position: absolute; inset: 0; background: rgba(0,0,0,{{ ss.overlay_opacity | default: 0.4 }}); }
-  .mk-text-over-image__content { position: relative; z-index: 1; text-align: center; padding: 48px 24px; max-width: 600px; }
-  .mk-text-over-image__badge { display: inline-block; padding: 6px 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #fff; background: var(--color-primary, #000); border-radius: 100px; margin-bottom: 16px; }
-  .mk-text-over-image__title { margin: 0 0 16px 0; font-size: 28px; font-weight: 700; color: #fff; }
+  .mk-text-over-image__content { position: relative; z-index: 1; text-align: center; padding: var(--mk-spacing-5xl) 24px; max-width: 600px; }
+  .mk-text-over-image__badge { display: inline-block; padding: var(--mk-spacing-xs) 16px; font-size: var(--mk-font-size-sm); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #fff; background: var(--color-primary, #000); border-radius: 100px; margin-bottom: 16px; }
+  .mk-text-over-image__title { margin: 0 0 16px 0; font-size: var(--mk-font-size-3xl); font-weight: 700; color: #fff; }
   @media (min-width: 750px) { .mk-text-over-image__title { font-size: 42px; } }
-  .mk-text-over-image__text { margin: 0 0 24px 0; font-size: 16px; color: rgba(255,255,255,0.9); line-height: 1.6; }
-  .mk-text-over-image__button { display: inline-flex; padding: 14px 32px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+  .mk-text-over-image__text { margin: 0 0 24px 0; font-size: var(--mk-font-size-lg); color: rgba(255,255,255,0.9); line-height: 1.6; }
+  .mk-text-over-image__button { display: inline-flex; padding: 14px 32px; font-size: var(--mk-font-size-md); font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: var(--mk-radius-sm); text-decoration: none; }
   .mk-text-over-image__button:hover { opacity: 0.85; }
 {% endstylesheet %}
 

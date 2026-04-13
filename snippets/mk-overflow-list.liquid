@@ -26,9 +26,9 @@
 
 {% stylesheet %}
   .mk-overflow-list { }
-  .mk-overflow-list__items { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mk-overflow-list__items { display: flex; flex-wrap: wrap; gap: var(--mk-spacing-sm); }
   .mk-overflow-list__toggle {
-    margin-top: 8px; padding: 8px 16px; font-size: 13px; font-weight: 500;
+    margin-top: 8px; padding: var(--mk-spacing-sm) 16px; font-size: var(--mk-font-size-sm); font-weight: 500;
     color: var(--color-primary, #000); background: transparent; border: none;
     cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
   }

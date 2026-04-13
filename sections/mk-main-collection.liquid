@@ -176,14 +176,14 @@
   .mk-main-collection__description {
     max-width: 700px;
     margin: 0 auto 16px auto;
-    font-size: 16px;
+    font-size: var(--mk-font-size-lg);
     line-height: 1.6;
     opacity: 0.85;
   }
 
   .mk-main-collection__count {
     margin: 0;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-text-secondary, #666);
   }
 
@@ -192,7 +192,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
+    gap: var(--mk-spacing-lg);
     margin-bottom: 32px;
     padding-bottom: 16px;
     border-bottom: 1px solid rgba(var(--color-border), 0.15);
@@ -201,13 +201,13 @@
   .mk-main-collection__filter-btn {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    font-size: 14px;
+    gap: var(--mk-spacing-sm);
+    padding: var(--mk-spacing-sm) 16px;
+    font-size: var(--mk-font-size-md);
     font-weight: 500;
     background: transparent;
     border: 1px solid rgba(var(--color-border), 0.3);
-    border-radius: 4px;
+    border-radius: var(--mk-radius-xs);
     cursor: pointer;
     transition: all 0.2s ease;
   }
@@ -224,20 +224,20 @@
   .mk-main-collection__sort {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   .mk-main-collection__sort-label {
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-text-secondary, #666);
   }
 
   .mk-main-collection__sort-select {
-    padding: 10px 32px 10px 12px;
-    font-size: 14px;
+    padding: var(--mk-spacing-sm) 32px 10px 12px;
+    font-size: var(--mk-font-size-md);
     background: transparent;
     border: 1px solid rgba(var(--color-border), 0.3);
-    border-radius: 4px;
+    border-radius: var(--mk-radius-xs);
     cursor: pointer;
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
@@ -249,7 +249,7 @@
   .mk-main-collection__grid {
     display: grid;
     grid-template-columns: repeat(var(--coll-cols-mob, 2), 1fr);
-    gap: 16px;
+    gap: var(--mk-spacing-lg);
   }
 
   @media (min-width: 480px) {
@@ -261,14 +261,14 @@
   @media (min-width: 750px) {
     .mk-main-collection__grid {
       grid-template-columns: repeat(var(--coll-cols-tablet, 3), 1fr);
-      gap: 24px;
+      gap: var(--mk-spacing-2xl);
     }
   }
 
   @media (min-width: 990px) {
     .mk-main-collection__grid {
       grid-template-columns: repeat(var(--coll-cols-desk, 4), 1fr);
-      gap: 32px;
+      gap: var(--mk-spacing-3xl);
     }
   }
 
@@ -281,19 +281,19 @@
 
   .mk-main-collection__empty p {
     margin: 0 0 24px 0;
-    font-size: 16px;
+    font-size: var(--mk-font-size-lg);
     opacity: 0.7;
   }
 
   .mk-main-collection__empty-link {
     display: inline-block;
     padding: 14px 28px;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     font-weight: 600;
     text-decoration: none;
     color: var(--color-background, #fff);
     background: var(--color-primary, #000);
-    border-radius: 4px;
+    border-radius: var(--mk-radius-xs);
     transition: opacity 0.2s ease;
   }
 
@@ -306,7 +306,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
     margin-top: 48px;
   }
 
@@ -318,13 +318,13 @@
     min-width: 40px;
     height: 40px;
     padding: 0 12px;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     font-weight: 500;
     text-decoration: none;
     color: inherit;
     background: transparent;
     border: 1px solid rgba(var(--color-border), 0.3);
-    border-radius: 4px;
+    border-radius: var(--mk-radius-xs);
     transition: all 0.2s ease;
   }
 
@@ -346,11 +346,11 @@
     min-width: 40px;
     height: 40px;
     padding: 0 12px;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     font-weight: 600;
     background: var(--color-primary, #000);
     color: var(--color-background, #fff);
-    border-radius: 4px;
+    border-radius: var(--mk-radius-xs);
   }
 {% endstylesheet %}
 

@@ -40,9 +40,9 @@
 </div>
 
 {% stylesheet %}
-  .mk-dropdown-localization { display: flex; gap: 12px; }
+  .mk-dropdown-localization { display: flex; gap: var(--mk-spacing-md); }
   .mk-dropdown-localization__select {
-    padding: 8px 32px 8px 12px; font-size: 13px; border: 1px solid var(--color-border);
+    padding: var(--mk-spacing-sm) 32px 8px 12px; font-size: var(--mk-font-size-sm); border: 1px solid var(--color-border);
     border-radius: 6px; background: var(--color-background) url('icon-chevron-down.svg') no-repeat right 8px center;
     background-size: 16px; cursor: pointer; appearance: none;
   }

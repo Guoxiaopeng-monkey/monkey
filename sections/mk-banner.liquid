@@ -43,12 +43,12 @@
   .mk-banner { position: relative; overflow: hidden; }
   .mk-banner__image { position: absolute; inset: 0; }
   .mk-banner__image img { width: 100%; height: 100%; object-fit: cover; }
-  .mk-banner__content { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: {{ ss.height_mobile | default: 300 }}px; padding: 48px {{ ss.padding_mobile | default: 24 }}px; }
-  @media (min-width: 750px) { .mk-banner__content { min-height: {{ ss.height_desktop | default: 400 }}px; padding: 64px {{ ss.padding_desktop | default: 64 }}px; } }
-  .mk-banner__title { margin: 0 0 16px 0; font-size: 28px; font-weight: 700; }
-  @media (min-width: 750px) { .mk-banner__title { font-size: 36px; } }
-  .mk-banner__description { margin: 0 0 24px 0; font-size: 16px; max-width: 600px; }
-  .mk-banner__button { display: inline-flex; padding: 14px 32px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+  .mk-banner__content { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: {{ ss.height_mobile | default: 300 }}px; padding: var(--mk-spacing-5xl) {{ ss.padding_mobile | default: 24 }}px; }
+  @media (min-width: 750px) { .mk-banner__content { min-height: {{ ss.height_desktop | default: 400 }}px; padding: var(--mk-spacing-6xl) {{ ss.padding_desktop | default: 64 }}px; } }
+  .mk-banner__title { margin: 0 0 16px 0; font-size: var(--mk-font-size-3xl); font-weight: 700; }
+  @media (min-width: 750px) { .mk-banner__title { font-size: var(--mk-font-size-5xl); } }
+  .mk-banner__description { margin: 0 0 24px 0; font-size: var(--mk-font-size-lg); max-width: 600px; }
+  .mk-banner__button { display: inline-flex; padding: 14px 32px; font-size: var(--mk-font-size-md); font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: var(--mk-radius-sm); text-decoration: none; }
   .mk-banner__button:hover { opacity: 0.85; }
 {% endstylesheet %}
 

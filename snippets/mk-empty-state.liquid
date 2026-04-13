@@ -46,7 +46,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 48px 24px;
+    padding: var(--mk-spacing-5xl) 24px;
     text-align: center;
   }
 
@@ -66,14 +66,14 @@
 
   .mk-empty-state__title {
     margin: 0 0 8px 0;
-    font-size: 18px;
+    font-size: var(--mk-font-size-xl);
     font-weight: 600;
     color: var(--color-foreground);
   }
 
   .mk-empty-state__description {
     margin: 0 0 24px 0;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-text-secondary, #666);
     max-width: 300px;
   }
@@ -82,12 +82,12 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 24px;
-    font-size: 14px;
+    padding: var(--mk-spacing-md) 24px;
+    font-size: var(--mk-font-size-md);
     font-weight: 600;
     color: var(--color-on-primary, #fff);
     background-color: var(--color-primary, #000);
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
     text-decoration: none;
     transition: all 0.2s ease;
   }

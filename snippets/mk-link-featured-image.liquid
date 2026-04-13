@@ -24,7 +24,7 @@
 {%- endif -%}
 
 {% stylesheet %}
-  .mk-link-featured-image { display: block; overflow: hidden; border-radius: 12px; }
+  .mk-link-featured-image { display: block; overflow: hidden; border-radius: var(--mk-radius-md); }
   .mk-link-featured-image__img { width: 100%; height: auto; display: block; transition: transform 0.4s ease; }
   .mk-link-featured-image:hover .mk-link-featured-image__img { transform: scale(1.03); }
 {% endstylesheet %}

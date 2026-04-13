@@ -42,15 +42,15 @@
   .mk-multi-banner { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
   @media (min-width: 750px) { .mk-multi-banner { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
   .mk-multi-banner__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
-  .mk-multi-banner__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media (min-width: 750px) { .mk-multi-banner__grid { grid-template-columns: repeat(4, 1fr); gap: 24px; } }
-  .mk-multi-banner__item { position: relative; aspect-ratio: 3/4; overflow: hidden; border-radius: 16px; }
+  .mk-multi-banner__grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--mk-spacing-lg); }
+  @media (min-width: 750px) { .mk-multi-banner__grid { grid-template-columns: repeat(4, 1fr); gap: var(--mk-spacing-2xl); } }
+  .mk-multi-banner__item { position: relative; aspect-ratio: 3/4; overflow: hidden; border-radius: var(--mk-radius-lg); }
   .mk-multi-banner__image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
   .mk-multi-banner__item:hover .mk-multi-banner__image { transform: scale(1.05); }
   .mk-multi-banner__overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 50%); }
-  .mk-multi-banner__content { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; }
-  .mk-multi-banner__title { margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #fff; }
-  .mk-multi-banner__text { margin: 0; font-size: 13px; color: rgba(255,255,255,0.8); }
+  .mk-multi-banner__content { position: absolute; bottom: 0; left: 0; right: 0; padding: var(--mk-spacing-xl); }
+  .mk-multi-banner__title { margin: 0 0 4px 0; font-size: var(--mk-font-size-lg); font-weight: 700; color: #fff; }
+  .mk-multi-banner__text { margin: 0; font-size: var(--mk-font-size-sm); color: rgba(255,255,255,0.8); }
 {% endstylesheet %}
 
 {% schema %}

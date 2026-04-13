@@ -34,17 +34,17 @@
 {% stylesheet %}
   .mk-promo-code__fields {
     display: flex;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   .mk-promo-code__input {
     flex: 1;
     padding: 14px 16px;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-foreground);
     background-color: var(--color-background);
     border: 1px solid var(--color-border);
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
     text-transform: uppercase;
     transition: border-color 0.2s ease;
   }
@@ -60,12 +60,12 @@
 
   .mk-promo-code__button {
     padding: 14px 24px;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     font-weight: 600;
     color: var(--color-on-primary, #fff);
     background-color: var(--color-primary, #000);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
     cursor: pointer;
     transition: all 0.2s ease;
     white-space: nowrap;
@@ -76,8 +76,8 @@
   }
 
   .mk-promo-code__message {
-    margin: 8px 0 0 0;
-    font-size: 13px;
+    margin: var(--mk-spacing-sm) 0 0 0;
+    font-size: var(--mk-font-size-sm);
   }
 
   .mk-promo-code__message[hidden] {

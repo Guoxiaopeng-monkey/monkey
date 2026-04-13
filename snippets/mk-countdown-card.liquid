@@ -53,23 +53,23 @@
 
 {% stylesheet %}
   .mk-countdown-card {
-    padding: 24px;
+    padding: var(--mk-spacing-2xl);
     background-color: var(--color-background);
     border: 1px solid var(--color-border);
-    border-radius: 16px;
+    border-radius: var(--mk-radius-lg);
     text-align: center;
   }
 
   .mk-countdown-card__title {
     margin: 0 0 8px 0;
-    font-size: 20px;
+    font-size: var(--mk-font-size-2xl);
     font-weight: 700;
     color: var(--color-foreground);
   }
 
   .mk-countdown-card__description {
     margin: 0 0 20px 0;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-text-secondary, #666);
   }
 
@@ -77,7 +77,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   .mk-countdown-card__unit {
@@ -88,7 +88,7 @@
   }
 
   .mk-countdown-card__value {
-    font-size: 28px;
+    font-size: var(--mk-font-size-3xl);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     color: var(--color-primary, #000);
@@ -96,13 +96,13 @@
   }
 
   .mk-countdown-card__label {
-    font-size: 11px;
+    font-size: var(--mk-font-size-xs);
     color: var(--color-text-secondary, #666);
     margin-top: 4px;
   }
 
   .mk-countdown-card__separator {
-    font-size: 24px;
+    font-size: var(--mk-font-size-3xl);
     font-weight: 700;
     color: var(--color-primary, #000);
     margin-top: -16px;

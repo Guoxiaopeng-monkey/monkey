@@ -52,32 +52,32 @@
 
 {% stylesheet %}
   .mk-address-card {
-    padding: 20px;
+    padding: var(--mk-spacing-xl);
     background-color: var(--color-background);
     border: 1px solid var(--color-border);
-    border-radius: 12px;
+    border-radius: var(--mk-radius-md);
   }
 
   .mk-address-card__header {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--mk-spacing-md);
     margin-bottom: 12px;
   }
 
   .mk-address-card__name {
     margin: 0;
-    font-size: 16px;
+    font-size: var(--mk-font-size-lg);
     font-weight: 600;
   }
 
   .mk-address-card__badge {
     padding: 2px 8px;
-    font-size: 11px;
+    font-size: var(--mk-font-size-xs);
     font-weight: 600;
     color: var(--color-primary, #000);
-    background-color: var(--color-background-secondary, #f5f5f5);
-    border-radius: 4px;
+    background-color: var(--color-background-secondary, var(--mk-color-bg-secondary));
+    border-radius: var(--mk-radius-xs);
   }
 
   .mk-address-card__body {
@@ -91,21 +91,21 @@
   .mk-address-card__country,
   .mk-address-card__phone {
     margin: 0;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-text-secondary, #666);
     line-height: 1.6;
   }
 
   .mk-address-card__actions {
     display: flex;
-    gap: 16px;
+    gap: var(--mk-spacing-lg);
     padding-top: 16px;
     border-top: 1px solid var(--color-border);
   }
 
   .mk-address-card__edit,
   .mk-address-card__delete {
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     font-weight: 500;
     text-decoration: none;
     transition: color 0.2s ease;

@@ -36,14 +36,14 @@
 
 {% stylesheet %}
   .mk-shipping-calculator {
-    padding: 20px;
-    background-color: var(--color-background-secondary, #f5f5f5);
-    border-radius: 12px;
+    padding: var(--mk-spacing-xl);
+    background-color: var(--color-background-secondary, var(--mk-color-bg-secondary));
+    border-radius: var(--mk-radius-md);
   }
 
   .mk-shipping-calculator__row {
     display: flex;
-    gap: 12px;
+    gap: var(--mk-spacing-md);
   }
 
   .mk-shipping-calculator__field {
@@ -54,18 +54,18 @@
   }
 
   .mk-shipping-calculator__label {
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     font-weight: 500;
     color: var(--color-foreground);
   }
 
   .mk-shipping-calculator__input {
-    padding: 12px 14px;
-    font-size: 14px;
+    padding: var(--mk-spacing-md) 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-foreground);
     background-color: var(--color-background);
     border: 1px solid var(--color-border);
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
     transition: border-color 0.2s ease;
   }
 
@@ -75,13 +75,13 @@
   }
 
   .mk-shipping-calculator__button {
-    padding: 12px 24px;
-    font-size: 14px;
+    padding: var(--mk-spacing-md) 24px;
+    font-size: var(--mk-font-size-md);
     font-weight: 600;
     color: var(--color-on-primary, #fff);
     background-color: var(--color-primary, #000);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
     cursor: pointer;
     transition: all 0.2s ease;
     align-self: flex-end;
@@ -105,8 +105,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
-    font-size: 14px;
+    padding: var(--mk-spacing-sm) 0;
+    font-size: var(--mk-font-size-md);
   }
 
   .mk-shipping-calculator__rate-name {

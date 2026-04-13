@@ -67,7 +67,7 @@
   }
 
   .mk-swatch-size__label {
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     font-weight: 500;
     color: var(--color-foreground);
   }
@@ -80,18 +80,18 @@
   .mk-swatch-size__options {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   .mk-swatch-size__option {
     min-width: 44px;
-    padding: 10px 16px;
-    font-size: 13px;
+    padding: var(--mk-spacing-sm) 16px;
+    font-size: var(--mk-font-size-sm);
     font-weight: 500;
     color: var(--color-foreground);
     background-color: var(--color-background);
     border: 1px solid var(--color-border);
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
     cursor: pointer;
     transition: all 0.2s ease;
   }

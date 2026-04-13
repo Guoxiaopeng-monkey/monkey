@@ -26,8 +26,8 @@
   .mk-custom-content { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
   @media (min-width: 750px) { .mk-custom-content { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
   .mk-custom-content__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
-  .mk-custom-content__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
-  .mk-custom-content__content { font-size: 15px; line-height: 1.6; }
+  .mk-custom-content__title { margin: 0 0 32px 0; font-size: var(--mk-font-size-3xl); font-weight: 700; text-align: center; }
+  .mk-custom-content__content { font-size: var(--mk-font-size-md); line-height: 1.6; }
 {% endstylesheet %}
 
 {% schema %}

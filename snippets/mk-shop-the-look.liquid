@@ -30,13 +30,13 @@
   .mk-shop-the-look__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   @media (min-width: 750px) {
     .mk-shop-the-look__grid {
       grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
+      gap: var(--mk-spacing-lg);
     }
   }
 
@@ -49,7 +49,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
   }
 
   .mk-shop-the-look__hotspot {
@@ -63,7 +63,7 @@
     border: none;
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 8px var(--mk-shadow-md)5);
     transition: all 0.2s ease;
   }
 
@@ -72,7 +72,7 @@
   }
 
   .mk-shop-the-look__plus {
-    font-size: 20px;
+    font-size: var(--mk-font-size-2xl);
     font-weight: 300;
     color: var(--color-foreground);
     line-height: 1;

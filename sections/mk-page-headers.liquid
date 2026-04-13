@@ -28,9 +28,9 @@
   .mk-page-headers { padding: {{ ss.padding_top_mobile | default: 32 }}px 0 {{ ss.padding_bottom_mobile | default: 32 }}px; text-align: {{ ss.text_align | default: 'center' }}; }
   @media (min-width: 750px) { .mk-page-headers { padding: {{ ss.padding_top_desktop | default: 48 }}px 0 {{ ss.padding_bottom_desktop | default: 48 }}px; } }
   .mk-page-headers__container { max-width: var(--container-max-width, 800px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
-  .mk-page-headers__title { margin: 0 0 12px 0; font-size: 28px; font-weight: 700; }
-  @media (min-width: 750px) { .mk-page-headers__title { font-size: 36px; } }
-  .mk-page-headers__description { margin: 0; font-size: 16px; color: var(--color-text-secondary, #666); }
+  .mk-page-headers__title { margin: 0 0 12px 0; font-size: var(--mk-font-size-3xl); font-weight: 700; }
+  @media (min-width: 750px) { .mk-page-headers__title { font-size: var(--mk-font-size-5xl); } }
+  .mk-page-headers__description { margin: 0; font-size: var(--mk-font-size-lg); color: var(--color-text-secondary, #666); }
 {% endstylesheet %}
 
 {% schema %}

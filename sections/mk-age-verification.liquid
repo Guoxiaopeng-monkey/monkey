@@ -44,17 +44,17 @@
   .mk-age-verification { position: fixed; inset: 0; z-index: 99999; display: none; align-items: center; justify-content: center; }
   .mk-age-verification.active { display: flex; }
   .mk-age-verification__overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.9); }
-  .mk-age-verification__content { position: relative; max-width: 480px; width: calc(100% - 48px); padding: 48px 32px; background: var(--color-background); border-radius: 16px; text-align: center; }
+  .mk-age-verification__content { position: relative; max-width: 480px; width: calc(100% - 48px); padding: var(--mk-spacing-5xl) 32px; background: var(--color-background); border-radius: var(--mk-radius-lg); text-align: center; }
   .mk-age-verification__logo { margin-bottom: 24px; }
   .mk-age-verification__logo img { max-width: 160px; height: auto; margin: 0 auto; }
-  .mk-age-verification__title { margin: 0 0 12px 0; font-size: 28px; font-weight: 700; }
-  .mk-age-verification__text { margin: 0 0 32px 0; font-size: 15px; color: var(--color-text-secondary, #666); line-height: 1.6; }
-  .mk-age-verification__actions { display: flex; flex-direction: column; gap: 12px; }
-  .mk-age-verification__btn { padding: 16px 24px; font-size: 15px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; }
+  .mk-age-verification__title { margin: 0 0 12px 0; font-size: var(--mk-font-size-3xl); font-weight: 700; }
+  .mk-age-verification__text { margin: 0 0 32px 0; font-size: var(--mk-font-size-md); color: var(--color-text-secondary, #666); line-height: 1.6; }
+  .mk-age-verification__actions { display: flex; flex-direction: column; gap: var(--mk-spacing-md); }
+  .mk-age-verification__btn { padding: var(--mk-spacing-lg) 24px; font-size: var(--mk-font-size-md); font-weight: 600; border-radius: var(--mk-radius-sm); cursor: pointer; transition: all 0.2s ease; }
   .mk-age-verification__btn--yes { color: #fff; background: var(--color-primary, #000); border: none; }
   .mk-age-verification__btn--no { color: var(--color-foreground); background: transparent; border: 1px solid var(--color-border); }
   .mk-age-verification__btn:hover { opacity: 0.85; }
-  .mk-age-verification__privacy { margin: 24px 0 0 0; font-size: 12px; color: var(--color-text-secondary, #666); }
+  .mk-age-verification__privacy { margin: var(--mk-spacing-2xl) 0 0 0; font-size: var(--mk-font-size-sm); color: var(--color-text-secondary, #666); }
 {% endstylesheet %}
 
 {% javascript %}

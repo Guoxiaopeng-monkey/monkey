@@ -47,7 +47,7 @@
   .mk-product-media-grid {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   .mk-product-media-grid__main {
@@ -57,26 +57,26 @@
   .mk-product-media-grid__image {
     width: 100%;
     height: auto;
-    border-radius: 12px;
+    border-radius: var(--mk-radius-md);
     object-fit: cover;
   }
 
   .mk-product-media-grid__two {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   .mk-product-media-grid__secondary {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   .mk-product-media-grid__thumb {
     position: relative;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
   }
 
   .mk-product-media-grid__thumb::after {

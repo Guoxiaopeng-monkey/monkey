@@ -31,15 +31,15 @@
 </section>
 
 {% stylesheet %}
-  .mk-countdown-extended { padding: 100px 0; background: var(--color-background-secondary, #f5f5f5); text-align: center; }
+  .mk-countdown-extended { padding: 100px 0; background: var(--color-background-secondary, var(--mk-color-bg-secondary)); text-align: center; }
   .mk-countdown-extended__container { max-width: 800px; margin: 0 auto; padding: 0 32px; }
-  .mk-countdown-extended__subtitle { margin: 0 0 12px 0; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--color-primary, #000); }
+  .mk-countdown-extended__subtitle { margin: 0 0 12px 0; font-size: var(--mk-font-size-md); font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--color-primary, #000); }
   .mk-countdown-extended__title { margin: 0 0 40px 0; font-size: 42px; font-weight: 700; }
-  .mk-countdown-extended__countdown { display: flex; justify-content: center; gap: 24px; margin-bottom: 40px; }
-  .mk-countdown-extended__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .mk-countdown-extended__num { min-width: 100px; padding: 24px 16px; background: var(--color-background); border-radius: 16px; font-size: 44px; font-weight: 700; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-  .mk-countdown-extended__label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-secondary, #666); }
-  .mk-countdown-extended__btn { display: inline-flex; padding: 16px 40px; font-size: 14px; font-weight: 600; color: #fff; background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+  .mk-countdown-extended__countdown { display: flex; justify-content: center; gap: var(--mk-spacing-2xl); margin-bottom: 40px; }
+  .mk-countdown-extended__item { display: flex; flex-direction: column; align-items: center; gap: var(--mk-spacing-sm); }
+  .mk-countdown-extended__num { min-width: 100px; padding: var(--mk-spacing-2xl) 16px; background: var(--color-background); border-radius: var(--mk-radius-lg); font-size: 44px; font-weight: 700; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .mk-countdown-extended__label { font-size: var(--mk-font-size-sm); text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-secondary, #666); }
+  .mk-countdown-extended__btn { display: inline-flex; padding: var(--mk-spacing-lg) 40px; font-size: var(--mk-font-size-md); font-weight: 600; color: #fff; background: var(--color-primary, #000); border-radius: var(--mk-radius-sm); text-decoration: none; }
 {% endstylesheet %}
 
 {% javascript %}

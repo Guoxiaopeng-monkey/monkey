@@ -31,16 +31,16 @@
 {% stylesheet %}
   .mk-search-modal[hidden] { display: none; }
   .mk-search-modal__overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 998; }
-  .mk-search-modal__container { position: fixed; top: 10%; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; max-height: 80vh; background: var(--color-background); border-radius: 16px; z-index: 999; display: flex; flex-direction: column; box-shadow: 0 4px 30px rgba(0,0,0,0.2); overflow: hidden; }
-  .mk-search-modal__header { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--color-border); }
+  .mk-search-modal__container { position: fixed; top: 10%; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; max-height: 80vh; background: var(--color-background); border-radius: var(--mk-radius-lg); z-index: 999; display: flex; flex-direction: column; box-shadow: 0 4px 30px rgba(0,0,0,0.2); overflow: hidden; }
+  .mk-search-modal__header { display: flex; align-items: center; gap: var(--mk-spacing-md); padding: var(--mk-spacing-lg) 20px; border-bottom: 1px solid var(--color-border); }
   .mk-search-modal__input-wrap { flex: 1; display: flex; align-items: center; gap: 10px; }
   .mk-search-modal__icon { display: flex; width: 20px; height: 20px; color: var(--color-text-secondary, #666); }
   .mk-search-modal__icon svg { width: 100%; height: 100%; }
-  .mk-search-modal__input { flex: 1; border: none; outline: none; font-size: 16px; background: transparent; }
+  .mk-search-modal__input { flex: 1; border: none; outline: none; font-size: var(--mk-font-size-lg); background: transparent; }
   .mk-search-modal__clear { display: flex; width: 20px; height: 20px; padding: 0; background: transparent; border: none; cursor: pointer; color: var(--color-text-secondary, #666); }
   .mk-search-modal__clear svg { width: 100%; height: 100%; }
-  .mk-search-modal__close { padding: 8px 16px; font-size: 14px; font-weight: 500; background: transparent; border: 1px solid var(--color-border); border-radius: 6px; cursor: pointer; }
-  .mk-search-modal__content { flex: 1; overflow-y: auto; padding: 16px 20px; }
+  .mk-search-modal__close { padding: var(--mk-spacing-sm) 16px; font-size: var(--mk-font-size-md); font-weight: 500; background: transparent; border: 1px solid var(--color-border); border-radius: 6px; cursor: pointer; }
+  .mk-search-modal__content { flex: 1; overflow-y: auto; padding: var(--mk-spacing-lg) 20px; }
 {% endstylesheet %}
 
 {% javascript %}

@@ -70,7 +70,7 @@
 
   .mk-map__title {
     margin: 0 0 24px 0;
-    font-size: 24px;
+    font-size: var(--mk-font-size-3xl);
     font-weight: 700;
     text-align: center;
   }
@@ -79,9 +79,9 @@
     position: relative;
     width: 100%;
     height: 400px;
-    border-radius: 12px;
+    border-radius: var(--mk-radius-md);
     overflow: hidden;
-    background-color: var(--color-background-secondary, #f5f5f5);
+    background-color: var(--color-background-secondary, var(--mk-color-bg-secondary));
   }
 
   .mk-map__iframe {
@@ -98,7 +98,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: var(--mk-spacing-md);
     color: var(--color-text-secondary, #666);
   }
 
@@ -116,7 +116,7 @@
 
   .mk-map__placeholder p {
     margin: 0;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
   }
 
   .mk-map__info {
@@ -126,19 +126,19 @@
 
   .mk-map__info-title {
     margin: 0 0 8px 0;
-    font-size: 18px;
+    font-size: var(--mk-font-size-xl);
     font-weight: 600;
   }
 
   .mk-map__address {
     margin: 0 0 4px 0;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-text-secondary, #666);
   }
 
   .mk-map__phone {
     margin: 0;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-primary, #000);
   }
 {% endstylesheet %}

@@ -35,10 +35,10 @@
 </section>
 
 {% stylesheet %}
-  .mk-swatch-section { padding: 24px 0; }
+  .mk-swatch-section { padding: var(--mk-spacing-2xl) 0; }
   .mk-swatch-section__container { max-width: var(--container-max-width, 600px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
-  .mk-swatch-section__title { margin: 0 0 16px 0; font-size: 16px; font-weight: 600; }
-  .mk-swatch-section__swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mk-swatch-section__title { margin: 0 0 16px 0; font-size: var(--mk-font-size-lg); font-weight: 600; }
+  .mk-swatch-section__swatches { display: flex; flex-wrap: wrap; gap: var(--mk-spacing-sm); }
   .mk-swatch-section__swatch { width: 36px; height: 36px; padding: 3px; background: transparent; border: 2px solid transparent; border-radius: 50%; cursor: pointer; transition: all 0.2s ease; }
   .mk-swatch-section__swatch:hover { border-color: var(--color-border); }
   .mk-swatch-section__swatch.selected { border-color: var(--color-primary, #000); }

@@ -146,7 +146,7 @@
 
   .mk-media-grid__label {
     margin: 0 0 12px 0;
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1.5px;
@@ -162,7 +162,7 @@
 
   .mk-media-grid__description {
     margin: 0;
-    font-size: 16px;
+    font-size: var(--mk-font-size-lg);
     line-height: 1.6;
     opacity: 0.8;
     max-width: 600px;
@@ -193,7 +193,7 @@
   .mk-media-grid__item {
     position: relative;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
   }
 
   .mk-media-grid__item--large {
@@ -230,7 +230,7 @@
   .mk-media-grid__placeholder {
     width: 100%;
     aspect-ratio: 1 / 1;
-    background: var(--color-background-secondary, #f5f5f5);
+    background: var(--color-background-secondary, var(--mk-color-bg-secondary));
   }
 
   .mk-media-grid__placeholder-svg {
@@ -246,7 +246,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 24px;
+    padding: var(--mk-spacing-2xl);
     background: rgba(0, 0, 0, 0.7);
     color: #fff;
     text-align: center;
@@ -260,30 +260,30 @@
 
   .mk-media-grid__hover-title {
     margin: 0 0 8px 0;
-    font-size: 20px;
+    font-size: var(--mk-font-size-2xl);
     font-weight: 600;
   }
 
   .mk-media-grid__hover-desc {
     margin: 0;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     opacity: 0.9;
   }
 
   /* Caption */
   .mk-media-grid__caption {
-    padding: 16px 0 0 0;
+    padding: var(--mk-spacing-lg) 0 0 0;
   }
 
   .mk-media-grid__title {
     margin: 0 0 4px 0;
-    font-size: 16px;
+    font-size: var(--mk-font-size-lg);
     font-weight: 600;
   }
 
   .mk-media-grid__subtitle {
     margin: 0;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-text-secondary, #666);
   }
 
@@ -297,14 +297,14 @@
   .mk-media-grid__view-all {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
     padding: 14px 28px;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     font-weight: 600;
     text-decoration: none;
     color: var(--color-primary, #000);
     border: 1.5px solid var(--color-primary, #000);
-    border-radius: 4px;
+    border-radius: var(--mk-radius-xs);
     transition: all 0.2s ease;
   }
 

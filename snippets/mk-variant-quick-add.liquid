@@ -33,9 +33,9 @@
 
 {% stylesheet %}
   .mk-variant-quick-add {
-    padding: 12px 24px; font-size: 13px; font-weight: 600;
+    padding: var(--mk-spacing-md) 24px; font-size: var(--mk-font-size-sm); font-weight: 600;
     color: var(--color-on-primary, #fff); background: var(--color-primary, #000);
-    border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
+    border: none; border-radius: var(--mk-radius-sm); cursor: pointer; transition: all 0.2s ease;
   }
   .mk-variant-quick-add:hover:not(:disabled) { opacity: 0.85; }
   .mk-variant-quick-add:disabled { opacity: 0.5; cursor: not-allowed; }

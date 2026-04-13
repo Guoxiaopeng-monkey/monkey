@@ -44,8 +44,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    padding: 24px 0;
+    gap: var(--mk-spacing-lg);
+    padding: var(--mk-spacing-2xl) 0;
   }
 
   .mk-pagination-simple__btn {
@@ -57,7 +57,7 @@
     color: var(--color-foreground);
     background-color: var(--color-background);
     border: 1px solid var(--color-border);
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
     text-decoration: none;
     transition: all 0.2s ease;
   }
@@ -77,7 +77,7 @@
   }
 
   .mk-pagination-simple__info {
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-text-secondary, #666);
   }
 {% endstylesheet %}

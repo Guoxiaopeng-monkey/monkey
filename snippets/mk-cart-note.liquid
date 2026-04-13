@@ -27,12 +27,12 @@
 </div>
 
 {% stylesheet %}
-  .mk-cart-note { display: flex; flex-direction: column; gap: 8px; }
-  .mk-cart-note__label { font-size: 14px; font-weight: 500; color: var(--color-foreground); }
+  .mk-cart-note { display: flex; flex-direction: column; gap: var(--mk-spacing-sm); }
+  .mk-cart-note__label { font-size: var(--mk-font-size-md); font-weight: 500; color: var(--color-foreground); }
   .mk-cart-note__textarea {
-    padding: 12px 14px; font-size: 14px; color: var(--color-foreground);
+    padding: var(--mk-spacing-md) 14px; font-size: var(--mk-font-size-md); color: var(--color-foreground);
     background: var(--color-background); border: 1px solid var(--color-border);
-    border-radius: 8px; resize: vertical; min-height: 80px;
+    border-radius: var(--mk-radius-sm); resize: vertical; min-height: 80px;
     transition: border-color 0.2s ease;
   }
   .mk-cart-note__textarea:focus { outline: none; border-color: var(--color-primary, #000); }

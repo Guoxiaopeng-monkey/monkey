@@ -50,15 +50,15 @@
   @media (min-width: 750px) { .mk-account-section { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
   .mk-account-section__container { max-width: var(--container-max-width, 600px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
   .mk-account-section__header { margin-bottom: 32px; text-align: center; }
-  .mk-account-section__title { margin: 0; font-size: 28px; font-weight: 700; }
-  .mk-account-section__subtitle { margin: 0 0 24px 0; font-size: 20px; font-weight: 600; }
-  .mk-account-section__form { display: flex; flex-direction: column; gap: 12px; }
-  .mk-account-section__input { padding: 14px 16px; font-size: 14px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); }
-  .mk-account-section__btn { padding: 14px; font-size: 14px; font-weight: 600; color: #fff; background: var(--color-primary, #000); border: none; border-radius: 8px; cursor: pointer; }
+  .mk-account-section__title { margin: 0; font-size: var(--mk-font-size-3xl); font-weight: 700; }
+  .mk-account-section__subtitle { margin: 0 0 24px 0; font-size: var(--mk-font-size-2xl); font-weight: 600; }
+  .mk-account-section__form { display: flex; flex-direction: column; gap: var(--mk-spacing-md); }
+  .mk-account-section__input { padding: 14px 16px; font-size: var(--mk-font-size-md); border: 1px solid var(--color-border); border-radius: var(--mk-radius-sm); background: var(--color-background); }
+  .mk-account-section__btn { padding: 14px; font-size: var(--mk-font-size-md); font-weight: 600; color: #fff; background: var(--color-primary, #000); border: none; border-radius: var(--mk-radius-sm); cursor: pointer; }
   .mk-account-section__btn:hover { opacity: 0.85; }
-  .mk-account-section__signup-link { margin-top: 16px; font-size: 14px; text-align: center; }
-  .mk-account-section__links { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
-  .mk-account-section__link { font-size: 14px; font-weight: 500; color: var(--color-primary, #000); text-decoration: none; }
+  .mk-account-section__signup-link { margin-top: 16px; font-size: var(--mk-font-size-md); text-align: center; }
+  .mk-account-section__links { display: flex; flex-direction: column; gap: var(--mk-spacing-md); margin-top: 24px; }
+  .mk-account-section__link { font-size: var(--mk-font-size-md); font-weight: 500; color: var(--color-primary, #000); text-decoration: none; }
   .mk-account-section__link:hover { text-decoration: underline; }
   .mk-account-section__link--logout { color: #d00; }
 {% endstylesheet %}

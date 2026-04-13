@@ -23,10 +23,10 @@
 </div>
 
 {% stylesheet %}
-  .mk-countdown-top { padding: 12px 0; background: var(--color-primary, #000); color: #fff; }
-  .mk-countdown-top__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 32px; display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
-  .mk-countdown-top__text { font-size: 13px; font-weight: 500; }
-  .mk-countdown-top__time { display: flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .mk-countdown-top { padding: var(--mk-spacing-md) 0; background: var(--color-primary, #000); color: #fff; }
+  .mk-countdown-top__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 32px; display: flex; align-items: center; justify-content: center; gap: var(--mk-spacing-lg); flex-wrap: wrap; }
+  .mk-countdown-top__text { font-size: var(--mk-font-size-sm); font-weight: 500; }
+  .mk-countdown-top__time { display: flex; align-items: center; gap: var(--mk-spacing-xs); font-size: var(--mk-font-size-md); font-weight: 700; font-variant-numeric: tabular-nums; }
 {% endstylesheet %}
 
 {% javascript %}

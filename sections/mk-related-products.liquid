@@ -55,27 +55,27 @@
 
   .mk-related-products__heading {
     margin: 0 0 24px 0;
-    font-size: 24px;
+    font-size: var(--mk-font-size-3xl);
     font-weight: 700;
     text-align: center;
   }
 
   .mk-related-products__heading.h1 {
-    font-size: 32px;
+    font-size: var(--mk-font-size-4xl);
   }
 
   .mk-related-products__heading.h2 {
-    font-size: 24px;
+    font-size: var(--mk-font-size-3xl);
   }
 
   .mk-related-products__heading.h3 {
-    font-size: 20px;
+    font-size: var(--mk-font-size-2xl);
   }
 
   .mk-related-products__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    gap: var(--mk-spacing-lg);
     list-style: none;
     margin: 0;
     padding: 0;
@@ -90,7 +90,7 @@
   @media (min-width: 750px) {
     .mk-related-products__grid {
       grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
+      gap: var(--mk-spacing-2xl);
     }
   }
 

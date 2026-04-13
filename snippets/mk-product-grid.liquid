@@ -30,8 +30,8 @@
 </div>
 
 {% stylesheet %}
-  .mk-product-grid { display: grid; grid-template-columns: repeat(var(--grid-columns, 4), 1fr); gap: 24px; }
+  .mk-product-grid { display: grid; grid-template-columns: repeat(var(--grid-columns, 4), 1fr); gap: var(--mk-spacing-2xl); }
   @media (max-width: 1024px) { .mk-product-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 768px) { .mk-product-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+  @media (max-width: 768px) { .mk-product-grid { grid-template-columns: repeat(2, 1fr); gap: var(--mk-spacing-lg); } }
   .mk-product-grid__item { min-width: 0; }
 {% endstylesheet %}

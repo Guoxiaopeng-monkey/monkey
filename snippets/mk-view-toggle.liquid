@@ -38,10 +38,10 @@
 {% stylesheet %}
   .mk-view-toggle {
     display: flex;
-    gap: 4px;
-    padding: 4px;
-    background-color: var(--color-background-secondary, #f5f5f5);
-    border-radius: 8px;
+    gap: var(--mk-spacing-xs);
+    padding: var(--mk-spacing-xs);
+    background-color: var(--color-background-secondary, var(--mk-color-bg-secondary));
+    border-radius: var(--mk-radius-sm);
   }
 
   .mk-view-toggle__btn {
@@ -66,7 +66,7 @@
   .mk-view-toggle__btn--active {
     background-color: var(--color-background);
     color: var(--color-primary, #000);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px var(--mk-shadow-md));
   }
 
   .mk-view-toggle__btn svg {

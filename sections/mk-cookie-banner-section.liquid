@@ -35,14 +35,14 @@
 </section>
 
 {% stylesheet %}
-  .mk-cookie-banner-section { position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; padding: 16px 24px; background: var(--color-background); border-top: 1px solid var(--color-border); box-shadow: 0 -4px 16px rgba(0,0,0,0.08); display: none; }
+  .mk-cookie-banner-section { position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; padding: var(--mk-spacing-lg) 24px; background: var(--color-background); border-top: 1px solid var(--color-border); box-shadow: 0 -4px 16px rgba(0,0,0,0.08); display: none; }
   .mk-cookie-banner-section.active { display: block; }
-  .mk-cookie-banner-section__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+  .mk-cookie-banner-section__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; display: flex; flex-direction: column; gap: var(--mk-spacing-lg); align-items: flex-start; }
   @media (min-width: 750px) { .mk-cookie-banner-section__container { flex-direction: row; align-items: center; justify-content: space-between; } }
-  .mk-cookie-banner-section__title { margin: 0 0 4px 0; font-size: 15px; font-weight: 600; }
-  .mk-cookie-banner-section__text { margin: 0; font-size: 13px; color: var(--color-text-secondary, #666); }
-  .mk-cookie-banner-section__actions { display: flex; gap: 8px; flex-shrink: 0; }
-  .mk-cookie-banner-section__btn { padding: 10px 20px; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; }
+  .mk-cookie-banner-section__title { margin: 0 0 4px 0; font-size: var(--mk-font-size-md); font-weight: 600; }
+  .mk-cookie-banner-section__text { margin: 0; font-size: var(--mk-font-size-sm); color: var(--color-text-secondary, #666); }
+  .mk-cookie-banner-section__actions { display: flex; gap: var(--mk-spacing-sm); flex-shrink: 0; }
+  .mk-cookie-banner-section__btn { padding: var(--mk-spacing-sm) 20px; font-size: var(--mk-font-size-sm); font-weight: 600; border-radius: var(--mk-radius-sm); cursor: pointer; transition: all 0.2s ease; }
   .mk-cookie-banner-section__btn--primary { color: #fff; background: var(--color-primary, #000); border: none; }
   .mk-cookie-banner-section__btn--secondary { color: var(--color-foreground); background: transparent; border: 1px solid var(--color-border); }
   .mk-cookie-banner-section__btn:hover { opacity: 0.85; }

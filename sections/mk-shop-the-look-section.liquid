@@ -44,14 +44,14 @@
   .mk-shop-the-look-section { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
   @media (min-width: 750px) { .mk-shop-the-look-section { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
   .mk-shop-the-look-section__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
-  .mk-shop-the-look-section__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
-  .mk-shop-the-look-section__looks { display: grid; grid-template-columns: 1fr; gap: 24px; }
-  @media (min-width: 750px) { .mk-shop-the-look-section__looks { grid-template-columns: repeat(3, 1fr); gap: 32px; } }
-  .mk-shop-the-look-section__image { position: relative; border-radius: 16px; overflow: hidden; }
+  .mk-shop-the-look-section__title { margin: 0 0 32px 0; font-size: var(--mk-font-size-3xl); font-weight: 700; text-align: center; }
+  .mk-shop-the-look-section__looks { display: grid; grid-template-columns: 1fr; gap: var(--mk-spacing-2xl); }
+  @media (min-width: 750px) { .mk-shop-the-look-section__looks { grid-template-columns: repeat(3, 1fr); gap: var(--mk-spacing-3xl); } }
+  .mk-shop-the-look-section__image { position: relative; border-radius: var(--mk-radius-lg); overflow: hidden; }
   .mk-shop-the-look-section__image img { width: 100%; height: auto; display: block; transition: transform 0.3s ease; }
   .mk-shop-the-look-section__look:hover .mk-shop-the-look-section__image img { transform: scale(1.03); }
-  .mk-shop-the-look-section__badge { position: absolute; bottom: 16px; left: 16px; padding: 8px 16px; font-size: 13px; font-weight: 600; color: #fff; background: rgba(0,0,0,0.7); border-radius: 100px; }
-  .mk-shop-the-look-section__description { margin: 12px 0 0 0; font-size: 14px; color: var(--color-text-secondary, #666); }
+  .mk-shop-the-look-section__badge { position: absolute; bottom: 16px; left: 16px; padding: var(--mk-spacing-sm) 16px; font-size: var(--mk-font-size-sm); font-weight: 600; color: #fff; background: rgba(0,0,0,0.7); border-radius: 100px; }
+  .mk-shop-the-look-section__description { margin: var(--mk-spacing-md) 0 0 0; font-size: var(--mk-font-size-md); color: var(--color-text-secondary, #666); }
 {% endstylesheet %}
 
 {% schema %}

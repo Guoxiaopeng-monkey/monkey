@@ -30,12 +30,12 @@
 </div>
 
 {% stylesheet %}
-  .mk-countdown-inline-inline { padding: 16px 0; }
-  .mk-countdown-inline-inline__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
-  .mk-countdown-inline-inline__title { font-size: 14px; font-weight: 600; }
-  .mk-countdown-inline-inline__time { display: flex; align-items: center; gap: 4px; }
-  .mk-countdown-inline-inline__num { font-size: 18px; font-weight: 700; min-width: 28px; text-align: center; }
-  .mk-countdown-inline-inline__sep { font-size: 12px; color: var(--color-text-secondary, #666); }
+  .mk-countdown-inline-inline { padding: var(--mk-spacing-lg) 0; }
+  .mk-countdown-inline-inline__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); display: flex; align-items: center; justify-content: center; gap: var(--mk-spacing-md); flex-wrap: wrap; }
+  .mk-countdown-inline-inline__title { font-size: var(--mk-font-size-md); font-weight: 600; }
+  .mk-countdown-inline-inline__time { display: flex; align-items: center; gap: var(--mk-spacing-xs); }
+  .mk-countdown-inline-inline__num { font-size: var(--mk-font-size-xl); font-weight: 700; min-width: 28px; text-align: center; }
+  .mk-countdown-inline-inline__sep { font-size: var(--mk-font-size-sm); color: var(--color-text-secondary, #666); }
 {% endstylesheet %}
 
 {% javascript %}

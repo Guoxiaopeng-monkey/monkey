@@ -26,26 +26,26 @@
   .mk-product-card-placeholder {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--mk-spacing-md);
   }
 
   .mk-product-card-placeholder__image {
     aspect-ratio: 3 / 4;
     background: linear-gradient(
       90deg,
-      var(--color-background-secondary, #f5f5f5) 25%,
+      var(--color-background-secondary, var(--mk-color-bg-secondary)) 25%,
       var(--color-background, #fff) 50%,
-      var(--color-background-secondary, #f5f5f5) 75%
+      var(--color-background-secondary, var(--mk-color-bg-secondary)) 75%
     );
     background-size: 200% 100%;
     animation: mk-shimmer 1.5s ease-in-out infinite;
-    border-radius: 12px;
+    border-radius: var(--mk-radius-md);
   }
 
   .mk-product-card-placeholder__content {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   .mk-product-card-placeholder__title {
@@ -53,13 +53,13 @@
     width: 80%;
     background: linear-gradient(
       90deg,
-      var(--color-background-secondary, #f5f5f5) 25%,
+      var(--color-background-secondary, var(--mk-color-bg-secondary)) 25%,
       var(--color-background, #fff) 50%,
-      var(--color-background-secondary, #f5f5f5) 75%
+      var(--color-background-secondary, var(--mk-color-bg-secondary)) 75%
     );
     background-size: 200% 100%;
     animation: mk-shimmer 1.5s ease-in-out infinite;
-    border-radius: 4px;
+    border-radius: var(--mk-radius-xs);
   }
 
   .mk-product-card-placeholder__price {
@@ -67,13 +67,13 @@
     width: 40%;
     background: linear-gradient(
       90deg,
-      var(--color-background-secondary, #f5f5f5) 25%,
+      var(--color-background-secondary, var(--mk-color-bg-secondary)) 25%,
       var(--color-background, #fff) 50%,
-      var(--color-background-secondary, #f5f5f5) 75%
+      var(--color-background-secondary, var(--mk-color-bg-secondary)) 75%
     );
     background-size: 200% 100%;
     animation: mk-shimmer 1.5s ease-in-out infinite;
-    border-radius: 4px;
+    border-radius: var(--mk-radius-xs);
   }
 
   .mk-product-card-placeholder__button {
@@ -82,13 +82,13 @@
     margin-top: 8px;
     background: linear-gradient(
       90deg,
-      var(--color-background-secondary, #f5f5f5) 25%,
+      var(--color-background-secondary, var(--mk-color-bg-secondary)) 25%,
       var(--color-background, #fff) 50%,
-      var(--color-background-secondary, #f5f5f5) 75%
+      var(--color-background-secondary, var(--mk-color-bg-secondary)) 75%
     );
     background-size: 200% 100%;
     animation: mk-shimmer 1.5s ease-in-out infinite;
-    border-radius: 8px;
+    border-radius: var(--mk-radius-sm);
   }
 
   @keyframes mk-shimmer {

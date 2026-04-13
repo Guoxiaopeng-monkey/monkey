@@ -51,7 +51,7 @@
   .mk-countdown-section__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 32px;
+    gap: var(--mk-spacing-3xl);
     text-align: center;
   }
 
@@ -65,7 +65,7 @@
   .mk-countdown-section__item {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--mk-spacing-sm);
   }
 
   .mk-countdown-section__number {
@@ -82,7 +82,7 @@
   }
 
   .mk-countdown-section__label {
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-text-secondary, #666);
   }
 {% endstylesheet %}

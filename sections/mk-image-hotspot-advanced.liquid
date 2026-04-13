@@ -48,15 +48,15 @@
   .mk-image-hotspot-advanced { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
   @media (min-width: 750px) { .mk-image-hotspot-advanced { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
   .mk-image-hotspot-advanced__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
-  .mk-image-hotspot-advanced__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-image-hotspot-advanced__title { margin: 0 0 32px 0; font-size: var(--mk-font-size-3xl); font-weight: 700; text-align: center; }
   .mk-image-hotspot-advanced__wrapper { position: relative; display: inline-block; width: 100%; }
-  .mk-image-hotspot-advanced__image { width: 100%; height: auto; border-radius: 16px; }
+  .mk-image-hotspot-advanced__image { width: 100%; height: auto; border-radius: var(--mk-radius-lg); }
   .mk-image-hotspot-advanced__spots { position: absolute; inset: 0; }
   .mk-image-hotspot-advanced__spot { position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; cursor: pointer; }
-  .mk-image-hotspot-advanced__dot { position: relative; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--color-primary, #000); color: #fff; border-radius: 50%; font-size: 14px; font-weight: 700; z-index: 2; }
+  .mk-image-hotspot-advanced__dot { position: relative; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--color-primary, #000); color: #fff; border-radius: 50%; font-size: var(--mk-font-size-md); font-weight: 700; z-index: 2; }
   .mk-image-hotspot-advanced__pulse { position: absolute; width: 100%; height: 100%; background: var(--color-primary, #000); border-radius: 50%; opacity: 0.3; z-index: 1; animation: hotspot-pulse 2s ease-in-out infinite; }
   @keyframes hotspot-pulse { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.8); opacity: 0; } }
-  .mk-image-hotspot-advanced__tooltip { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); padding: 6px 12px; font-size: 12px; font-weight: 600; color: #fff; background: var(--color-primary, #000); border-radius: 6px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+  .mk-image-hotspot-advanced__tooltip { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); padding: var(--mk-spacing-xs) 12px; font-size: var(--mk-font-size-sm); font-weight: 600; color: #fff; background: var(--color-primary, #000); border-radius: 6px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
   .mk-image-hotspot-advanced__spot:hover .mk-image-hotspot-advanced__tooltip { opacity: 1; }
 {% endstylesheet %}
 

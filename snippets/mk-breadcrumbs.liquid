@@ -39,14 +39,14 @@
 
 {% stylesheet %}
   .mk-breadcrumbs {
-    padding: 16px 0;
+    padding: var(--mk-spacing-lg) 0;
   }
 
   .mk-breadcrumbs__list {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 4px;
+    gap: var(--mk-spacing-xs);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -55,7 +55,7 @@
   .mk-breadcrumbs__item {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: var(--mk-spacing-xs);
   }
 
   .mk-breadcrumbs__separator {
@@ -71,7 +71,7 @@
   }
 
   .mk-breadcrumbs__link {
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     color: var(--color-text-secondary, #666);
     text-decoration: none;
     transition: color 0.2s ease;
@@ -82,7 +82,7 @@
   }
 
   .mk-breadcrumbs__current {
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     color: var(--color-foreground);
     font-weight: 500;
   }

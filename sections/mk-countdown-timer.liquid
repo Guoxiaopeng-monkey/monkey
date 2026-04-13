@@ -81,20 +81,20 @@
 
   .mk-customer-service__title {
     margin: 0 0 8px 0;
-    font-size: 24px;
+    font-size: var(--mk-font-size-3xl);
     font-weight: 700;
   }
 
   .mk-customer-service__subtitle {
     margin: 0 0 32px 0;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-text-secondary, #666);
   }
 
   .mk-customer-service__methods {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
-    gap: 24px;
+    gap: var(--mk-spacing-2xl);
     margin-bottom: 24px;
   }
 
@@ -108,7 +108,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: var(--mk-spacing-md);
   }
 
   .mk-customer-service__icon {
@@ -127,13 +127,13 @@
 
   .mk-customer-service__method-title {
     margin: 0 0 4px 0;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     font-weight: 600;
   }
 
   .mk-customer-service__method-value {
     margin: 0;
-    font-size: 14px;
+    font-size: var(--mk-font-size-md);
     color: var(--color-primary, #000);
     text-decoration: none;
   }
@@ -144,7 +144,7 @@
 
   .mk-customer-service__hours {
     margin: 0;
-    font-size: 13px;
+    font-size: var(--mk-font-size-sm);
     color: var(--color-text-secondary, #666);
   }
 {% endstylesheet %}

@@ -33,15 +33,15 @@
 </section>
 
 {% stylesheet %}
-  .mk-rating-section { padding: 24px 0; }
+  .mk-rating-section { padding: var(--mk-spacing-2xl) 0; }
   .mk-rating-section__container { max-width: var(--container-max-width, 600px); margin: 0 auto; padding: 0 var(--container-padding, 32px); text-align: center; }
-  .mk-rating-section__title { margin: 0 0 12px 0; font-size: 16px; font-weight: 600; }
-  .mk-rating-section__stars { display: flex; justify-content: center; gap: 4px; }
+  .mk-rating-section__title { margin: 0 0 12px 0; font-size: var(--mk-font-size-lg); font-weight: 600; }
+  .mk-rating-section__stars { display: flex; justify-content: center; gap: var(--mk-spacing-xs); }
   .mk-rating-section__star { display: flex; width: 20px; height: 20px; }
   .mk-rating-section__star svg { width: 100%; height: 100%; }
   .mk-rating-section__star--filled svg { fill: #f5a623; stroke: #f5a623; }
   .mk-rating-section__star:not(.mk-rating-section__star--filled) svg { fill: none; stroke: var(--color-border); }
-  .mk-rating-section__count { margin: 8px 0 0 0; font-size: 13px; color: var(--color-text-secondary, #666); }
+  .mk-rating-section__count { margin: var(--mk-spacing-sm) 0 0 0; font-size: var(--mk-font-size-sm); color: var(--color-text-secondary, #666); }
 {% endstylesheet %}
 
 {% schema %}

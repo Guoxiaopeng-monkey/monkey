@@ -24,7 +24,7 @@
     type="button"
     class="mk-quantity-selector__btn mk-quantity-selector__btn--decrease"
     data-action="decrease"
-    aria-label="{{ 'actions.decrease_quantity' | t | default: '减少数量' }}"
+    aria-label="{{ 减少数量 | default: '减少数量' }}"
     {% if value <= min %}
       disabled
     {% endif %}
@@ -40,14 +40,14 @@
     min="{{ min }}"
     max="{{ max }}"
     readonly
-    aria-label="{{ 'actions.quantity' | t | default: '数量' }}"
+    aria-label="{{ 数量 | default: '数量' }}"
   >
 
   <button
     type="button"
     class="mk-quantity-selector__btn mk-quantity-selector__btn--increase"
     data-action="increase"
-    aria-label="{{ 'actions.increase_quantity' | t | default: '增加数量' }}"
+    aria-label="{{ 增加数量 | default: '增加数量' }}"
     {% if value >= max %}
       disabled
     {% endif %}

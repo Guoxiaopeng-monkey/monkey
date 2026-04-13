@@ -5,7 +5,7 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/search
 {% endcomment %}
 
-<h1>{{ 'search.title' | t }}</h1>
+<h1>{{ 搜索 }}</h1>
 
 <form action="{{ routes.search_url }}" method="get" role="search">
   <input
@@ -13,9 +13,9 @@
     size="50"
     name="q"
     value="{{ search.terms | escape }}"
-    placeholder="{{ 'search.placeholder' | t }}"
+    placeholder="{{ 搜索文章、页面或产品 }}"
   >
-  <button type="submit">{{ 'search.submit' | t }}</button>
+  <button type="submit">{{ 搜索 }}</button>
 </form>
 
 {% if search.performed %}
@@ -31,7 +31,7 @@
           <div class="search-result">
             {% assign featured_image = result.featured_image | default: result.image %}
             {% if featured_image %}
-              {% render 'image', class: 'search-result__image', image: featured_image, url: result.url, width: 400 %}
+              {% render 'mk-image', class: 'search-result__image', image: featured_image %}
             {% endif %}
             <div class="search-result__content">
               <p>

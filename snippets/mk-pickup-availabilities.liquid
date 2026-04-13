@@ -18,7 +18,7 @@
 
 {%- if availabilities.size > 0 -%}
   <div class="mk-pickup-availabilities {{ class }}">
-    <h3 class="mk-pickup-availabilities__title">{{ 'pickup.available_at' | t | default: '可提货门店' }}</h3>
+    <h3 class="mk-pickup-availabilities__title">{{ 可提货门店 | default: '可提货门店' }}</h3>
 
     <ul class="mk-pickup-availabilities__list">
       {%- for availability in availabilities -%}
@@ -26,9 +26,9 @@
           <span class="mk-pickup-availabilities__location">{{ availability.location_name }}</span>
           <span class="mk-pickup-availabilities__status {% if availability.available %}mk-pickup-availabilities__status--available{% else %}mk-pickup-availabilities__status--unavailable{% endif %}">
             {% if availability.available %}
-              {{ 'pickup.available' | t | default: '可提货' }}
+              {{ 可提货 | default: '可提货' }}
             {% else %}
-              {{ 'pickup.unavailable' | t | default: '暂不可提' }}
+              {{ 暂不可提 | default: '暂不可提' }}
             {% endif %}
           </span>
         </li>

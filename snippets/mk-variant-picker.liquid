@@ -48,7 +48,7 @@
                   disabled
                 {% endunless %}
               >
-                {{ value }}{% unless is_available %} - {{ 'products.sold_out' | t | default: '缺货' }}{% endunless %}
+                {{ value }}{% unless is_available %} - {{ 缺货 | default: '缺货' }}{% endunless %}
               </option>
             {%- endfor -%}
           </select>
@@ -82,7 +82,7 @@
                 {% unless is_available %}
                   disabled
                 {% endunless %}
-                aria-label="{{ value }}{% unless is_available %} - {{ 'products.sold_out' | t | default: '缺货' }}{% endunless %}"
+                aria-label="{{ value }}{% unless is_available %} - {{ 缺货 | default: '缺货' }}{% endunless %}"
               >
                 <span class="mk-variant-picker__swatch-inner">{{ value }}</span>
               </button>

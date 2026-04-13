@@ -24,9 +24,9 @@
     {% unless variant.available %}disabled{% endunless %}
   >
     {%- if variant.available -%}
-      {{ 'products.quick_add' | t | default: '快速添加' }}
+      {{ 快速添加 | default: '快速添加' }}
     {%- else -%}
-      {{ 'products.sold_out' | t | default: '售罄' }}
+      {{ 缺货 | default: '售罄' }}
     {%- endif -%}
   </button>
 {%- endif -%}

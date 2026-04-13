@@ -13,7 +13,7 @@
 
 {% liquid
   assign product_form_id = 'QuickAdd-ProductForm-' | append: product.id | append: '-' | append: block.id
-  assign add_to_cart_text = 'actions.add' | t | default: '添加'
+  assign add_to_cart_text = 添加 | default: '添加'
 
   # 确定使用哪个 variant
   assign variant_to_use = product.selected_or_first_available_variant
@@ -85,7 +85,7 @@
           </span>
           <span class="mk-quick-add__button-added" aria-hidden="true">
             {{- 'icon-check.svg' | inline_asset_content -}}
-            {{ 'actions.added' | t | default: '已添加' }}
+            {{ 已添加 | default: '已添加' }}
           </span>
         </button>
       {%- endif -%}

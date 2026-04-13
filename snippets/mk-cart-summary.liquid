@@ -21,7 +21,7 @@
   {%- comment -%} 原始小计（如果有折扣） {%- endcomment -%}
   {% if cart.cart_level_discount_applications.size > 0 %}
     <div class="mk-cart-summary__original-total">
-      <span class="mk-cart-summary__label">{{ 'content.cart_subtotal' | t }}</span>
+      <span class="mk-cart-summary__label">{{ 小计 }}</span>
       <span class="mk-cart-summary__value">{{ subtotal }}</span>
     </div>
 
@@ -58,7 +58,7 @@
 
   {%- comment -%} 最终总价 {%- endcomment -%}
   <div class="mk-cart-summary__total">
-    <span class="mk-cart-summary__total-label">{{ 'content.cart_estimated_total' | t }}</span>
+    <span class="mk-cart-summary__total-label">{{ 预估总额 }}</span>
     <span class="mk-cart-summary__total-value" data-cart-subtotal>{{ total_price }}</span>
   </div>
 
@@ -79,7 +79,7 @@
       {% endif %}
       form="mk-cart-form"
     >
-      {{ 'content.checkout' | t }}
+      {{ 结账 }}
       {{- 'icon-arrow-right.svg' | inline_asset_content -}}
     </button>
 

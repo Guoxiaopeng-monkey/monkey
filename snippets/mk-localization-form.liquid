@@ -16,7 +16,7 @@
 {% form 'localization', class: 'mk-localization-form {{ class }}' %}
   <div class="mk-localization-form__row">
     <div class="mk-localization-form__field">
-      <label for="locale-code">{{ 'localization.language' | t | default: '语言' }}</label>
+      <label for="locale-code">{{ 语言 | default: '语言' }}</label>
       <select name="locale_code" id="locale-code" class="mk-localization-form__select">
         {%- for locale in form.available_locales -%}
           <option value="{{ locale.iso_code }}" {% if locale.iso_code == localization.language.iso_code %}selected{% endif %}>
@@ -27,7 +27,7 @@
     </div>
 
     <div class="mk-localization-form__field">
-      <label for="currency-code">{{ 'localization.currency' | t | default: '货币' }}</label>
+      <label for="currency-code">{{ 货币 | default: '货币' }}</label>
       <select name="currency_code" id="currency-code" class="mk-localization-form__select">
         {%- for currency in form.available_currencies -%}
           <option value="{{ currency.iso_code }}" {% if currency.iso_code == localization.currency.iso_code %}selected{% endif %}>
@@ -37,7 +37,7 @@
       </select>
     </div>
   </div>
-  <button type="submit" class="mk-localization-form__submit">{{ 'localization.update' | t | default: '更新' }}</button>
+  <button type="submit" class="mk-localization-form__submit">{{ 更新 | default: '更新' }}</button>
 {% endform %}
 
 {% stylesheet %}

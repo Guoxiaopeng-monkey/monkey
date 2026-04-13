@@ -109,7 +109,7 @@
           {%- comment -%} 数量选择器 {%- endcomment -%}
           <div class="mk-cart-item__quantity">
             <div class="mk-quantity-selector">
-              <button type="button" class="mk-quantity-selector__btn" data-action="decrease" aria-label="{{ 'actions.decrease_quantity' | t }}">
+              <button type="button" class="mk-quantity-selector__btn" data-action="decrease" aria-label="{{ 减少数量 }}">
                 {{- 'icon-minus.svg' | inline_asset_content -}}
               </button>
               <input
@@ -120,14 +120,14 @@
                 class="mk-quantity-selector__input"
                 data-item-id="{{ item.id }}"
                 data-item-key="{{ item.key }}"
-                aria-label="{{ 'actions.quantity' | t }}"
+                aria-label="{{ 数量 }}"
               >
-              <button type="button" class="mk-quantity-selector__btn" data-action="increase" aria-label="{{ 'actions.increase_quantity' | t }}">
+              <button type="button" class="mk-quantity-selector__btn" data-action="increase" aria-label="{{ 增加数量 }}">
                 {{- 'icon-plus.svg' | inline_asset_content -}}
               </button>
             </div>
 
-            <button type="button" class="mk-cart-item__remove" data-item-remove aria-label="{{ 'accessibility.remove_item' | t }}">
+            <button type="button" class="mk-cart-item__remove" data-item-remove aria-label="{{ 移除商品 }}">
               {{- 'icon-delete.svg' | inline_asset_content -}}
             </button>
           </div>
@@ -135,7 +135,7 @@
           {%- comment -%} 小计 {%- endcomment -%}
           <div class="mk-cart-item__total">
             {% if item.original_line_price > item.final_line_price %}
-              <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
+              <span class="visually-hidden">{{ 促销价格 }}</span>
             {% endif %}
             <span class="mk-cart-item__total-final">{{ item.final_line_price | money }}</span>
           </div>

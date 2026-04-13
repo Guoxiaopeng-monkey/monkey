@@ -21,7 +21,7 @@
       <h3 class="mk-sticky-atc__title">{{ product.title }}</h3>
       <p class="mk-sticky-atc__price">
         {%- if product.price_varies -%}
-          {{ 'products.from' | t }} {{ product.price | money }}
+          {{ 从 }} {{ product.price | money }}
         {%- else -%}
           {{ product.price | money }}
         {%- endif -%}

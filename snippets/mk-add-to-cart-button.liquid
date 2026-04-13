@@ -20,11 +20,11 @@
   if product != blank
     if product.selected_variant != blank
       if product.selected_variant.available == false
-        assign button_text = 'products.sold_out' | t | default: '缺货'
+        assign button_text = 缺货 | default: '缺货'
         assign button_disabled = true
       endif
     elsif product.variants.size == 1 and product.variants.first.available == false
-      assign button_text = 'products.sold_out' | t | default: '缺货'
+      assign button_text = 缺货 | default: '缺货'
       assign button_disabled = true
     endif
   endif

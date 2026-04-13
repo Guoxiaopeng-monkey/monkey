@@ -32,7 +32,7 @@
           </h3>
           <p class="mk-editorial-product-grid__price">
             {%- if product.price_varies -%}
-              {{ 'products.from' | t }} {{ product.price_min | money }}
+              {{ 从 }} {{ product.price_min | money }}
             {%- else -%}
               {{ product.price | money }}
             {%- endif -%}

@@ -20,7 +20,7 @@
     </a>
   {%- endif -%}
 
-  <a href="{{ routes.cart_url }}" class="mk-header-actions__item mk-header-actions__item--cart" aria-label="{{ 'accessibility.cart' | t }}">
+  <a href="{{ routes.cart_url }}" class="mk-header-actions__item mk-header-actions__item--cart" aria-label="{{ 购物车 }}">
     {{- 'icon-cart.svg' | inline_asset_content -}}
     {%- if cart.item_count > 0 -%}
       <span class="mk-header-actions__cart-count">{{ cart.item_count }}</span>

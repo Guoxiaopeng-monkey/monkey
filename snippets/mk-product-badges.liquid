@@ -33,7 +33,7 @@
     {%- endif -%}
 
     {%- if product.inventory_quantity <= 0 -%}
-      <span class="mk-product-badges__item mk-product-badges__item--soldout">{{ 'products.sold_out' | t | default: '售罄' }}</span>
+      <span class="mk-product-badges__item mk-product-badges__item--soldout">{{ 缺货 | default: '售罄' }}</span>
     {%- endif -%}
   </div>
 {%- endif -%}

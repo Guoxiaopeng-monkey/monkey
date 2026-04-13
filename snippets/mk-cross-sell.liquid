@@ -14,7 +14,7 @@
 -%}
 
 <div class="mk-cross-sell {{ class }}" data-cross-sell>
-  <h3 class="mk-cross-sell__title">{{ 'products.cross_sell' | t | default: '你可能还喜欢' }}</h3>
+  <h3 class="mk-cross-sell__title">{{ 你可能还喜欢 | default: '你可能还喜欢' }}</h3>
 
   <div class="mk-cross-sell__products" data-cross-sell-products>
     {%- comment -%} 动态加载交叉销售产品 {%- endcomment -%}

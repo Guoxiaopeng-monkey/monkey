@@ -17,7 +17,7 @@
   assign label = label | default: ''
 -%}
 
-<div class="mk-stars" aria-label="{{ rating }} {{ 'products.stars' | t }}">
+<div class="mk-stars" aria-label="{{ rating }} {{ 星 }}">
   <div class="mk-stars__rating" style="--rating: {{ rating }};">
     {%- for i in (1..max) -%}
       <span class="mk-stars__star {% if i <= rating %}mk-stars__star--full{% elsif i <= rating | ceil %}mk-stars__star--half{% else %}mk-stars__star--empty{% endif %}">

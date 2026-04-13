@@ -51,7 +51,7 @@
         {% if search.performed %}
           {{ 'search.results_for_html' | t: terms: search.terms, count: search.results_count }}
         {% else %}
-          {{ 'search.title' | t | default: '搜索' }}
+          {{ 搜索 | default: '搜索' }}
         {% endif %}
       </h1>
     </div>
@@ -72,7 +72,7 @@
           class="mk-search__input"
           value="{{ search.terms | escape }}"
           placeholder="{{ 'search.placeholder' | t | default: '搜索文章、页面或产品...' }}"
-          {% if predictive_search %}aria-label="{{ 'search.title' | t }}"{% endif %}
+          {% if predictive_search %}aria-label="{{ 搜索 }}"{% endif %}
         >
         <button type="submit" class="mk-search__submit">
           {{- 'icon-search.svg' | inline_asset_content -}}

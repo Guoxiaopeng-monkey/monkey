@@ -28,7 +28,7 @@
   <button
     class="mk-cart-drawer__trigger button button-unstyled"
     on:click="/open"
-    aria-label="{{ 'accessibility.open_cart_drawer' | t }} {{ 'accessibility.cart_count' | t }}: {{ cart.item_count }}"
+    aria-label="{{ 打开购物车 }} {{ 购物车数量 }}: {{ cart.item_count }}"
   >
     {% render 'mk-icon', icon: 'cart' %}
     {% if cart.item_count > 0 %}
@@ -54,7 +54,7 @@
               ref="closeButton"
               on:click="cart-drawer-component/close"
               class="mk-cart-drawer__close button button-unstyled"
-              aria-label="{{ 'actions.close_dialog' | t }}"
+              aria-label="{{ 关闭 }}"
             >
               {{- 'icon-close.svg' | inline_asset_content -}}
             </button>
@@ -62,7 +62,7 @@
 
           <div class="mk-cart-drawer__content motion-reduce">
             <span class="mk-cart-drawer__heading h3 mk-cart-drawer__heading--empty">
-              {{ 'content.your_cart_is_empty' | t }}
+              {{ 您的购物车是空的 }}
             </span>
 
             <div class="mk-cart-drawer__items">
@@ -73,7 +73,7 @@
           {%- comment -%} 有商品的购物车 {%- endcomment -%}
           <div class="mk-cart-drawer__header" id="mk-cart-drawer-header">
             <span class="mk-cart-drawer__heading h3">
-              {{ 'content.cart_title' | t }}
+              {{ 购物车 }}
               <span class="mk-cart-bubble">{{ cart.item_count }}</span>
             </span>
 
@@ -81,7 +81,7 @@
               ref="closeButton"
               on:click="cart-drawer-component/close"
               class="mk-cart-drawer__close button button-unstyled"
-              aria-label="{{ 'actions.close_dialog' | t }}"
+              aria-label="{{ 关闭 }}"
             >
               {{- 'icon-close.svg' | inline_asset_content -}}
             </button>
@@ -89,7 +89,7 @@
 
           <div
             class="mk-cart-drawer__content motion-reduce"
-            aria-label="{{ 'accessibility.cart' | t }}"
+            aria-label="{{ 购物车 }}"
             style="--header-height: 60px;"
           >
             <scroll-hint class="mk-cart-drawer__items">

@@ -18,14 +18,14 @@
   <div class="mk-newsletter-popup__overlay" data-newsletter-close></div>
 
   <div class="mk-newsletter-popup__container">
-    <button type="button" class="mk-newsletter-popup__close" aria-label="{{ 'actions.close' | t }}" data-newsletter-close>
+    <button type="button" class="mk-newsletter-popup__close" aria-label="{{ 关闭 }}" data-newsletter-close>
       {{- 'icon-close.svg' | inline_asset_content -}}
     </button>
 
     <div class="mk-newsletter-popup__content">
-      <h2 class="mk-newsletter-popup__title">{{ 'newsletter.popup_title' | t | default: '订阅获取10%折扣' }}</h2>
+      <h2 class="mk-newsletter-popup__title">{{ 订阅获取10%折扣 | default: '订阅获取10%折扣' }}</h2>
       <p class="mk-newsletter-popup__description">
-        {{ 'newsletter.popup_message' | t | default: '订阅我们的邮件，第一时间获取新品资讯和独家优惠。' }}
+        {{ 订阅我们的邮件，第一时间获取新品资讯和独家优惠。 | default: '订阅我们的邮件，第一时间获取新品资讯和独家优惠。' }}
       </p>
 
       {% form 'customer', class: 'mk-newsletter-popup__form' %}
@@ -36,20 +36,20 @@
             type="email"
             name="contact[email]"
             class="mk-newsletter-popup__input"
-            placeholder="{{ 'newsletter.email_placeholder' | t | default: '输入您的邮箱' }}"
+            placeholder="{{ 输入您的邮箱 | default: '输入您的邮箱' }}"
             required
           >
           <button type="submit" class="mk-newsletter-popup__button">
-            {{ 'newsletter.subscribe' | t | default: '订阅' }}
+            {{ 订阅 | default: '订阅' }}
           </button>
         </div>
 
         <p class="mk-newsletter-popup__note">
-          {{ 'newsletter.disclaimer' | t | default: '点击订阅即表示您同意我们的隐私政策。' }}
+          {{ 点击订阅即表示您同意我们的隐私政策。 | default: '点击订阅即表示您同意我们的隐私政策。' }}
         </p>
 
         {%- if form.posted_successfully? -%}
-          <p class="mk-newsletter-popup__success">{{ 'newsletter.success' | t | default: '感谢订阅！' }}</p>
+          <p class="mk-newsletter-popup__success">{{ 感谢订阅！ | default: '感谢订阅！' }}</p>
         {%- endif -%}
       {% endform %}
     </div>

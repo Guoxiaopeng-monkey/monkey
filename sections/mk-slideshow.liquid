@@ -59,7 +59,7 @@
 
     {%- comment -%} 导航控制 {%- endcomment -%}
     <div class="mk-slideshow__controls">
-      <button type="button" class="mk-slideshow__arrow mk-slideshow__arrow--prev" aria-label="{{ 'general.previous' | t }}">
+      <button type="button" class="mk-slideshow__arrow mk-slideshow__arrow--prev" aria-label="{{ 上一个 }}">
         {{- 'icon-arrow-left.svg' | inline_asset_content -}}
       </button>
 
@@ -76,7 +76,7 @@
         {%- endfor -%}
       </div>
 
-      <button type="button" class="mk-slideshow__arrow mk-slideshow__arrow--next" aria-label="{{ 'general.next' | t }}">
+      <button type="button" class="mk-slideshow__arrow mk-slideshow__arrow--next" aria-label="{{ 下一个 }}">
         {{- 'icon-arrow-right.svg' | inline_asset_content -}}
       </button>
     </div>

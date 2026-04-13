@@ -16,7 +16,7 @@
 <div class="mk-price-filter {{ class }}" data-price-filter>
   <div class="mk-price-filter__inputs">
     <div class="mk-price-filter__field">
-      <label class="mk-price-filter__label">{{ 'search.from' | t | default: '从' }}</label>
+      <label class="mk-price-filter__label">{{ 从 | default: '从' }}</label>
       <div class="mk-price-filter__input-wrap">
         <span class="mk-price-filter__currency">{{ currency.symbol }}</span>
         <input type="number" name="price_min" class="mk-price-filter__input" placeholder="0" min="0">
@@ -24,14 +24,14 @@
     </div>
     <span class="mk-price-filter__separator">-</span>
     <div class="mk-price-filter__field">
-      <label class="mk-price-filter__label">{{ 'search.to' | t | default: '到' }}</label>
+      <label class="mk-price-filter__label">{{ 到 | default: '到' }}</label>
       <div class="mk-price-filter__input-wrap">
         <span class="mk-price-filter__currency">{{ currency.symbol }}</span>
         <input type="number" name="price_max" class="mk-price-filter__input" placeholder="{{ range_max }}" min="0">
       </div>
     </div>
   </div>
-  <button type="button" class="mk-price-filter__apply" data-price-filter-apply>{{ 'search.apply' | t | default: '应用' }}</button>
+  <button type="button" class="mk-price-filter__apply" data-price-filter-apply>{{ 应用 | default: '应用' }}</button>
 </div>
 
 {% stylesheet %}

@@ -34,7 +34,7 @@
   {%- comment -%} 当前价格 {%- endcomment -%}
   <span class="mk-price__current">
     {% if product_price_min != product_price_max %}
-      {{ 'products.from' | t | default: '从' }}
+      {{ 从 | default: '从' }}
     {% endif %}
     <span class="mk-price__amount">{{ product_price_min | money }}</span>
   </span>

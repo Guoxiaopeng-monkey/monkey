@@ -43,7 +43,7 @@
                   {% if option.selected_value == value %}selected{% endif %}
                   {% unless is_available %}disabled{% endunless %}
                 >
-                  {{ value }}{% unless is_available %} - {{ 'products.sold_out' | t | default: '缺货' }}{% endunless %}
+                  {{ value }}{% unless is_available %} - {{ 缺货 | default: '缺货' }}{% endunless %}
                 </option>
               {%- endfor -%}
             </select>

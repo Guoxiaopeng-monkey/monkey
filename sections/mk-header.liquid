@@ -107,7 +107,7 @@
           <button
             type="button"
             class="mk-header__mobile-menu-button desktop:hidden"
-            aria-label="{{ 'accessibility.menu' | t }}"
+            aria-label="{{ 菜单 }}"
             aria-controls="Details-menu-drawer-container"
             aria-expanded="false"
             data-mobile-menu-trigger
@@ -145,7 +145,7 @@
 
         {%- comment -%} Desktop Menu {%- endcomment -%}
         {% if section.settings.menu != blank and menu_links.size > 0 %}
-          <nav class="{{ menu_class }}" ref="headerMenu" aria-label="{{ 'general.navigation' | t }}">
+          <nav class="{{ menu_class }}" ref="headerMenu" aria-label="{{ 导航 }}">
             <ul class="mk-header__menu-list">
               {% for link in menu_links %}
                 {%- comment -%} 查找匹配的 mega menu block {%- endcomment -%}
@@ -206,17 +206,17 @@
         {%- comment -%} Actions (Search & Cart) {%- endcomment -%}
         <div class="mk-header__actions">
           {% if section.settings.show_search %}
-            {% render 'search', style: 'modal' %}
+            {% render 'mk-search-modal' %}
           {% endif %}
 
           {% if section.settings.show_cart %}
             {% if settings.cart_type == 'drawer' and template.name != 'cart' %}
-              {% render 'cart-drawer' %}
+              {% render 'mk-cart-drawer' %}
             {% else %}
               <a
                 href="{{ routes.cart_url }}"
                 class="mk-header__action-link"
-                aria-label="{{ 'accessibility.cart' | t }}"
+                aria-label="{{ 购物车 }}"
               >
                 {{- 'icon-cart.svg' | inline_asset_content -}}
                 {% if cart.item_count > 0 %}
@@ -240,7 +240,7 @@
     >
       <div class="menu-drawer__inner">
         <div class="menu-drawer__navigation">
-          <nav class="menu-drawer__menu" aria-label="{{ 'general.navigation' | t }}">
+          <nav class="menu-drawer__menu" aria-label="{{ 导航 }}">
             <ul class="menu-drawer__menu-list" role="list">
               {% for link in menu_links %}
                 {%- comment -%} 查找移动端 mega menu {%- endcomment -%}

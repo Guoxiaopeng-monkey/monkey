@@ -36,7 +36,7 @@
 
 <div class="mk-badge {{ class }}">
   {%- if sold_out -%}
-    <span class="mk-badge__item mk-badge__item--sold-out">{{ 'products.sold_out' | t | default: '缺货' }}</span>
+    <span class="mk-badge__item mk-badge__item--sold-out">{{ 缺货 | default: '缺货' }}</span>
   {%- elsif on_sale -%}
     <span class="mk-badge__item mk-badge__item--sale">{{ 'products.on_sale' | t | default: '促销' }}</span>
   {%- endif -%}

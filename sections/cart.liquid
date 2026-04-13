@@ -5,28 +5,28 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/cart
 {% endcomment %}
 
-<h1>{{ 'cart.title' | t }}</h1>
+<h1>购物车</h1>
 
 <form action="{{ routes.cart_url }}" method="post">
   <table>
     {% for item in cart.items %}
       <tr>
         <td>
-          {% render 'image', image: item.image, url: item.url %}
+          {% render 'mk-image', image: item.image, width: 200, height: 200 %}
         </td>
         <td>
           <p>{{ item.product.title }}</p>
-          {{ 'cart.remove' | t | link_to: item.url_to_remove }}
+          <a href="{{ item.url_to_remove }}">移除</a>
         </td>
         <td>
           <input type="text" name="updates[]" value="{{ item.quantity }}">
-          <input type="submit" value="{{ 'cart.update' | t }}">
+          <input type="submit" value="更新">
         </td>
       </tr>
     {% endfor %}
   </table>
 
-  <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}">
+  <input type="submit" name="checkout" value="结账">
 </form>
 
 {% schema %}

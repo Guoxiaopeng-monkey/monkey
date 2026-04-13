@@ -22,13 +22,13 @@
   <div class="mk-drawer-localization__overlay" data-localization-close hidden></div>
   <div class="mk-drawer-localization__panel" data-localization-panel hidden>
     <div class="mk-drawer-localization__header">
-      <h3>{{ 'localization.language' | t | default: '语言/货币' }}</h3>
+      <h3>{{ 语言 | default: '语言/货币' }}</h3>
       <button type="button" data-localization-close>{{- 'icon-close.svg' | inline_asset_content -}}</button>
     </div>
     <div class="mk-drawer-localization__content">
       {% form 'localization', class: 'mk-drawer-localization__form' %}
         <div class="mk-drawer-localization__field">
-          <label for="locale">{{ 'localization.language' | t | default: '语言' }}</label>
+          <label for="locale">{{ 语言 | default: '语言' }}</label>
           <select name="locale_code" class="mk-drawer-localization__select">
             {%- for locale in form.available_locales -%}
               <option value="{{ locale.iso_code }}" {% if locale.iso_code == localization.language.iso_code %}selected{% endif %}>
@@ -38,7 +38,7 @@
           </select>
         </div>
         <div class="mk-drawer-localization__field">
-          <label for="currency">{{ 'localization.currency' | t | default: '货币' }}</label>
+          <label for="currency">{{ 货币 | default: '货币' }}</label>
           <select name="currency_code" class="mk-drawer-localization__select">
             {%- for currency in form.available_currencies -%}
               <option value="{{ currency.iso_code }}" {% if currency.iso_code == localization.currency.iso_code %}selected{% endif %}>
@@ -47,7 +47,7 @@
             {%- endfor -%}
           </select>
         </div>
-        <button type="submit" class="mk-drawer-localization__submit">{{ 'localization.update' | t | default: '更新' }}</button>
+        <button type="submit" class="mk-drawer-localization__submit">{{ 更新 | default: '更新' }}</button>
       {% endform %}
     </div>
   </div>

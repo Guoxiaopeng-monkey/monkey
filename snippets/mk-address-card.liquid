@@ -1,0 +1,126 @@
+{%- doc -%}
+  MK 地址卡片组件
+
+  渲染客户地址卡片
+
+  @param {object} address - 地址对象
+  @param {boolean} [is_default] - 是否为默认地址
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-address-card', address: customer.default_address, is_default: true %}
+{%- enddoc -%}
+
+{% liquid
+  assign address = address | default: nil
+  assign is_default = is_default | default: false
+  assign class = class | default: ''
+-%}
+
+{%- if address != blank -%}
+  <div class="mk-address-card {{ class }}">
+    <div class="mk-address-card__header">
+      <h3 class="mk-address-card__name">{{ address.name }}</h3>
+      {%- if is_default -%}
+        <span class="mk-address-card__badge">{{ 'addresses.default' | t | default: '默认' }}</span>
+      {%- endif -%}
+    </div>
+
+    <div class="mk-address-card__body">
+      <p class="mk-address-card__company">{{ address.company }}</p>
+      <p class="mk-address-card__address1">{{ address.address1 }}</p>
+      {%- if address.address2 != blank -%}
+        <p class="mk-address-card__address2">{{ address.address2 }}</p>
+      {%- endif -%}
+      <p class="mk-address-card__city">{{ address.city }}, {{ address.province_code }} {{ address.zip }}</p>
+      <p class="mk-address-card__country">{{ address.country }}</p>
+      {%- if address.phone != blank -%}
+        <p class="mk-address-card__phone">{{ address.phone }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="mk-address-card__actions">
+      <a href="{{ routes.account_addresses_url }}/{{ address.id }}/edit" class="mk-address-card__edit">
+        {{ 'addresses.edit' | t | default: '编辑' }}
+      </a>
+      <a href="{{ routes.account_addresses_url }}/{{ address.id }}" class="mk-address-card__delete" data-confirm="{{ 'addresses.delete_confirm' | t | default: '确定删除此地址？' }}">
+        {{ 'addresses.delete' | t | default: '删除' }}
+      </a>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-address-card {
+    padding: 20px;
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+  }
+
+  .mk-address-card__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .mk-address-card__name {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .mk-address-card__badge {
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-primary, #000);
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border-radius: 4px;
+  }
+
+  .mk-address-card__body {
+    margin-bottom: 16px;
+  }
+
+  .mk-address-card__company,
+  .mk-address-card__address1,
+  .mk-address-card__address2,
+  .mk-address-card__city,
+  .mk-address-card__country,
+  .mk-address-card__phone {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+    line-height: 1.6;
+  }
+
+  .mk-address-card__actions {
+    display: flex;
+    gap: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .mk-address-card__edit,
+  .mk-address-card__delete {
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .mk-address-card__edit {
+    color: var(--color-primary, #000);
+  }
+
+  .mk-address-card__delete {
+    color: var(--color-error, #e53935);
+  }
+
+  .mk-address-card__edit:hover,
+  .mk-address-card__delete:hover {
+    text-decoration: underline;
+  }
+{% endstylesheet %}

@@ -1,0 +1,86 @@
+{%- doc -%}
+  MK 店铺库存组件
+
+  渲染店铺库存状态
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-store-availability', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+  assign variants = product.variants | default: empty_array
+  assign selected_variant = product.selected_variant | default: variants.first
+-%}
+
+{%- if selected_variant != blank -%}
+  {%- assign variant_id = selected_variant.id -%}
+  {%- assign availability = selected_variant.available -%}
+
+  <div class="mk-store-availability {{ class }}">
+    {%- if availability -%}
+      <span class="mk-store-availability__icon mk-store-availability__icon--in">{{- 'icon-check.svg' | inline_asset_content -}}</span>
+      <span class="mk-store-availability__text">{{ 'products.available' | t | default: '有货' }}</span>
+    {%- else -%}
+      <span class="mk-store-availability__icon mk-store-availability__icon--out">{{- 'icon-close.svg' | inline_asset_content -}}</span>
+      <span class="mk-store-availability__text">{{ 'products.out_of_stock' | t | default: '缺货' }}</span>
+    {%- endif -%}
+
+    <button type="button" class="mk-store-availability__check" data-check-store>
+      {{ 'products.check_store' | t | default: '查看门店库存' }}
+    </button>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-store-availability {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border-radius: 8px;
+  }
+
+  .mk-store-availability__icon {
+    display: flex;
+    width: 18px;
+    height: 18px;
+  }
+
+  .mk-store-availability__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-store-availability__icon--in {
+    color: var(--color-success, #2e7d32);
+  }
+
+  .mk-store-availability__icon--out {
+    color: var(--color-error, #e53935);
+  }
+
+  .mk-store-availability__text {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .mk-store-availability__check {
+    padding: 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-primary, #000);
+    background: transparent;
+    border: none;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+{% endstylesheet %}

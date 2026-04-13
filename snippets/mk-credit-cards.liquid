@@ -1,0 +1,51 @@
+{%- doc -%}
+  MK 信用卡图标组件
+
+  渲染支持的信用卡图标
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-credit-cards' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+  assign cards = 'visa,mastercard,amex,discover,jcb,diners' | split: ','
+-%}
+
+<div class="mk-credit-cards {{ class }}">
+  {%- for card in cards -%}
+    <span class="mk-credit-cards__item" data-card="{{ card }}">
+      {{- 'icon-cc-' | append: card | append: '.svg' | inline_asset_content -}}
+    </span>
+  {%- endfor -%}
+</div>
+
+{% stylesheet %}
+  .mk-credit-cards {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mk-credit-cards__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 26px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .mk-credit-cards__item svg {
+    width: 100%;
+    height: 100%;
+    opacity: 0.7;
+  }
+
+  .mk-credit-cards__item:hover svg {
+    opacity: 1;
+  }
+{% endstylesheet %}

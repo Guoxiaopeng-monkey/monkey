@@ -1,0 +1,238 @@
+{%- comment -%}
+  MK 搜索结果页面板块
+
+  展示搜索结果
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+  assign search_results = search.results | default: empty_array
+  assign products = search_results | where: 'object_type', 'product'
+  assign pages = search_results | where: 'object_type', 'page'
+  assign articles = search_results | where: 'object_type', 'article'
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-search-results color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-search-results__container">
+    <header class="mk-search-results__header">
+      <h1 class="mk-search-results__title">
+        {%- if search.performed -%}
+          {{ 'search.results_for' | t | default: '搜索结果' }} "{{ search.terms }}"
+        {%- else -%}
+          {{ 'search.title' | t | default: '搜索' }}
+        {%- endif -%}
+      </h1>
+
+      {%- if search.performed -%}
+        <p class="mk-search-results__count">
+          {{ 'search.results_count' | t: count: search_results.size | default: '找到' }} {{ search_results.size }} {{ 'search.results' | default: '个结果' }}
+        </p>
+      {%- endif -%}
+    </header>
+
+    {%- if search.performed and search_results.size == 0 -%}
+      <div class="mk-search-results__empty">
+        {% render 'mk-empty-state',
+          title: 'search.no_results' | t | default: '没有找到结果',
+          description: 'search.no_results_description' | t | default: '请尝试其他关键词',
+          button_text: 'search.browse_all' | t | default: '浏览全部',
+          button_link: routes.collections_url
+        %}
+      </div>
+    {%- endif -%}
+
+    {%- if products.size > 0 -%}
+      <div class="mk-search-results__section">
+        <h2 class="mk-search-results__section-title">{{ 'search.products' | t | default: '产品' }}</h2>
+        <div class="mk-search-results__grid">
+          {%- for product in products -%}
+            {% render 'mk-product-card', product: product %}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if pages.size > 0 -%}
+      <div class="mk-search-results__section">
+        <h2 class="mk-search-results__section-title">{{ 'search.pages' | t | default: '页面' }}</h2>
+        <ul class="mk-search-results__list">
+          {%- for page in pages -%}
+            <li class="mk-search-results__list-item">
+              <a href="{{ page.url }}">{{ page.title }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+
+    {%- if articles.size > 0 -%}
+      <div class="mk-search-results__section">
+        <h2 class="mk-search-results__section-title">{{ 'search.articles' | t | default: '文章' }}</h2>
+        <ul class="mk-search-results__list">
+          {%- for article in articles -%}
+            <li class="mk-search-results__list-item">
+              <a href="{{ article.url }}">{{ article.title }}</a>
+              <span class="mk-search-results__date">{{ article.published_at | date: '%Y-%m-%d' }}</span>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-search-results {
+    padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-search-results {
+      padding: {{ ss.padding_top_desktop | default: 64 }}px 0 {{ ss.padding_bottom_desktop | default: 64 }}px;
+    }
+  }
+
+  .mk-search-results__container {
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .mk-search-results__header {
+    margin-bottom: 32px;
+    text-align: center;
+  }
+
+  .mk-search-results__title {
+    margin: 0 0 8px 0;
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .mk-search-results__count {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-search-results__empty {
+    padding: 64px 0;
+  }
+
+  .mk-search-results__section {
+    margin-bottom: 48px;
+  }
+
+  .mk-search-results__section-title {
+    margin: 0 0 24px 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .mk-search-results__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-search-results__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+  }
+
+  .mk-search-results__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mk-search-results__list-item {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .mk-search-results__list-item a {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    text-decoration: none;
+  }
+
+  .mk-search-results__list-item a:hover {
+    text-decoration: underline;
+  }
+
+  .mk-search-results__date {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 搜索结果",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "间距"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 搜索结果"
+    }
+  ]
+}
+{% endschema %}

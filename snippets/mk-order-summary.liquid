@@ -1,0 +1,108 @@
+{%- doc -%}
+  MK 订单摘要组件
+
+  渲染订单摘要信息
+
+  @param {object} order - 订单对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-order-summary', order: order %}
+{%- enddoc -%}
+
+{% liquid
+  assign order = order | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if order != blank -%}
+  <div class="mk-order-summary {{ class }}">
+    <div class="mk-order-summary__row">
+      <span class="mk-order-summary__label">{{ 'order.subtotal' | t | default: '小计' }}</span>
+      <span class="mk-order-summary__value">{{ order.subtotal_price | money }}</span>
+    </div>
+
+    {%- for discount in order.discounts -%}
+      <div class="mk-order-summary__row mk-order-summary__row--discount">
+        <span class="mk-order-summary__label">{{ discount.title }}</span>
+        <span class="mk-order-summary__value">-{{ discount.amount | money }}</span>
+      </div>
+    {%- endfor -%}
+
+    <div class="mk-order-summary__row">
+      <span class="mk-order-summary__label">{{ 'order.shipping' | t | default: '配送' }}</span>
+      <span class="mk-order-summary__value">
+        {%- if order.shipping_price == 0 -%}
+          {{ 'order.free' | t | default: '免费' }}
+        {%- else -%}
+          {{ order.shipping_price | money }}
+        {%- endif -%}
+      </span>
+    </div>
+
+    {%- if order.tax_price > 0 -%}
+      <div class="mk-order-summary__row">
+        <span class="mk-order-summary__label">{{ 'order.tax' | t | default: '税费' }}</span>
+        <span class="mk-order-summary__value">{{ order.tax_price | money }}</span>
+      </div>
+    {%- endif -%}
+
+    <div class="mk-order-summary__total">
+      <span class="mk-order-summary__total-label">{{ 'order.total' | t | default: '总计' }}</span>
+      <span class="mk-order-summary__total-value">{{ order.total_price | money }}</span>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-order-summary {
+    padding: 20px;
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border-radius: 12px;
+  }
+
+  .mk-order-summary__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    font-size: 14px;
+  }
+
+  .mk-order-summary__row + .mk-order-summary__row {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .mk-order-summary__label {
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-order-summary__value {
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .mk-order-summary__row--discount .mk-order-summary__value {
+    color: var(--color-success, #2e7d32);
+  }
+
+  .mk-order-summary__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    margin-top: 8px;
+    border-top: 2px solid var(--color-foreground);
+  }
+
+  .mk-order-summary__total-label {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .mk-order-summary__total-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-primary, #000);
+  }
+{% endstylesheet %}

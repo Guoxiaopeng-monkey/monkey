@@ -1,0 +1,105 @@
+{%- doc -%}
+  MK Toast提示组件
+
+  渲染Toast通知消息
+
+  @param {string} [message] - 消息内容
+  @param {string} [type] - 类型：success, error, info, warning
+
+  @example
+  {% render 'mk-toast', message: '操作成功', type: 'success' %}
+{%- enddoc -%}
+
+{% liquid
+  assign message = message | default: ''
+  assign type = type | default: 'info'
+-%}
+
+<div class="mk-toast mk-toast--{{ type }}" data-toast role="alert">
+  <div class="mk-toast__icon">
+    {%- case type -%}
+      {%- when 'success' -%}
+        {{- 'icon-check.svg' | inline_asset_content -}}
+      {%- when 'error' -%}
+        {{- 'icon-error.svg' | inline_asset_content -}}
+      {%- when 'warning' -%}
+        {{- 'icon-warning.svg' | inline_asset_content -}}
+      {%- else -%}
+        {{- 'icon-info.svg' | inline_asset_content -}}
+    {%- endcase -%}
+  </div>
+  <span class="mk-toast__message">{{ message }}</span>
+  <button type="button" class="mk-toast__close" aria-label="{{ 'actions.close' | t }}">
+    {{- 'icon-close.svg' | inline_asset_content -}}
+  </button>
+</div>
+
+{% stylesheet %}
+  .mk-toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background-color: var(--color-background);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border-left: 4px solid var(--toast-color, #666);
+  }
+
+  .mk-toast--success {
+    --toast-color: var(--color-success, #2e7d32);
+  }
+
+  .mk-toast--error {
+    --toast-color: var(--color-error, #e53935);
+  }
+
+  .mk-toast--warning {
+    --toast-color: var(--color-warning, #f5a623);
+  }
+
+  .mk-toast--info {
+    --toast-color: var(--color-info, #2196f3);
+  }
+
+  .mk-toast__icon {
+    display: flex;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--toast-color);
+  }
+
+  .mk-toast__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-toast__message {
+    flex: 1;
+    font-size: 14px;
+    color: var(--color-foreground);
+  }
+
+  .mk-toast__close {
+    display: flex;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-secondary, #666);
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  .mk-toast__close:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-toast__close svg {
+    width: 100%;
+    height: 100%;
+  }
+{% endstylesheet %}

@@ -1,0 +1,147 @@
+{%- doc -%}
+  MK 加购按钮组件
+
+  渲染产品加购按钮
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-add-to-cart-button', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+
+  assign button_text = 'products.add_to_cart' | t
+  assign button_disabled = false
+
+  if product != blank
+    if product.selected_variant != blank
+      if product.selected_variant.available == false
+        assign button_text = 'products.sold_out' | t | default: '缺货'
+        assign button_disabled = true
+      endif
+    elsif product.variants.size == 1 and product.variants.first.available == false
+      assign button_text = 'products.sold_out' | t | default: '缺货'
+      assign button_disabled = true
+    endif
+  endif
+-%}
+
+<button
+  type="button"
+  class="mk-add-to-cart-button {{ class }}"
+  data-add-to-cart
+  {% if button_disabled %}disabled{% endif %}
+  data-product-id="{{ product.id | default: '' }}"
+>
+  <span class="mk-add-to-cart-button__text">{{ button_text }}</span>
+  <span class="mk-add-to-cart-button__loader" hidden>
+    {% render 'mk-loading-spinner', size: 'small' %}
+  </span>
+</button>
+
+{% stylesheet %}
+  .mk-add-to-cart-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 52px;
+    padding: 16px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-add-to-cart-button:hover:not(:disabled) {
+    opacity: 0.85;
+  }
+
+  .mk-add-to-cart-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .mk-add-to-cart-button[data-loading] {
+    pointer-events: none;
+  }
+
+  .mk-add-to-cart-button__loader {
+    position: absolute;
+  }
+
+  .mk-add-to-cart-button[data-added] {
+    background-color: var(--color-success, #2e7d32);
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class AddToCartButton extends HTMLElement {
+    constructor() {
+      super();
+      this.button = this.querySelector('.mk-add-to-cart-button');
+      this.text = this.querySelector('.mk-add-to-cart-button__text');
+      this.loader = this.querySelector('.mk-add-to-cart-button__loader');
+      this.productId = this.dataset.productId;
+
+      this.init();
+    }
+
+    init() {
+      this.button?.addEventListener('click', () => this.addToCart());
+    }
+
+    async addToCart() {
+      if (this.button.disabled || this.button.dataset.loading) return;
+
+      this.button.dataset.loading = true;
+      this.text.hidden = true;
+      this.loader.hidden = false;
+
+      try {
+        const variantId = document.querySelector('[name="id"]')?.value || this.productId;
+        const formData = new FormData();
+        formData.append('id', variantId);
+        formData.append('quantity', 1);
+
+        const response = await fetch('/cart/add.js', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          this.button.dataset.added = true;
+          this.text.textContent = '{{ 'products.added' | t | default: "已添加" }}';
+
+          // Update cart count
+          document.dispatchEvent(new CustomEvent('cart:updated'));
+
+          setTimeout(() => {
+            this.button.dataset.added = false;
+            this.text.textContent = '{{ 'products.add_to_cart' | t | default: "加购" }}';
+          }, 2000);
+        } else {
+          throw new Error('Failed to add to cart');
+        }
+      } catch (error) {
+        console.error('Add to cart error:', error);
+        this.text.textContent = '{{ 'products.error' | t | default: "出错" }}';
+      } finally {
+        this.button.dataset.loading = false;
+        this.text.hidden = false;
+        this.loader.hidden = true;
+      }
+    }
+  }
+
+  customElements.define('add-to-cart-button', AddToCartButton);
+{% endjavascript %}

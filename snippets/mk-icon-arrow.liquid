@@ -1,0 +1,52 @@
+{%- doc -%}
+  MK 箭头图标组件
+
+  渲染箭头SVG图标
+
+  @param {string} [direction] - 方向：left, right, up, down
+  @param {number} [size] - 尺寸
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-icon-arrow', direction: 'right', size: 20 %}
+{%- enddoc -%}
+
+{% liquid
+  assign direction = direction | default: 'right'
+  assign size = size | default: 20
+  assign class = class | default: ''
+
+  case direction
+    when 'left'
+      assign points = '15 18 9 12 15 6'
+    when 'right'
+      assign points = '9 6 15 12 9 18'
+    when 'up'
+      assign points = '18 15 12 9 6 15'
+    when 'down'
+      assign points = '6 9 12 15 18 9'
+    else
+      assign points = '9 6 15 12 9 18'
+  endcase
+-%}
+
+<svg
+  class="mk-icon-arrow {{ class }}"
+  width="{{ size }}"
+  height="{{ size }}"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+>
+  <polyline points="{{ points }}"></polyline>
+</svg>
+
+{% stylesheet %}
+  .mk-icon-arrow {
+    flex-shrink: 0;
+  }
+{% endstylesheet %}

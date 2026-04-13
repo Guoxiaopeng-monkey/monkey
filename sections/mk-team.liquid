@@ -1,0 +1,276 @@
+{%- comment -%}
+  MK 团队成员板块
+
+  展示团队成员
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-team color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-team__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-team__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    {%- if ss.subtitle != blank -%}
+      <p class="mk-team__subtitle">{{ ss.subtitle }}</p>
+    {%- endif -%}
+
+    <div class="mk-team__grid">
+      {%- for i in (1..4) -%}
+        {%- assign image_setting = 'image_' | append: i -%}
+        {%- assign name_setting = 'name_' | append: i -%}
+        {%- assign role_setting = 'role_' | append: i -%}
+
+        {%- if ss[name_setting] != blank -%}
+          <div class="mk-team__member">
+            {%- if ss[image_setting] != blank -%}
+              <div class="mk-team__image">
+                {{ ss[image_setting] | image_url: width: 400 | image_tag }}
+              </div>
+            {%- endif -%}
+
+            <div class="mk-team__info">
+              <h3 class="mk-team__name">{{ ss[name_setting] }}</h3>
+              {%- if ss[role_setting] != blank -%}
+                <p class="mk-team__role">{{ ss[role_setting] }}</p>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-team {
+    padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-team {
+      padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px;
+    }
+  }
+
+  .mk-team__container {
+    max-width: var(--container-max-width, 1000px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .mk-team__title {
+    margin: 0 0 12px 0;
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .mk-team__subtitle {
+    margin: 0 0 40px 0;
+    font-size: 16px;
+    color: var(--color-text-secondary, #666);
+    text-align: center;
+  }
+
+  .mk-team__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-team__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 48px;
+    }
+  }
+
+  .mk-team__member {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .mk-team__image {
+    width: 160px;
+    height: 160px;
+    margin-bottom: 16px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .mk-team__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mk-team__name {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .mk-team__role {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 团队成员",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "副标题"
+    },
+    {
+      "type": "header",
+      "content": "成员 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "头像 1"
+    },
+    {
+      "type": "text",
+      "id": "name_1",
+      "label": "姓名 1"
+    },
+    {
+      "type": "text",
+      "id": "role_1",
+      "label": "职位 1"
+    },
+    {
+      "type": "header",
+      "content": "成员 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "头像 2"
+    },
+    {
+      "type": "text",
+      "id": "name_2",
+      "label": "姓名 2"
+    },
+    {
+      "type": "text",
+      "id": "role_2",
+      "label": "职位 2"
+    },
+    {
+      "type": "header",
+      "content": "成员 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "头像 3"
+    },
+    {
+      "type": "text",
+      "id": "name_3",
+      "label": "姓名 3"
+    },
+    {
+      "type": "text",
+      "id": "role_3",
+      "label": "职位 3"
+    },
+    {
+      "type": "header",
+      "content": "成员 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "头像 4"
+    },
+    {
+      "type": "text",
+      "id": "name_4",
+      "label": "姓名 4"
+    },
+    {
+      "type": "text",
+      "id": "role_4",
+      "label": "职位 4"
+    },
+    {
+      "type": "header",
+      "content": "间距"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 团队成员"
+    }
+  ]
+}
+{% endschema %}

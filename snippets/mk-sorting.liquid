@@ -1,0 +1,117 @@
+{%- doc -%}
+  MK 排序组件
+
+  渲染产品排序下拉选择
+
+  @param {object} results - 搜索/筛选结果对象
+  @param {string} [sort_by] - 当前排序方式
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-sorting', results: collection, sort_by: collection.sort_by %}
+{%- enddoc -%}
+
+{% liquid
+  assign results = results | default: nil
+  assign sort_by = sort_by | default: results.sort_by | default: 'best-selling'
+  assign class = class | default: ''
+-%}
+
+<div class="mk-sorting {{ class }}">
+  <label for="sort-by" class="mk-sorting__label">{{ 'actions.sort' | t | default: '排序' }}</label>
+
+  <div class="mk-sorting__wrapper">
+    <select
+      id="sort-by"
+      name="sort_by"
+      class="mk-sorting__select"
+      form="FacetSortForm"
+    >
+      {%- for option in results.sort_options -%}
+        <option
+          value="{{ option.value }}"
+          {% if option.value == sort_by %}
+            selected
+          {% endif %}
+        >
+          {{ option.name }}
+        </option>
+      {%- endfor -%}
+    </select>
+
+    <span class="mk-sorting__icon">{{- 'icon-chevron-down.svg' | inline_asset_content -}}</span>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-sorting {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mk-sorting__label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    white-space: nowrap;
+  }
+
+  .mk-sorting__wrapper {
+    position: relative;
+  }
+
+  .mk-sorting__select {
+    appearance: none;
+    padding: 10px 36px 10px 14px;
+    font-size: 14px;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+    min-width: 180px;
+  }
+
+  .mk-sorting__select:hover {
+    border-color: var(--color-foreground);
+  }
+
+  .mk-sorting__select:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-sorting__icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-sorting__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelectorAll('.mk-sorting__select').forEach(select => {
+    select.addEventListener('change', (e) => {
+      const form = document.getElementById('FacetSortForm');
+      if (form) {
+        form.submit();
+      } else {
+        const url = new URL(window.location.href);
+        url.searchParams.set('sort_by', e.target.value);
+        window.location.href = url.toString();
+      }
+    });
+  });
+{% endjavascript %}

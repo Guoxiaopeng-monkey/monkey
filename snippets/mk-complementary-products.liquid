@@ -1,0 +1,85 @@
+{%- doc -%}
+  MK 配套产品组件
+
+  渲染产品页面配套产品
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-complementary-products', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+  assign complementary_products = product.metafields.custom.complementary_products | default: empty_array
+-%}
+
+{%- if complementary_products.size > 0 -%}
+  <div class="mk-complementary-products {{ class }}">
+    <h3 class="mk-complementary-products__title">{{ 'products.complementary' | t | default: '配套产品' }}</h3>
+    <div class="mk-complementary-products__list">
+      {%- for item in complementary_products limit: 6 -%}
+        <div class="mk-complementary-products__item">
+          {{ item.product.featured_image | image_url: width: 200 | image_tag: class: 'mk-complementary-products__image', loading: 'lazy' }}
+          <div class="mk-complementary-products__info">
+            <h4 class="mk-complementary-products__name">{{ item.product.title }}</h4>
+            <p class="mk-complementary-products__price">{{ item.product.price | money }}</p>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-complementary-products {
+    padding: 24px 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .mk-complementary-products__title {
+    margin: 0 0 20px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .mk-complementary-products__list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .mk-complementary-products__item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mk-complementary-products__image {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .mk-complementary-products__name {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .mk-complementary-products__price {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-primary, #000);
+  }
+{% endstylesheet %}

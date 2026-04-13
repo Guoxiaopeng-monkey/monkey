@@ -1,0 +1,55 @@
+{%- doc -%}
+  MK 标签组件
+
+  渲染产品/文章标签
+
+  @param {string[]} tags - 标签数组
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-tag', tags: product.tags %}
+{%- enddoc -%}
+
+{% liquid
+  assign tags = tags | default: empty_array
+  if tags == empty_array
+    assign tags = '[]' | parse_json
+  endif
+  assign class = class | default: ''
+-%}
+
+{%- if tags.size > 0 -%}
+  <div class="mk-tag {{ class }}">
+    {%- for tag in tags limit: 5 -%}
+      <a href="{{ routes.collections_url | default: '/collections/all' }}/{{ tag | handle }}" class="mk-tag__item">
+        {{ tag }}
+      </a>
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-tag {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mk-tag__item {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-secondary, #666);
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border-radius: 100px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .mk-tag__item:hover {
+    background-color: var(--color-border);
+    color: var(--color-foreground);
+  }
+{% endstylesheet %}

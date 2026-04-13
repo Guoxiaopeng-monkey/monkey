@@ -1,0 +1,47 @@
+{%- doc -%}
+  MK 交叉销售组件
+
+  渲染交叉销售产品
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-cross-sell' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-cross-sell {{ class }}" data-cross-sell>
+  <h3 class="mk-cross-sell__title">{{ 'products.cross_sell' | t | default: '你可能还喜欢' }}</h3>
+
+  <div class="mk-cross-sell__products" data-cross-sell-products>
+    {%- comment -%} 动态加载交叉销售产品 {%- endcomment -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-cross-sell {
+    padding: 20px 0;
+  }
+
+  .mk-cross-sell__title {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .mk-cross-sell__products {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-cross-sell__products {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+{% endstylesheet %}

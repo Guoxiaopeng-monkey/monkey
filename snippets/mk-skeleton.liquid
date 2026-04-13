@@ -1,0 +1,78 @@
+{%- doc -%}
+  MK 骨架屏组件
+
+  渲染加载骨架屏占位
+
+  @param {string} [type] - 类型：text, image, card
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-skeleton', type: 'image' %}
+{%- enddoc -%}
+
+{% liquid
+  assign type = type | default: 'text'
+  assign class = class | default: ''
+-%}
+
+<div class="mk-skeleton mk-skeleton--{{ type }} {{ class }}" aria-hidden="true"></div>
+
+{% stylesheet %}
+  .mk-skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-background-secondary, #f5f5f5) 25%,
+      var(--color-background, #fff) 50%,
+      var(--color-background-secondary, #f5f5f5) 75%
+    );
+    background-size: 200% 100%;
+    animation: mk-shimmer 1.5s ease-in-out infinite;
+    border-radius: 4px;
+  }
+
+  /* 类型变体 */
+  .mk-skeleton--text {
+    height: 16px;
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .mk-skeleton--title {
+    height: 24px;
+    width: 60%;
+    margin-bottom: 12px;
+  }
+
+  .mk-skeleton--image {
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    border-radius: 8px;
+  }
+
+  .mk-skeleton--card {
+    width: 100%;
+    height: 200px;
+    border-radius: 12px;
+  }
+
+  .mk-skeleton--avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+  }
+
+  .mk-skeleton--button {
+    height: 44px;
+    width: 120px;
+    border-radius: 8px;
+  }
+
+  @keyframes mk-shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+{% endstylesheet %}

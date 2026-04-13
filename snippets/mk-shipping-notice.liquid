@@ -1,0 +1,69 @@
+{%- doc -%}
+  MK 配送说明组件
+
+  渲染配送相关信息
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-shipping-notice' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-shipping-notice {{ class }}">
+  <div class="mk-shipping-notice__item">
+    <span class="mk-shipping-notice__icon">{{- 'icon-truck.svg' | inline_asset_content -}}</span>
+    <span class="mk-shipping-notice__text">{{ 'shipping.standard' | t | default: '标准配送' }}</span>
+  </div>
+
+  <div class="mk-shipping-notice__item">
+    <span class="mk-shipping-notice__icon">{{- 'icon-undo.svg' | inline_asset_content -}}</span>
+    <span class="mk-shipping-notice__text">{{ 'shipping.returns' | t | default: '30天退换' }}</span>
+  </div>
+
+  <div class="mk-shipping-notice__item">
+    <span class="mk-shipping-notice__icon">{{- 'icon-shield.svg' | inline_asset_content -}}</span>
+    <span class="mk-shipping-notice__text">{{ 'shipping.secure' | t | default: '安全支付' }}</span>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-shipping-notice {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-shipping-notice {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+
+  .mk-shipping-notice__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mk-shipping-notice__icon {
+    display: flex;
+    width: 18px;
+    height: 18px;
+    color: var(--color-primary, #000);
+  }
+
+  .mk-shipping-notice__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-shipping-notice__text {
+    font-size: 12px;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}

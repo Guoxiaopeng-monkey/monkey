@@ -1,0 +1,126 @@
+{%- doc -%}
+  MK 订单行项目组件
+
+  渲染单个订单行项目
+
+  @param {object} line_item - 订单项对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% for item in order.line_items %}
+    {% render 'mk-line-item', line_item: item %}
+  {% endfor %}
+{%- enddoc -%}
+
+{% liquid
+  assign line_item = line_item | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if line_item != blank -%}
+  <div class="mk-line-item {{ class }}">
+    <div class="mk-line-item__image">
+      {{ line_item.image | image_url: width: 120 | image_tag: width: 60, height: 60, loading: 'lazy' }}
+    </div>
+
+    <div class="mk-line-item__details">
+      <h3 class="mk-line-item__title">
+        <a href="{{ line_item.url }}">{{ line_item.title }}</a>
+      </h3>
+
+      {%- unless line_item.variant_title == 'Default Title' or line_item.variant_title == blank -%}
+        <p class="mk-line-item__variant">{{ line_item.variant_title }}</p>
+      {%- endunless -%}
+
+      <p class="mk-line-item__price">{{ line_item.final_price | money }}</p>
+    </div>
+
+    <div class="mk-line-item__quantity">
+      <span class="mk-line-item__qty-label">{{ 'order.quantity' | t | default: '数量' }}:</span>
+      <span class="mk-line-item__qty-value">{{ line_item.quantity }}</span>
+    </div>
+
+    <div class="mk-line-item__total">
+      <span class="mk-line-item__total-label">{{ 'order.total' | t | default: '小计' }}:</span>
+      <span class="mk-line-item__total-value">{{ line_item.final_line_price | money }}</span>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-line-item {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  @media (min-width: 750px) {
+    .mk-line-item {
+      grid-template-columns: 80px 1fr auto auto;
+      align-items: center;
+    }
+  }
+
+  .mk-line-item__image img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .mk-line-item__title {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .mk-line-item__title a {
+    color: var(--color-foreground);
+    text-decoration: none;
+  }
+
+  .mk-line-item__title a:hover {
+    text-decoration: underline;
+  }
+
+  .mk-line-item__variant {
+    margin: 0 0 4px 0;
+    font-size: 12px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-line-item__price {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .mk-line-item__quantity,
+  .mk-line-item__total {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: left;
+  }
+
+  @media (min-width: 750px) {
+    .mk-line-item__quantity,
+    .mk-line-item__total {
+      text-align: right;
+    }
+  }
+
+  .mk-line-item__qty-label,
+  .mk-line-item__total-label {
+    font-size: 11px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-line-item__qty-value,
+  .mk-line-item__total-value {
+    font-size: 14px;
+    font-weight: 600;
+  }
+{% endstylesheet %}

@@ -1,0 +1,224 @@
+{%- doc -%}
+  MK Newsletter弹出层组件
+
+  渲染新闻订阅弹出层
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-newsletter-popup' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+  assign delay = delay | default: 3000
+-%}
+
+<div class="mk-newsletter-popup {{ class }}" data-newsletter-popup hidden data-delay="{{ delay }}">
+  <div class="mk-newsletter-popup__overlay" data-newsletter-close></div>
+
+  <div class="mk-newsletter-popup__container">
+    <button type="button" class="mk-newsletter-popup__close" aria-label="{{ 'actions.close' | t }}" data-newsletter-close>
+      {{- 'icon-close.svg' | inline_asset_content -}}
+    </button>
+
+    <div class="mk-newsletter-popup__content">
+      <h2 class="mk-newsletter-popup__title">{{ 'newsletter.popup_title' | t | default: '订阅获取10%折扣' }}</h2>
+      <p class="mk-newsletter-popup__description">
+        {{ 'newsletter.popup_message' | t | default: '订阅我们的邮件，第一时间获取新品资讯和独家优惠。' }}
+      </p>
+
+      {% form 'customer', class: 'mk-newsletter-popup__form' %}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+
+        <div class="mk-newsletter-popup__fields">
+          <input
+            type="email"
+            name="contact[email]"
+            class="mk-newsletter-popup__input"
+            placeholder="{{ 'newsletter.email_placeholder' | t | default: '输入您的邮箱' }}"
+            required
+          >
+          <button type="submit" class="mk-newsletter-popup__button">
+            {{ 'newsletter.subscribe' | t | default: '订阅' }}
+          </button>
+        </div>
+
+        <p class="mk-newsletter-popup__note">
+          {{ 'newsletter.disclaimer' | t | default: '点击订阅即表示您同意我们的隐私政策。' }}
+        </p>
+
+        {%- if form.posted_successfully? -%}
+          <p class="mk-newsletter-popup__success">{{ 'newsletter.success' | t | default: '感谢订阅！' }}</p>
+        {%- endif -%}
+      {% endform %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-newsletter-popup[hidden] {
+    display: none;
+  }
+
+  .mk-newsletter-popup__overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+  }
+
+  .mk-newsletter-popup__container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 480px;
+    background-color: var(--color-background);
+    border-radius: 16px;
+    padding: 40px 32px;
+    z-index: 999;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .mk-newsletter-popup__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--color-text-secondary, #666);
+    transition: background-color 0.2s ease;
+  }
+
+  .mk-newsletter-popup__close:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-newsletter-popup__close svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .mk-newsletter-popup__title {
+    margin: 0 0 12px 0;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .mk-newsletter-popup__description {
+    margin: 0 0 24px 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-secondary, #666);
+    text-align: center;
+  }
+
+  .mk-newsletter-popup__fields {
+    display: flex;
+    gap: 8px;
+  }
+
+  .mk-newsletter-popup__input {
+    flex: 1;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: border-color 0.2s ease;
+  }
+
+  .mk-newsletter-popup__input:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-newsletter-popup__button {
+    padding: 14px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .mk-newsletter-popup__button:hover {
+    opacity: 0.85;
+  }
+
+  .mk-newsletter-popup__note {
+    margin: 12px 0 0 0;
+    font-size: 11px;
+    color: var(--color-text-secondary, #666);
+    text-align: center;
+  }
+
+  .mk-newsletter-popup__success {
+    margin: 16px 0 0 0;
+    padding: 12px;
+    background-color: rgba(46, 125, 50, 0.1);
+    color: var(--color-success, #2e7d32);
+    border-radius: 8px;
+    text-align: center;
+    font-size: 13px;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class NewsletterPopup extends HTMLElement {
+    constructor() {
+      super();
+      this.popup = this.querySelector('.mk-newsletter-popup');
+      this.closeButtons = this.querySelectorAll('[data-newsletter-close]');
+      this.delay = parseInt(this.dataset.delay) || 3000;
+      this.init();
+    }
+
+    init() {
+      // 检查是否已经显示过
+      if (sessionStorage.getItem('newsletter_shown')) return;
+
+      setTimeout(() => {
+        this.open();
+        sessionStorage.setItem('newsletter_shown', 'true');
+      }, this.delay);
+
+      this.closeButtons.forEach(btn => {
+        btn.addEventListener('click', () => this.close());
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !this.popup.hidden) {
+          this.close();
+        }
+      });
+    }
+
+    open() {
+      this.popup.hidden = false;
+      document.body.style.overflow = 'hidden';
+    }
+
+    close() {
+      this.popup.hidden = true;
+      document.body.style.overflow = '';
+    }
+  }
+
+  customElements.define('newsletter-popup', NewsletterPopup);
+{% endjavascript %}

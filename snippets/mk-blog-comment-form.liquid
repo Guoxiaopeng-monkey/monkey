@@ -1,0 +1,151 @@
+{%- doc -%}
+  MK 博客评论表单组件
+
+  渲染博客文章评论表单
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-blog-comment-form' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-blog-comment-form {{ class }}">
+  {% form 'comment', class: 'mk-blog-comment-form__form' %}
+    <input type="hidden" name="comment[article_id]" value="{{ article.id }}">
+
+    <h3 class="mk-blog-comment-form__title">{{ 'blogs.comments.title' | t | default: '发表评论' }}</h3>
+
+    {%- if form.posted_successfully? -%}
+      <p class="mk-blog-comment-form__success">
+        {{ 'blogs.comments.success' | t | default: '评论已提交，等待审核。' }}
+      </p>
+    {%- endif -%}
+
+    <div class="mk-blog-comment-form__fields">
+      <div class="mk-blog-comment-form__field">
+        <label for="comment-author" class="mk-blog-comment-form__label">{{ 'blogs.comments.name' | t | default: '姓名' }}</label>
+        <input
+          type="text"
+          id="comment-author"
+          name="comment[author]"
+          class="mk-blog-comment-form__input"
+          required
+        >
+      </div>
+
+      <div class="mk-blog-comment-form__field">
+        <label for="comment-email" class="mk-blog-comment-form__label">{{ 'blogs.comments.email' | t | default: '邮箱' }}</label>
+        <input
+          type="email"
+          id="comment-email"
+          name="comment[email]"
+          class="mk-blog-comment-form__input"
+          required
+        >
+      </div>
+    </div>
+
+    <div class="mk-blog-comment-form__field">
+      <label for="comment-body" class="mk-blog-comment-form__label">{{ 'blogs.comments.message' | t | default: '评论内容' }}</label>
+      <textarea
+        id="comment-body"
+        name="comment[body]"
+        class="mk-blog-comment-form__textarea"
+        rows="5"
+        required
+      ></textarea>
+    </div>
+
+    <button type="submit" class="mk-blog-comment-form__submit">
+      {{ 'blogs.comments.submit' | t | default: '提交评论' }}
+    </button>
+  {% endform %}
+</div>
+
+{% stylesheet %}
+  .mk-blog-comment-form {
+    padding: 32px 0;
+  }
+
+  .mk-blog-comment-form__title {
+    margin: 0 0 24px 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .mk-blog-comment-form__fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  @media (min-width: 480px) {
+    .mk-blog-comment-form__fields {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .mk-blog-comment-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .mk-blog-comment-form__label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .mk-blog-comment-form__input,
+  .mk-blog-comment-form__textarea {
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: border-color 0.2s ease;
+  }
+
+  .mk-blog-comment-form__input:focus,
+  .mk-blog-comment-form__textarea:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-blog-comment-form__textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .mk-blog-comment-form__submit {
+    padding: 14px 32px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-blog-comment-form__submit:hover {
+    opacity: 0.85;
+  }
+
+  .mk-blog-comment-form__success {
+    padding: 16px;
+    background-color: rgba(46, 125, 50, 0.1);
+    color: var(--color-success, #2e7d32);
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+{% endstylesheet %}

@@ -1,0 +1,43 @@
+{%- doc -%}
+  MK 条形码组件
+
+  渲染产品条形码标签
+
+  @param {object} variant - 变体对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-barcode', variant: product.selected_or_first_available_variant %}
+{%- enddoc -%}
+
+{% liquid
+  assign variant = variant | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if variant != blank and variant.barcode != blank -%}
+  <span class="mk-barcode {{ class }}" data-barcode>
+    <span class="mk-barcode__label">EAN:</span>
+    <span class="mk-barcode__value">{{ variant.barcode }}</span>
+  </span>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-barcode {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-barcode__label {
+    font-weight: 500;
+  }
+
+  .mk-barcode__value {
+    font-weight: 400;
+    font-family: monospace;
+    letter-spacing: 1px;
+  }
+{% endstylesheet %}

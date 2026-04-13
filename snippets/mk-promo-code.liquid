@@ -1,0 +1,144 @@
+{%- doc -%}
+  MK 促销码输入组件
+
+  渲染促销码输入框
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-promo-code' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-promo-code {{ class }}" data-promo-code>
+  <div class="mk-promo-code__fields">
+    <input
+      type="text"
+      name="discount"
+      id="promo-code"
+      class="mk-promo-code__input"
+      placeholder="{{ 'cart.promo_placeholder' | t | default: '输入促销码' }}"
+      autocomplete="off"
+    >
+    <button type="button" class="mk-promo-code__button" data-promo-apply>
+      {{ 'cart.apply' | t | default: '应用' }}
+    </button>
+  </div>
+
+  <p class="mk-promo-code__message" data-promo-message hidden></p>
+</div>
+
+{% stylesheet %}
+  .mk-promo-code__fields {
+    display: flex;
+    gap: 8px;
+  }
+
+  .mk-promo-code__input {
+    flex: 1;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    text-transform: uppercase;
+    transition: border-color 0.2s ease;
+  }
+
+  .mk-promo-code__input:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-promo-code__input::placeholder {
+    text-transform: none;
+  }
+
+  .mk-promo-code__button {
+    padding: 14px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .mk-promo-code__button:hover {
+    opacity: 0.85;
+  }
+
+  .mk-promo-code__message {
+    margin: 8px 0 0 0;
+    font-size: 13px;
+  }
+
+  .mk-promo-code__message[hidden] {
+    display: none;
+  }
+
+  .mk-promo-code__message--success {
+    color: var(--color-success, #2e7d32);
+  }
+
+  .mk-promo-code__message--error {
+    color: var(--color-error, #e53935);
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class PromoCode extends HTMLElement {
+    constructor() {
+      super();
+      this.input = this.querySelector('.mk-promo-code__input');
+      this.button = this.querySelector('[data-promo-apply]');
+      this.message = this.querySelector('[data-promo-message]');
+
+      this.button?.addEventListener('click', () => this.apply());
+      this.input?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') this.apply();
+      });
+    }
+
+    async apply() {
+      const code = this.input.value.trim();
+      if (!code) return;
+
+      this.message.hidden = true;
+
+      try {
+        const response = await fetch('/cart.js');
+        const cart = await response.json();
+
+        const formData = new FormData();
+        formData.append('discount', code);
+
+        const res = await fetch('/cart/add.js', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (res.ok) {
+          this.message.textContent = '{{ 'cart.discount_applied' | t | default: '促销码已应用' }}';
+          this.message.className = 'mk-promo-code__message mk-promo-code__message--success';
+          this.message.hidden = false;
+        } else {
+          throw new Error('Invalid code');
+        }
+      } catch {
+        this.message.textContent = '{{ 'cart.discount_invalid' | t | default: '促销码无效' }}';
+        this.message.className = 'mk-promo-code__message mk-promo-code__message--error';
+        this.message.hidden = false;
+      }
+    }
+  }
+
+  customElements.define('promo-code', PromoCode);
+{% endjavascript %}

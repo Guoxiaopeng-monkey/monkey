@@ -1,0 +1,63 @@
+{%- doc -%}
+  MK 内联加载组件
+
+  渲染内联样式的加载指示器
+
+  @param {string} [text] - 加载文字
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-inline-spinner', text: '加载中...' %}
+{%- enddoc -%}
+
+{% liquid
+  assign text = text | default: '加载中...'
+  assign class = class | default: ''
+-%}
+
+<span class="mk-inline-spinner {{ class }}">
+  <span class="mk-inline-spinner__dot"></span>
+  <span class="mk-inline-spinner__dot"></span>
+  <span class="mk-inline-spinner__dot"></span>
+  {%- if text != blank -%}
+    <span class="mk-inline-spinner__text">{{ text }}</span>
+  {%- endif -%}
+</span>
+
+{% stylesheet %}
+  .mk-inline-spinner {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .mk-inline-spinner__dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--color-primary, #000);
+    border-radius: 50%;
+    animation: mk-bounce 1.4s ease-in-out infinite both;
+  }
+
+  .mk-inline-spinner__dot:nth-child(1) {
+    animation-delay: -0.32s;
+  }
+
+  .mk-inline-spinner__dot:nth-child(2) {
+    animation-delay: -0.16s;
+  }
+
+  .mk-inline-spinner__text {
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  @keyframes mk-bounce {
+    0%, 80%, 100% {
+      transform: scale(0);
+    }
+    40% {
+      transform: scale(1);
+    }
+  }
+{% endstylesheet %}

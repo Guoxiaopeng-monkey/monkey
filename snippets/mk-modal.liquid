@@ -1,0 +1,153 @@
+{%- doc -%}
+  MK 模态框组件
+
+  渲染可打开/关闭的模态框
+
+  @param {string} id - 模态框ID
+  @param {string} [title] - 标题
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  <div data-modal="my-modal">
+    <button data-modal-trigger>打开</button>
+    {% render 'mk-modal', id: 'my-modal', title: '标题' %}
+  </div>
+{%- enddoc -%}
+
+{% liquid
+  assign id = id | default: ''
+  assign title = title | default: ''
+  assign class = class | default: ''
+-%}
+
+<div
+  class="mk-modal {{ class }}"
+  id="{{ id }}"
+  data-modal
+  hidden
+>
+  <div class="mk-modal__overlay" data-modal-close></div>
+
+  <div class="mk-modal__container" role="dialog" aria-modal="true" aria-labelledby="{{ id }}-title">
+    <button type="button" class="mk-modal__close" aria-label="{{ 'actions.close' | t }}" data-modal-close>
+      {{- 'icon-close.svg' | inline_asset_content -}}
+    </button>
+
+    {%- if title != blank -%}
+      <h2 class="mk-modal__title" id="{{ id }}-title">{{ title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-modal__content">
+      {{ content }}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-modal[hidden] {
+    display: none;
+  }
+
+  .mk-modal__overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+  }
+
+  .mk-modal__container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: var(--color-background);
+    border-radius: 16px;
+    padding: 32px;
+    z-index: 999;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .mk-modal__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--color-text-secondary, #666);
+    transition: background-color 0.2s ease;
+  }
+
+  .mk-modal__close:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-modal__close svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .mk-modal__title {
+    margin: 0 0 20px 0;
+    font-size: 20px;
+    font-weight: 700;
+    padding-right: 40px;
+  }
+
+  .mk-modal__content {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class Modal extends HTMLElement {
+    constructor() {
+      super();
+      this.modal = this.querySelector('.mk-modal');
+      this.closeButtons = this.querySelectorAll('[data-modal-close]');
+      this.triggers = document.querySelectorAll(`[data-modal-trigger="${this.modal?.id}"]`);
+
+      this.init();
+    }
+
+    init() {
+      this.closeButtons.forEach(btn => {
+        btn.addEventListener('click', () => this.close());
+      });
+
+      this.triggers.forEach(trigger => {
+        trigger.addEventListener('click', () => this.open());
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !this.modal.hidden) {
+          this.close();
+        }
+      });
+    }
+
+    open() {
+      this.modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+    }
+
+    close() {
+      this.modal.hidden = true;
+      document.body.style.overflow = '';
+    }
+  }
+
+  customElements.define('modal-component', Modal);
+{% endjavascript %}

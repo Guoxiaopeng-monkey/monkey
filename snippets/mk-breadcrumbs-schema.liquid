@@ -1,0 +1,37 @@
+{%- doc -%}
+  MK 商品销售标签组件
+
+  渲染产品促销信息标签
+
+  @param {string} [tag] - 促销标签
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-sale-tag', tag: 'SALE' %}
+{%- enddoc -%}
+
+{% liquid
+  assign tag = tag | default: ''
+  assign class = class | default: ''
+-%}
+
+{%- if tag != blank -%}
+  <span class="mk-sale-tag {{ class }}">
+    {{ tag | upcase }}
+  </span>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-sale-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--color-on-sale, #fff);
+    background-color: var(--color-sale, #e53935);
+    border-radius: 4px;
+  }
+{% endstylesheet %}

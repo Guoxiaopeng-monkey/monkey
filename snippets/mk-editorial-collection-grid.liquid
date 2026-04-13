@@ -1,0 +1,94 @@
+{%- doc -%}
+  MK 编辑收藏夹网格组件
+
+  渲染编辑风格的收藏夹网格
+
+  @param {object[]} collections - 收藏夹数组
+  @param {number} [limit] - 显示数量
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-editorial-collection-grid', collections: collections, limit: 4 %}
+{%- enddoc -%}
+
+{% liquid
+  assign collections = collections | default: empty_array
+  assign limit = limit | default: 4
+  assign class = class | default: ''
+  assign display_collections = collections | slice: 0, limit
+-%}
+
+{%- if display_collections.size > 0 -%}
+  <div class="mk-editorial-collection-grid {{ class }}">
+    {%- for collection in display_collections -%}
+      <a href="{{ collection.url }}" class="mk-editorial-collection-grid__item">
+        {%- if collection.image -%}
+          {{ collection.image | image_url: width: 600 | image_tag: class: 'mk-editorial-collection-grid__image', loading: 'lazy' }}
+        {%- else -%}
+          {{ collection.products.first.featured_image | default: '' | image_url: width: 600 | image_tag: class: 'mk-editorial-collection-grid__image', loading: 'lazy' }}
+        {%- endif -%}
+
+        <div class="mk-editorial-collection-grid__overlay">
+          <h3 class="mk-editorial-collection-grid__title">{{ collection.title }}</h3>
+          <span class="mk-editorial-collection-grid__count">{{ 'collections.products_count' | t: count: collection.products_count | default: collection.products_count | append: ' Products' }}</span>
+        </div>
+      </a>
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-editorial-collection-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-editorial-collection-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+  }
+
+  .mk-editorial-collection-grid__item {
+    position: relative;
+    display: block;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .mk-editorial-collection-grid__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .mk-editorial-collection-grid__item:hover .mk-editorial-collection-grid__image {
+    transform: scale(1.08);
+  }
+
+  .mk-editorial-collection-grid__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
+    color: #fff;
+  }
+
+  .mk-editorial-collection-grid__title {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .mk-editorial-collection-grid__count {
+    font-size: 12px;
+    opacity: 0.8;
+  }
+{% endstylesheet %}

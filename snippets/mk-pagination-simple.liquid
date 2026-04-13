@@ -1,0 +1,83 @@
+{%- doc -%}
+  MK 简洁分页组件
+
+  渲染简洁分页导航
+
+  @param {object} paginate - 分页对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-pagination-simple', paginate: paginate %}
+{%- enddoc -%}
+
+{% liquid
+  assign paginate = paginate | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if paginate != blank and paginate.pages > 1 -%}
+  <nav class="mk-pagination-simple {{ class }}" aria-label="{{ 'general.pagination' | t | default: '分页' }}">
+    <a
+      href="{{ paginate.previous.url }}"
+      class="mk-pagination-simple__btn mk-pagination-simple__btn--prev {% unless paginate.previous %}mk-pagination-simple__btn--disabled{% endunless %}"
+      {% unless paginate.previous %}aria-disabled="true"{% endunless %}
+    >
+      {{- 'icon-arrow-left.svg' | inline_asset_content -}}
+    </a>
+
+    <span class="mk-pagination-simple__info">
+      {{ 'general.pagination.page' | t | default: '页' }} {{ paginate.current_page }} / {{ paginate.pages }}
+    </span>
+
+    <a
+      href="{{ paginate.next.url }}"
+      class="mk-pagination-simple__btn mk-pagination-simple__btn--next {% unless paginate.next %}mk-pagination-simple__btn--disabled{% endunless %}"
+      {% unless paginate.next %}aria-disabled="true"{% endunless %}
+    >
+      {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+    </a>
+  </nav>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-pagination-simple {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 24px 0;
+  }
+
+  .mk-pagination-simple__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .mk-pagination-simple__btn:hover:not(.mk-pagination-simple__btn--disabled) {
+    border-color: var(--color-foreground);
+  }
+
+  .mk-pagination-simple__btn--disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .mk-pagination-simple__btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .mk-pagination-simple__info {
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}

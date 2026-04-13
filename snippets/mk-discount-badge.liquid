@@ -1,0 +1,40 @@
+{%- doc -%}
+  MK 折扣标签组件
+
+  渲染折扣百分比标签
+
+  @param {number} [compare_at_price] - 原价
+  @param {number} [price] - 现价
+
+  @example
+  {% render 'mk-discount-badge', compare_at_price: product.compare_at_price, price: product.price %}
+{%- enddoc -%}
+
+{% liquid
+  assign compare_at_price = compare_at_price | default: 0
+  assign price = price | default: 0
+
+  if compare_at_price > price and compare_at_price > 0
+    assign discount_percent = compare_at_price | minus: price | times: 100.0 | divided_by: compare_at_price | round
+  endif
+-%}
+
+{%- if discount_percent -%}
+  <span class="mk-discount-badge">
+    -{{ discount_percent }}%
+  </span>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-discount-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-on-sale, #fff);
+    background-color: var(--color-sale, #e53935);
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+{% endstylesheet %}

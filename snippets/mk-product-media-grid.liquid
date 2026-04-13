@@ -1,0 +1,88 @@
+{%- doc -%}
+  MK 产品媒体网格组件
+
+  渲染产品图片网格
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-product-media-grid', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+  assign images = product.media | default: product.images | default: empty_array
+-%}
+
+{%- if images.size > 0 -%}
+  <div class="mk-product-media-grid {{ class }}">
+    {%- if images.size == 1 -%}
+      <div class="mk-product-media-grid__main">
+        {{ images.first | image_url: width: 1200 | image_tag: class: 'mk-product-media-grid__image', loading: 'lazy' }}
+      </div>
+    {%- elsif images.size == 2 -%}
+      <div class="mk-product-media-grid__two">
+        {%- for image in images limit: 2 -%}
+          {{ image | image_url: width: 800 | image_tag: class: 'mk-product-media-grid__image', loading: 'lazy' }}
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <div class="mk-product-media-grid__main">
+        {{ images.first | image_url: width: 1200 | image_tag: class: 'mk-product-media-grid__image', loading: 'lazy' }}
+      </div>
+      <div class="mk-product-media-grid__secondary">
+        {%- for image in images offset: 1 limit: 3 -%}
+          <div class="mk-product-media-grid__thumb">
+            {{ image | image_url: width: 400 | image_tag: class: 'mk-product-media-grid__image', loading: 'lazy' }}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-product-media-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mk-product-media-grid__main {
+    width: 100%;
+  }
+
+  .mk-product-media-grid__image {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+
+  .mk-product-media-grid__two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .mk-product-media-grid__secondary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .mk-product-media-grid__thumb {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .mk-product-media-grid__thumb::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.03);
+  }
+{% endstylesheet %}

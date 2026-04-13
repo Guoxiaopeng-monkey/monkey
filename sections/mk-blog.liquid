@@ -1,0 +1,300 @@
+{%- comment -%}
+  MK 博客列表页面板块
+
+  展示博客文章列表
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+  assign blog = blog | default: nil
+  assign articles = blog.articles | default: empty_array
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-blog color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-blog__container">
+    {%- if ss.show_header -%}
+      <header class="mk-blog__header">
+        <h1 class="mk-blog__title">{{ blog.title }}</h1>
+        {%- if ss.show_description and blog.description != blank -%}
+          <p class="mk-blog__description">{{ blog.description }}</p>
+        {%- endif -%}
+      </header>
+    {%- endif -%}
+
+    {%- if articles.size > 0 -%}
+      <div class="mk-blog__grid">
+        {%- for article in articles -%}
+          <article class="mk-blog__article">
+            {%- if article.image -%}
+              <a href="{{ article.url }}" class="mk-blog__image">
+                {{ article.image | image_url: width: 600 | image_tag: loading: 'lazy', class: 'mk-blog__img' }}
+              </a>
+            {%- endif -%}
+
+            <div class="mk-blog__content">
+              <div class="mk-blog__meta">
+                <time class="mk-blog__date">{{ article.published_at | date: '%Y-%m-%d' }}</time>
+                {%- if ss.show_author -%}
+                  <span class="mk-blog__author">{{ article.author }}</span>
+                {%- endif -%}
+              </div>
+
+              <h2 class="mk-blog__article-title">
+                <a href="{{ article.url }}">{{ article.title }}</a>
+              </h2>
+
+              {%- if ss.show_excerpt -%}
+                <p class="mk-blog__excerpt">{{ article.excerpt | strip_html | truncate: 120 }}</p>
+              {%- endif -%}
+
+              <a href="{{ article.url }}" class="mk-blog__read-more">
+                {{ 'blogs.read_more' | t | default: '阅读更多' }}
+              </a>
+            </div>
+          </article>
+        {%- endfor -%}
+      </div>
+
+      {%- if ss.show_pagination -%}
+        {% render 'mk-pagination', paginate: blog.paginate %}
+      {%- endif -%}
+    {%- else -%}
+      <div class="mk-blog__empty">
+        {% render 'mk-empty-state', title: 'blogs.empty', description: 'blogs.empty_description' %}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-blog {
+    padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-blog {
+      padding: {{ ss.padding_top_desktop | default: 64 }}px 0 {{ ss.padding_bottom_desktop | default: 64 }}px;
+    }
+  }
+
+  .mk-blog__container {
+    max-width: var(--container-max-width, 1000px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .mk-blog__header {
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .mk-blog__title {
+    margin: 0 0 12px 0;
+    font-size: 32px;
+    font-weight: 700;
+  }
+
+  .mk-blog__description {
+    margin: 0;
+    font-size: 16px;
+    color: var(--color-text-secondary, #666);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .mk-blog__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-blog__grid {
+      gap: 48px;
+    }
+  }
+
+  .mk-blog__article {
+    display: grid;
+    gap: 20px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-blog__article {
+      grid-template-columns: 300px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+  }
+
+  .mk-blog__image {
+    display: block;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .mk-blog__img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .mk-blog__image:hover .mk-blog__img {
+    transform: scale(1.03);
+  }
+
+  .mk-blog__content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mk-blog__meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-blog__author::before {
+    content: '•';
+    margin-right: 12px;
+  }
+
+  .mk-blog__article-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .mk-blog__article-title a {
+    color: var(--color-foreground);
+    text-decoration: none;
+  }
+
+  .mk-blog__article-title a:hover {
+    text-decoration: underline;
+  }
+
+  .mk-blog__excerpt {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-blog__read-more {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-primary, #000);
+    text-decoration: none;
+  }
+
+  .mk-blog__read-more:hover {
+    text-decoration: underline;
+  }
+
+  .mk-blog__empty {
+    padding: 64px 0;
+    text-align: center;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 博客列表",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_header",
+      "label": "显示头部",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "显示描述",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "显示作者",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "显示摘要",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pagination",
+      "label": "显示分页",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "间距"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 博客列表"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,184 @@
+{%- comment -%}
+  MK 引用区块板块
+
+  展示引用语录内容
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-quote color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-quote__container">
+    <blockquote class="mk-quote__content">
+      <span class="mk-quote__icon">{{- 'icon-quote.svg' | inline_asset_content -}}</span>
+      <p class="mk-quote__text">{{ ss.quote | default: '这是一段引用的文字内容。' }}</p>
+      <footer class="mk-quote__footer">
+        {%- if ss.author != blank -%}
+          <cite class="mk-quote__author">{{ ss.author }}</cite>
+        {%- endif -%}
+        {%- if ss.title != blank -%}
+          <span class="mk-quote__title">{{ ss.title }}</span>
+        {%- endif -%}
+      </footer>
+    </blockquote>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-quote {
+    padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-quote {
+      padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px;
+    }
+  }
+
+  .mk-quote__container {
+    max-width: var(--container-max-width, 800px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .mk-quote__content {
+    position: relative;
+    margin: 0;
+    padding: 32px;
+    text-align: center;
+  }
+
+  @media (min-width: 750px) {
+    .mk-quote__content {
+      padding: 48px;
+    }
+  }
+
+  .mk-quote__icon {
+    display: block;
+    margin-bottom: 20px;
+    color: var(--color-primary, #000);
+    opacity: 0.2;
+  }
+
+  .mk-quote__icon svg {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto;
+  }
+
+  .mk-quote__text {
+    margin: 0 0 24px 0;
+    font-size: 20px;
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--color-foreground);
+  }
+
+  @media (min-width: 750px) {
+    .mk-quote__text {
+      font-size: 26px;
+    }
+  }
+
+  .mk-quote__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .mk-quote__author {
+    font-size: 16px;
+    font-weight: 600;
+    font-style: normal;
+    color: var(--color-foreground);
+  }
+
+  .mk-quote__title {
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 引用区块",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "quote",
+      "label": "引用内容",
+      "default": "这是一段引用的文字内容。"
+    },
+    {
+      "type": "text",
+      "id": "author",
+      "label": "作者"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "职位/头衔"
+    },
+    {
+      "type": "header",
+      "content": "间距"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 引用区块"
+    }
+  ]
+}
+{% endschema %}

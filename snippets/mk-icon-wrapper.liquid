@@ -1,0 +1,68 @@
+{%- doc -%}
+  MK 图标包装组件
+
+  用图标包装内容
+
+  @param {string} name - 图标名称
+  @param {string} [class] - 额外CSS类名
+  @param {string} [content] - 包裹的内容
+
+  @example
+  {% render 'mk-icon-wrapper', name: 'check', content: '订单完成' %}
+{%- enddoc -%}
+
+{% liquid
+  assign name = name | default: ''
+  assign content = content | default: ''
+  assign class = class | default: ''
+
+  assign icon_content = ''
+  case name
+    when 'check'
+      assign icon_content = 'icon-check.svg' | inline_asset_content
+    when 'close'
+      assign icon_content = 'icon-close.svg' | inline_asset_content
+    when 'plus'
+      assign icon_content = 'icon-plus.svg' | inline_asset_content
+    when 'minus'
+      assign icon_content = 'icon-minus.svg' | inline_asset_content
+    when 'arrow-right'
+      assign icon_content = 'icon-arrow-right.svg' | inline_asset_content
+    when 'arrow-left'
+      assign icon_content = 'icon-arrow-left.svg' | inline_asset_content
+    else
+      assign icon_content = 'icon-placeholder.svg' | inline_asset_content
+  endcase
+-%}
+
+<span class="mk-icon-wrapper {{ class }}">
+  <span class="mk-icon-wrapper__icon">{{ icon_content }}</span>
+  {%- if content != blank -%}
+    <span class="mk-icon-wrapper__content">{{ content }}</span>
+  {%- endif -%}
+</span>
+
+{% stylesheet %}
+  .mk-icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mk-icon-wrapper__icon {
+    display: flex;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .mk-icon-wrapper__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-icon-wrapper__content {
+    font-size: 14px;
+    color: var(--color-foreground);
+  }
+{% endstylesheet %}

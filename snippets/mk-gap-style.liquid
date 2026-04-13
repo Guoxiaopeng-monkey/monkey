@@ -1,0 +1,40 @@
+{%- doc -%}
+  MK Gap间距样式组件
+
+  设置元素间距
+
+  @param {number} [gap] - 间距大小
+  @param {string} [direction] - 方向：both, horizontal, vertical
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-gap-style', gap: 16, direction: 'horizontal' %}
+{%- enddoc -%}
+
+{% liquid
+  assign gap = gap | default: 16
+  assign direction = direction | default: 'both'
+  assign class = class | default: ''
+
+  assign gap_style = '--gap: ' | append: gap | append: 'px;'
+-%}
+
+<div class="mk-gap-style {{ class }}" style="{{ gap_style }}">
+  {{ content }}
+</div>
+
+{% stylesheet %}
+  .mk-gap-style {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap, 16px);
+  }
+
+  .mk-gap-style--horizontal {
+    flex-direction: row;
+  }
+
+  .mk-gap-style--vertical {
+    flex-direction: column;
+  }
+{% endstylesheet %}

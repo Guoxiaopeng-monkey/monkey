@@ -1,0 +1,86 @@
+{%- doc -%}
+  MK 批量定价表格组件
+
+  渲染批量购买定价表格
+
+  @param {object[]} tiers - 定价层级数组
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-volume-pricing', tiers: product.metafields.custom.volume_pricing %}
+{%- enddoc -%}
+
+{% liquid
+  assign tiers = tiers | default: empty_array
+  assign class = class | default: ''
+
+  if tiers == empty_array
+    assign tiers = '[]' | parse_json
+  endif
+-%}
+
+{%- if tiers.size > 0 -%}
+  <div class="mk-volume-pricing {{ class }}">
+    <h4 class="mk-volume-pricing__title">{{ 'products.volume_pricing' | t | default: '批量定价' }}</h4>
+
+    <table class="mk-volume-pricing__table">
+      <thead>
+        <tr>
+          <th>{{ 'products.quantity' | t | default: '数量' }}</th>
+          <th>{{ 'products.per_unit' | t | default: '单价' }}</th>
+          <th>{{ 'products.discount' | t | default: '折扣' }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for tier in tiers -%}
+          <tr>
+            <td>{{ tier.minimum | default: forloop.index }}</td>
+            <td>{{ tier.price | default: product.price | money }}</td>
+            <td>{{ tier.discount | default: '-' }}</td>
+          </tr>
+        {%- endfor -%}
+      </tbody>
+    </table>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-volume-pricing {
+    padding: 20px;
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border-radius: 12px;
+  }
+
+  .mk-volume-pricing__title {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .mk-volume-pricing__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .mk-volume-pricing__table th,
+  .mk-volume-pricing__table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .mk-volume-pricing__table th {
+    font-weight: 600;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-volume-pricing__table td {
+    color: var(--color-foreground);
+  }
+
+  .mk-volume-pricing__table tr:last-child td {
+    border-bottom: none;
+  }
+{% endstylesheet %}

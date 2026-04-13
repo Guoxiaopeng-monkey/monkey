@@ -1,0 +1,44 @@
+{%- doc -%}
+  MK 账户按钮组件
+
+  渲染账户图标按钮
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-account-button' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<a
+  href="{{ routes.account_url | default: '/account' }}"
+  class="mk-account-button {{ class }}"
+  aria-label="{{ 'account.account' | t | default: '账户' }}"
+>
+  {{- 'icon-account.svg' | inline_asset_content -}}
+</a>
+
+{% stylesheet %}
+  .mk-account-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: var(--color-foreground);
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+  }
+
+  .mk-account-button:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-account-button svg {
+    width: 22px;
+    height: 22px;
+  }
+{% endstylesheet %}

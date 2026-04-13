@@ -1,0 +1,130 @@
+{%- doc -%}
+  MK 主题Footer区块
+
+  渲染主题内置Footer区块
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-theme-footer' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-theme-footer {{ class }}">
+  <div class="mk-theme-footer__row">
+    <div class="mk-theme-footer__col">
+      <h3 class="mk-theme-footer__title">{{ 'footer.shop' | t | default: '购物' }}</h3>
+      <ul class="mk-theme-footer__links">
+        <li><a href="{{ routes.collections_url }}">{{ 'footer.new_arrivals' | t | default: '新品上市' }}</a></li>
+        <li><a href="{{ routes.collections_url }}/best-sellers">{{ 'footer.best_sellers' | t | default: '畅销商品' }}</a></li>
+        <li><a href="{{ routes.sale_url }}">{{ 'footer.sale' | t | default: '促销' }}</a></li>
+      </ul>
+    </div>
+
+    <div class="mk-theme-footer__col">
+      <h3 class="mk-theme-footer__title">{{ 'footer.help' | t | default: '帮助' }}</h3>
+      <ul class="mk-theme-footer__links">
+        <li><a href="{{ routes.contact_url }}">{{ 'footer.contact' | t | default: '联系我们' }}</a></li>
+        <li><a href="{{ routes.shipping_url | default: '/pages/shipping' }}">{{ 'footer.shipping' | t | default: '配送信息' }}</a></li>
+        <li><a href="{{ routes.returns_url | default: '/pages/returns' }}">{{ 'footer.returns' | t | default: '退换货' }}</a></li>
+        <li><a href="{{ routes.page_url | default: '/pages/faq' }}">{{ 'footer.faq' | t | default: '常见问题' }}</a></li>
+      </ul>
+    </div>
+
+    <div class="mk-theme-footer__col">
+      <h3 class="mk-theme-footer__title">{{ 'footer.about' | t | default: '关于我们' }}</h3>
+      <ul class="mk-theme-footer__links">
+        <li><a href="{{ routes.page_url | default: '/pages/about' }}">{{ 'footer.our_story' | t | default: '我们的故事' }}</a></li>
+        <li><a href="{{ routes.page_url | default: '/pages/sustainability' }}">{{ 'footer.sustainability' | t | default: '可持续发展' }}</a></li>
+        <li><a href="{{ routes.page_url | default: '/pages/careers' }}">{{ 'footer.careers' | t | default: '招聘' }}</a></li>
+      </ul>
+    </div>
+
+    <div class="mk-theme-footer__col">
+      <h3 class="mk-theme-footer__title">{{ 'footer.follow_us' | t | default: '关注我们' }}</h3>
+      {% render 'mk-social-icons' %}
+    </div>
+  </div>
+
+  <div class="mk-theme-footer__bottom">
+    <p class="mk-theme-footer__copyright">&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+    {% render 'mk-credit-cards' %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-theme-footer {
+    padding: 48px 0 24px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .mk-theme-footer__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  @media (min-width: 750px) {
+    .mk-theme-footer__row {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .mk-theme-footer__title {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .mk-theme-footer__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mk-theme-footer__links li {
+    margin-bottom: 10px;
+  }
+
+  .mk-theme-footer__links a {
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .mk-theme-footer__links a:hover {
+    color: var(--color-foreground);
+  }
+
+  .mk-theme-footer__bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    max-width: var(--container-max-width, 1200px);
+    margin: 32px auto 0;
+    padding: 24px var(--container-padding, 32px) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  @media (min-width: 750px) {
+    .mk-theme-footer__bottom {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  .mk-theme-footer__copyright {
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}

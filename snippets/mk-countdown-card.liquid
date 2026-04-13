@@ -1,0 +1,153 @@
+{%- doc -%}
+  MK 倒计时卡片组件
+
+  渲染带倒计时的促销卡片
+
+  @param {string} end_date - 结束日期时间
+  @param {string} [title] - 卡片标题
+  @param {string} [description] - 卡片描述
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-countdown-card', end_date: '2024-12-31T23:59:59', title: '限时优惠', description: '立即抢购' %}
+{%- enddoc -%}
+
+{% liquid
+  assign end_date = end_date | default: ''
+  assign title = title | default: ''
+  assign description = description | default: ''
+  assign class = class | default: ''
+-%}
+
+<div class="mk-countdown-card {{ class }}" data-countdown-card data-end-date="{{ end_date }}">
+  {%- if title != blank -%}
+    <h3 class="mk-countdown-card__title">{{ title }}</h3>
+  {%- endif -%}
+
+  {%- if description != blank -%}
+    <p class="mk-countdown-card__description">{{ description }}</p>
+  {%- endif -%}
+
+  <div class="mk-countdown-card__countdown">
+    <div class="mk-countdown-card__unit">
+      <span class="mk-countdown-card__value" data-days>00</span>
+      <span class="mk-countdown-card__label">{{ 'countdown.days' | t | default: '天' }}</span>
+    </div>
+    <span class="mk-countdown-card__separator">:</span>
+    <div class="mk-countdown-card__unit">
+      <span class="mk-countdown-card__value" data-hours>00</span>
+      <span class="mk-countdown-card__label">{{ 'countdown.hours' | t | default: '时' }}</span>
+    </div>
+    <span class="mk-countdown-card__separator">:</span>
+    <div class="mk-countdown-card__unit">
+      <span class="mk-countdown-card__value" data-minutes>00</span>
+      <span class="mk-countdown-card__label">{{ 'countdown.minutes' | t | default: '分' }}</span>
+    </div>
+    <span class="mk-countdown-card__separator">:</span>
+    <div class="mk-countdown-card__unit">
+      <span class="mk-countdown-card__value" data-seconds>00</span>
+      <span class="mk-countdown-card__label">{{ 'countdown.seconds' | t | default: '秒' }}</span>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-countdown-card {
+    padding: 24px;
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    text-align: center;
+  }
+
+  .mk-countdown-card__title {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-foreground);
+  }
+
+  .mk-countdown-card__description {
+    margin: 0 0 20px 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-countdown-card__countdown {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mk-countdown-card__unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 50px;
+  }
+
+  .mk-countdown-card__value {
+    font-size: 28px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-primary, #000);
+    line-height: 1;
+  }
+
+  .mk-countdown-card__label {
+    font-size: 11px;
+    color: var(--color-text-secondary, #666);
+    margin-top: 4px;
+  }
+
+  .mk-countdown-card__separator {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-primary, #000);
+    margin-top: -16px;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class CountdownCard extends HTMLElement {
+    constructor() {
+      super();
+      this.endDate = new Date(this.dataset.endDate).getTime();
+      this.days = this.querySelector('[data-days]');
+      this.hours = this.querySelector('[data-hours]');
+      this.minutes = this.querySelector('[data-minutes]');
+      this.seconds = this.querySelector('[data-seconds]');
+      this.init();
+    }
+
+    init() {
+      if (this.endDate) {
+        this.update();
+        setInterval(() => this.update(), 1000);
+      }
+    }
+
+    update() {
+      const now = Date.now();
+      const distance = this.endDate - now;
+
+      if (distance < 0) {
+        this.innerHTML = '<p class="mk-countdown-card__expired">{{ 'countdown.expired' | t | default: '已过期' }}</p>';
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      if (this.days) this.days.textContent = String(days).padStart(2, '0');
+      if (this.hours) this.hours.textContent = String(hours).padStart(2, '0');
+      if (this.minutes) this.minutes.textContent = String(minutes).padStart(2, '0');
+      if (this.seconds) this.seconds.textContent = String(seconds).padStart(2, '0');
+    }
+  }
+
+  customElements.define('countdown-card', CountdownCard);
+{% endjavascript %}

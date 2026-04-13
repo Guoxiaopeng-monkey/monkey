@@ -1,0 +1,26 @@
+{%- doc -%}
+  MK 税费说明组件
+
+  渲染税费和关税说明
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-tax-line' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<p class="mk-tax-line {{ class }}">
+  {{ 'cart.taxes_and_duties' | t | default: '税费和关税将在结算时计算' }}
+</p>
+
+{% stylesheet %}
+  .mk-tax-line {
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}

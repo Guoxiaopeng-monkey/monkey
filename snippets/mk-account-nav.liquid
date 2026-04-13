@@ -1,0 +1,78 @@
+{%- doc -%}
+  MK 账户导航组件
+
+  渲染账户页面导航
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-account-nav' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<nav class="mk-account-nav {{ class }}">
+  <a href="{{ routes.account_url }}" class="mk-account-nav__link {% if request.path == routes.account_url %}mk-account-nav__link--active{% endif %}">
+    {{- 'icon-account.svg' | inline_asset_content -}}
+    <span>{{ 'account.overview' | t | default: '账户概览' }}</span>
+  </a>
+
+  <a href="{{ routes.account_url }}/orders" class="mk-account-nav__link {% if request.path contains '/orders' %}mk-account-nav__link--active{% endif %}">
+    {{- 'icon-order.svg' | inline_asset_content -}}
+    <span>{{ 'account.orders' | t | default: '我的订单' }}</span>
+  </a>
+
+  <a href="{{ routes.account_url }}/addresses" class="mk-account-nav__link {% if request.path contains '/addresses' %}mk-account-nav__link--active{% endif %}">
+    {{- 'icon-location.svg' | inline_asset_content -}}
+    <span>{{ 'account.addresses' | t | default: '收货地址' }}</span>
+  </a>
+
+  <a href="{{ routes.account_url }}/wishlist" class="mk-account-nav__link {% if request.path contains '/wishlist' %}mk-account-nav__link--active{% endif %}">
+    {{- 'icon-heart.svg' | inline_asset_content -}}
+    <span>{{ 'account.wishlist' | t | default: '心愿单' }}</span>
+  </a>
+</nav>
+
+{% stylesheet %}
+  .mk-account-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-account-nav {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+
+  .mk-account-nav__link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-account-nav__link:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-account-nav__link--active {
+    background-color: var(--color-background-secondary, #f5f5f5);
+    color: var(--color-primary, #000);
+  }
+
+  .mk-account-nav__link svg {
+    width: 20px;
+    height: 20px;
+  }
+{% endstylesheet %}

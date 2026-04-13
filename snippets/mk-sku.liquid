@@ -1,0 +1,42 @@
+{%- doc -%}
+  MK SKU标签组件
+
+  渲染SKU编号标签
+
+  @param {object} variant - 变体对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-sku', variant: product.selected_or_first_available_variant %}
+{%- enddoc -%}
+
+{% liquid
+  assign variant = variant | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if variant != blank and variant.sku != blank -%}
+  <span class="mk-sku {{ class }}" data-sku>
+    <span class="mk-sku__label">SKU:</span>
+    <span class="mk-sku__value">{{ variant.sku }}</span>
+  </span>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-sku {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-sku__label {
+    font-weight: 500;
+  }
+
+  .mk-sku__value {
+    font-weight: 400;
+    font-family: monospace;
+  }
+{% endstylesheet %}

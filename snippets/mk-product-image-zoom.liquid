@@ -1,0 +1,97 @@
+{%- doc -%}
+  MK 图片放大组件
+
+  渲染可放大查看的图片
+
+  @param {object} image - 图片对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-product-image-zoom', image: product.featured_image %}
+{%- enddoc -%}
+
+{% liquid
+  assign image = image | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if image != blank -%}
+  <div class="mk-product-image-zoom {{ class }}" data-image-zoom data-zoom-src="{{ image | image_url: width: 2000 }}">
+    <img
+      src="{{ image | image_url: width: 800 }}"
+      alt="{{ image.alt | default: product.title }}"
+      class="mk-product-image-zoom__image"
+      loading="lazy"
+    >
+    <div class="mk-product-image-zoom__lens"></div>
+    <div class="mk-product-image-zoom__result"></div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-product-image-zoom {
+    position: relative;
+    overflow: hidden;
+    cursor: zoom-in;
+  }
+
+  .mk-product-image-zoom__image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .mk-product-image-zoom__result {
+    position: absolute;
+    top: 0;
+    right: calc(100% + 20px);
+    width: 300px;
+    height: 300px;
+    background-repeat: no-repeat;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+  }
+
+  .mk-product-image-zoom:hover .mk-product-image-zoom__result {
+    opacity: 1;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class ProductImageZoom extends HTMLElement {
+    constructor() {
+      super();
+      this.container = this.querySelector('.mk-product-image-zoom');
+      this.img = this.querySelector('.mk-product-image-zoom__image');
+      this.result = this.querySelector('.mk-product-image-zoom__result');
+      this.zoomSrc = this.dataset.zoomSrc;
+
+      this.init();
+    }
+
+    init() {
+      if (!this.zoomSrc) return;
+
+      this.result.style.backgroundImage = `url(${this.zoomSrc})`;
+      this.result.style.backgroundSize = '200%';
+
+      this.container?.addEventListener('mousemove', (e) => {
+        const rect = this.img.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const percentX = (x / rect.width) * 100;
+        const percentY = (y / rect.height) * 100;
+
+        this.result.style.backgroundPosition = `${percentX}% ${percentY}%`;
+      });
+    }
+  }
+
+  customElements.define('product-image-zoom', ProductImageZoom);
+{% endjavascript %}

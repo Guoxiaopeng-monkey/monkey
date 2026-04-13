@@ -1,0 +1,34 @@
+{%- doc -%}
+  MK 边框覆盖样式组件
+
+  设置自定义边框样式
+
+  @param {string} [width] - 边框宽度
+  @param {string} [style] - 边框样式：solid, dashed, dotted
+  @param {string} [color] - 边框颜色
+  @param {string} [radius] - 圆角
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-border-override', width: '2px', style: 'solid', color: '#000', radius: '8px' %}
+{%- enddoc -%}
+
+{% liquid
+  assign width = width | default: '1px'
+  assign style = style | default: 'solid'
+  assign color = color | default: 'var(--color-border)'
+  assign radius = radius | default: '0px'
+  assign class = class | default: ''
+
+  assign border_style = width | append: ' ' | append: style | append: ' ' | append: color | append: '; border-radius: ' | append: radius
+-%}
+
+<div class="mk-border-override {{ class }}" style="--border-override: {{ border_style }}">
+  {{ content }}
+</div>
+
+{% stylesheet %}
+  .mk-border-override {
+    border: var(--border-override, 1px solid var(--color-border));
+  }
+{% endstylesheet %}

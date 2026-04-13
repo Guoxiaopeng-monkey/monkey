@@ -1,0 +1,25 @@
+{%- doc -%}
+  MK 渲染动态Liquid组件
+
+  动态渲染任意liquid片段
+
+  @param {string} template - 模板名称
+  @param {object} [data] - 传递的数据
+
+  @example
+  {% render 'mk-liquid', template: 'featured-product', data: section %}
+{%- enddoc -%}
+
+{% liquid
+  assign template = template | default: ''
+  assign data = data | default: nil
+
+  case template
+    when 'featured-product'
+      render 'mk-product-card', product: data
+    when 'featured-collection'
+      render 'mk-collection-card', collection: data
+    else
+      echo 'Template not found'
+  endcase
+-%}

@@ -1,0 +1,255 @@
+{%- doc -%}
+  MK 头部抽屉菜单组件
+
+  渲染移动端抽屉菜单
+
+  @param {object[]} links - 链接数组
+
+  @example
+  {% render 'mk-header-drawer', links: menu.links %}
+{%- enddoc -%}
+
+{% liquid
+  assign links = links | default: empty_array
+  if links == empty_array
+    assign links = '[]' | parse_json
+  endif
+-%}
+
+<div class="mk-header-drawer" data-header-drawer>
+  <button type="button" class="mk-header-drawer__close" aria-label="{{ 'actions.close' | t }}">
+    {{- 'icon-close.svg' | inline_asset_content -}}
+  </button>
+
+  <nav class="mk-header-drawer__nav" aria-label="{{ 'general.menu' | t | default: '菜单' }}">
+    <ul class="mk-header-drawer__list">
+      {%- for link in links -%}
+        <li class="mk-header-drawer__item {% if link.links.size > 0 %}mk-header-drawer__item--has-submenu{% endif %}">
+          <a href="{{ link.url }}" class="mk-header-drawer__link">
+            {{ link.title }}
+          </a>
+
+          {%- if link.links.size > 0 -%}
+            <button type="button" class="mk-header-drawer__submenu-toggle" aria-label="{{ link.title }}">
+              {{- 'icon-chevron-right.svg' | inline_asset_content -}}
+            </button>
+
+            <div class="mk-header-drawer__submenu">
+              <button type="button" class="mk-header-drawer__back" aria-label="{{ 'general.back' | t }}">
+                {{- 'icon-arrow-left.svg' | inline_asset_content -}}
+              </button>
+              <span class="mk-header-drawer__submenu-title">{{ link.title }}</span>
+              <ul class="mk-header-drawer__submenu-list">
+                {%- for sublink in link.links -%}
+                  <li>
+                    <a href="{{ sublink.url }}" class="mk-header-drawer__submenu-link">{{ sublink.title }}</a>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            </div>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </nav>
+</div>
+
+{% stylesheet %}
+  .mk-header-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: 320px;
+    height: 100vh;
+    background-color: var(--color-background);
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+  }
+
+  .mk-header-drawer[open] {
+    transform: translateX(0);
+  }
+
+  .mk-header-drawer__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-foreground);
+    border-radius: 8px;
+  }
+
+  .mk-header-drawer__close:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-header-drawer__close svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mk-header-drawer__nav {
+    padding: 60px 20px 20px;
+  }
+
+  .mk-header-drawer__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mk-header-drawer__item {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .mk-header-drawer__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    text-decoration: none;
+  }
+
+  .mk-header-drawer__submenu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-secondary, #666);
+    margin: -44px 0 0 auto;
+  }
+
+  .mk-header-drawer__submenu-toggle svg {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.2s ease;
+  }
+
+  .mk-header-drawer__item--has-submenu[open] .mk-header-drawer__submenu-toggle svg {
+    transform: rotate(90deg);
+  }
+
+  /* 子菜单 */
+  .mk-header-drawer__submenu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: 320px;
+    height: 100vh;
+    background-color: var(--color-background);
+    padding: 60px 20px 20px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1001;
+  }
+
+  .mk-header-drawer__submenu[open] {
+    transform: translateX(0);
+  }
+
+  .mk-header-drawer__back {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-foreground);
+    border-radius: 8px;
+  }
+
+  .mk-header-drawer__back svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mk-header-drawer__submenu-title {
+    display: block;
+    padding: 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .mk-header-drawer__submenu-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mk-header-drawer__submenu-link {
+    display: block;
+    padding: 14px 0;
+    font-size: 15px;
+    color: var(--color-foreground);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class HeaderDrawer extends HTMLElement {
+    constructor() {
+      super();
+      this.drawer = this.querySelector('.mk-header-drawer');
+      this.submenuToggles = this.querySelectorAll('.mk-header-drawer__submenu-toggle');
+      this.backButtons = this.querySelectorAll('.mk-header-drawer__back');
+      this.closeButton = this.querySelector('.mk-header-drawer__close');
+
+      this.init();
+    }
+
+    init() {
+      this.submenuToggles.forEach(toggle => {
+        toggle.addEventListener('click', (e) => {
+          const item = e.target.closest('.mk-header-drawer__item');
+          const submenu = item.querySelector('.mk-header-drawer__submenu');
+          if (submenu) {
+            submenu.setAttribute('open', '');
+          }
+        });
+      });
+
+      this.backButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const submenu = e.target.closest('.mk-header-drawer__submenu');
+          if (submenu) {
+            submenu.removeAttribute('open');
+          }
+        });
+      });
+
+      if (this.closeButton) {
+        this.closeButton.addEventListener('click', () => {
+          this.drawer.removeAttribute('open');
+        });
+      }
+    }
+  }
+
+  customElements.define('header-drawer-component', HeaderDrawer);
+{% endjavascript %}

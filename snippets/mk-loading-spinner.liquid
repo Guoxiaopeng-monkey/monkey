@@ -1,0 +1,60 @@
+{%- doc -%}
+  MK 加载动画组件
+
+  渲染加载中动画
+
+  @param {string} [size] - 尺寸：small, medium, large
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-loading-spinner', size: 'large' %}
+{%- enddoc -%}
+
+{% liquid
+  assign size = size | default: 'medium'
+  assign class = class | default: ''
+-%}
+
+<div class="mk-loading-spinner mk-loading-spinner--{{ size }} {{ class }}">
+  <div class="mk-loading-spinner__ring"></div>
+</div>
+
+{% stylesheet %}
+  .mk-loading-spinner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mk-loading-spinner__ring {
+    border-radius: 50%;
+    border: 2px solid var(--color-border);
+    border-top-color: var(--color-primary, #000);
+    animation: mk-spin 0.8s linear infinite;
+  }
+
+  /* 尺寸变体 */
+  .mk-loading-spinner--small .mk-loading-spinner__ring {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+  }
+
+  .mk-loading-spinner--medium .mk-loading-spinner__ring {
+    width: 24px;
+    height: 24px;
+    border-width: 2px;
+  }
+
+  .mk-loading-spinner--large .mk-loading-spinner__ring {
+    width: 40px;
+    height: 40px;
+    border-width: 3px;
+  }
+
+  @keyframes mk-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+{% endstylesheet %}

@@ -1,0 +1,71 @@
+{%- doc -%}
+  MK 账户操作按钮组件
+
+  渲染账户页面操作按钮
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-account-actions' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-account-actions {{ class }}">
+  {%- if customer -%}
+    <a href="{{ routes.account_url }}" class="mk-account-actions__link">
+      {{- 'icon-account.svg' | inline_asset_content -}}
+      <span>{{ 'account.dashboard' | t | default: '账户主页' }}</span>
+    </a>
+    <a href="{{ routes.account_url }}/orders" class="mk-account-actions__link">
+      {{- 'icon-order.svg' | inline_asset_content -}}
+      <span>{{ 'account.orders' | t | default: '我的订单' }}</span>
+    </a>
+    <a href="{{ routes.account_url }}/addresses" class="mk-account-actions__link">
+      {{- 'icon-location.svg' | inline_asset_content -}}
+      <span>{{ 'account.addresses' | t | default: '收货地址' }}</span>
+    </a>
+    <a href="{{ routes.account_logout_url }}" class="mk-account-actions__link mk-account-actions__link--logout">
+      {{- 'icon-logout.svg' | inline_asset_content -}}
+      <span>{{ 'account.logout' | t | default: '退出登录' }}</span>
+    </a>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .mk-account-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mk-account-actions__link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    text-decoration: none;
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-account-actions__link:hover {
+    border-color: var(--color-foreground);
+  }
+
+  .mk-account-actions__link--logout {
+    color: var(--color-error, #e53935);
+  }
+
+  .mk-account-actions__link svg {
+    width: 20px;
+    height: 20px;
+  }
+{% endstylesheet %}

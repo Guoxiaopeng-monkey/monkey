@@ -1,0 +1,174 @@
+{%- doc -%}
+  MK Cookie横幅组件
+
+  渲染Cookie同意横幅
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-cookie-banner' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-cookie-banner {{ class }}" data-cookie-banner hidden>
+  <div class="mk-cookie-banner__container">
+    <div class="mk-cookie-banner__content">
+      <h3 class="mk-cookie-banner__title">{{ 'cookies.title' | t | default: 'Cookie使用说明' }}</h3>
+      <p class="mk-cookie-banner__text">
+        {{ 'cookies.message' | t | default: '我们使用Cookie来提升您的购物体验。点击"同意"即表示您同意我们的Cookie政策。' }}
+        <a href="{{ routes.page_url | default: '/pages/privacy' }}">{{ 'cookies.learn_more' | t | default: '了解更多' }}</a>
+      </p>
+    </div>
+
+    <div class="mk-cookie-banner__actions">
+      <button type="button" class="mk-cookie-banner__btn mk-cookie-banner__btn--decline" data-cookie-decline>
+        {{ 'cookies.decline' | t | default: '拒绝' }}
+      </button>
+      <button type="button" class="mk-cookie-banner__btn mk-cookie-banner__btn--accept" data-cookie-accept>
+        {{ 'cookies.accept' | t | default: '同意' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--color-background);
+    border-top: 1px solid var(--color-border);
+    padding: 20px;
+    z-index: 1000;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .mk-cookie-banner[hidden] {
+    display: none;
+  }
+
+  .mk-cookie-banner__container {
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-cookie-banner__container {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .mk-cookie-banner__content {
+    flex: 1;
+  }
+
+  .mk-cookie-banner__title {
+    margin: 0 0 4px 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .mk-cookie-banner__text {
+    margin: 0;
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+    line-height: 1.5;
+  }
+
+  .mk-cookie-banner__text a {
+    color: var(--color-primary, #000);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .mk-cookie-banner__actions {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .mk-cookie-banner__btn {
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-cookie-banner__btn--decline {
+    color: var(--color-foreground);
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+  }
+
+  .mk-cookie-banner__btn--decline:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-cookie-banner__btn--accept {
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border: none;
+  }
+
+  .mk-cookie-banner__btn--accept:hover {
+    opacity: 0.85;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class CookieBanner extends HTMLElement {
+    constructor() {
+      super();
+      this.banner = this.querySelector('.mk-cookie-banner');
+      this.acceptBtn = this.querySelector('[data-cookie-accept]');
+      this.declineBtn = this.querySelector('[data-cookie-decline]');
+
+      this.init();
+    }
+
+    init() {
+      // 检查是否已经同意
+      if (!this.hasConsent()) {
+        this.banner.hidden = false;
+      }
+
+      this.acceptBtn?.addEventListener('click', () => this.accept());
+      this.declineBtn?.addEventListener('click', () => this.decline();
+    }
+
+    hasConsent() {
+      try {
+        return localStorage.getItem('cookie_consent') !== null;
+      } catch {
+        return false;
+      }
+    }
+
+    accept() {
+      try {
+        localStorage.setItem('cookie_consent', 'accepted');
+      } catch {}
+      this.banner.hidden = true;
+    }
+
+    decline() {
+      try {
+        localStorage.setItem('cookie_consent', 'declined');
+      } catch {}
+      this.banner.hidden = true;
+    }
+  }
+
+  customElements.define('cookie-banner', CookieBanner);
+{% endjavascript %}

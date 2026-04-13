@@ -1,0 +1,93 @@
+{%- doc -%}
+  MK 可提货店铺列表组件
+
+  渲染可提货门店列表
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-pickup-availabilities', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+  assign availabilities = product.store_availabilities | default: empty_array
+-%}
+
+{%- if availabilities.size > 0 -%}
+  <div class="mk-pickup-availabilities {{ class }}">
+    <h3 class="mk-pickup-availabilities__title">{{ 'pickup.available_at' | t | default: '可提货门店' }}</h3>
+
+    <ul class="mk-pickup-availabilities__list">
+      {%- for availability in availabilities -%}
+        <li class="mk-pickup-availabilities__item">
+          <span class="mk-pickup-availabilities__location">{{ availability.location_name }}</span>
+          <span class="mk-pickup-availabilities__status {% if availability.available %}mk-pickup-availabilities__status--available{% else %}mk-pickup-availabilities__status--unavailable{% endif %}">
+            {% if availability.available %}
+              {{ 'pickup.available' | t | default: '可提货' }}
+            {% else %}
+              {{ 'pickup.unavailable' | t | default: '暂不可提' }}
+            {% endif %}
+          </span>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-pickup-availabilities {
+    padding: 20px;
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border-radius: 12px;
+  }
+
+  .mk-pickup-availabilities__title {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .mk-pickup-availabilities__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mk-pickup-availabilities__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .mk-pickup-availabilities__item:last-child {
+    border-bottom: none;
+  }
+
+  .mk-pickup-availabilities__location {
+    font-size: 13px;
+    color: var(--color-foreground);
+  }
+
+  .mk-pickup-availabilities__status {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+
+  .mk-pickup-availabilities__status--available {
+    color: var(--color-success, #2e7d32);
+    background-color: rgba(46, 125, 50, 0.1);
+  }
+
+  .mk-pickup-availabilities__status--unavailable {
+    color: var(--color-text-secondary, #666);
+    background-color: var(--color-background);
+  }
+{% endstylesheet %}

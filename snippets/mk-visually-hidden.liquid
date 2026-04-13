@@ -1,0 +1,30 @@
+{%- doc -%}
+  MK 视觉隐藏组件
+
+  渲染视觉上隐藏但屏幕阅读器可访问的内容
+
+  @param {string} [text] - 要隐藏的文本
+
+  @example
+  {% render 'mk-visually-hidden', text: '跳过导航' %}
+{%- enddoc -%}
+
+{% liquid
+  assign text = text | default: ''
+-%}
+
+<span class="mk-visually-hidden">{{ text }}</span>
+
+{% stylesheet %}
+  .mk-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+{% endstylesheet %}

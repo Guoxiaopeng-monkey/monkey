@@ -1,0 +1,114 @@
+{%- doc -%}
+  MK 编辑博客网格组件
+
+  渲染编辑风格的博客文章网格
+
+  @param {object} blog - 博客对象
+  @param {number} [limit] - 显示数量
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-editorial-blog-grid', blog: blog, limit: 3 %}
+{%- enddoc -%}
+
+{% liquid
+  assign blog = blog | default: nil
+  assign limit = limit | default: 3
+  assign class = class | default: ''
+  assign articles = blog.articles | default: empty_array | slice: 0, limit
+-%}
+
+{%- if articles.size > 0 -%}
+  <div class="mk-editorial-blog-grid {{ class }}">
+    {%- for article in articles -%}
+      <article class="mk-editorial-blog-grid__item">
+        {%- if article.image -%}
+          <a href="{{ article.url }}" class="mk-editorial-blog-grid__image">
+            {{ article.image | image_url: width: 600 | image_tag: loading: 'lazy' }}
+          </a>
+        {%- endif -%}
+
+        <div class="mk-editorial-blog-grid__content">
+          <time class="mk-editorial-blog-grid__date">{{ article.published_at | date: '%Y.%m.%d' }}</time>
+          <h3 class="mk-editorial-blog-grid__title">
+            <a href="{{ article.url }}">{{ article.title }}</a>
+          </h3>
+          <p class="mk-editorial-blog-grid__excerpt">{{ article.excerpt | strip_html | truncate: 80 }}</p>
+        </div>
+      </article>
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-editorial-blog-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-editorial-blog-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .mk-editorial-blog-grid__item {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mk-editorial-blog-grid__image {
+    display: block;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .mk-editorial-blog-grid__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .mk-editorial-blog-grid__image:hover img {
+    transform: scale(1.05);
+  }
+
+  .mk-editorial-blog-grid__content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mk-editorial-blog-grid__date {
+    font-size: 12px;
+    color: var(--color-text-secondary, #666);
+    letter-spacing: 0.5px;
+  }
+
+  .mk-editorial-blog-grid__title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .mk-editorial-blog-grid__title a {
+    color: var(--color-foreground);
+    text-decoration: none;
+  }
+
+  .mk-editorial-blog-grid__title a:hover {
+    text-decoration: underline;
+  }
+
+  .mk-editorial-blog-grid__excerpt {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}

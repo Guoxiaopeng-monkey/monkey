@@ -1,0 +1,188 @@
+{%- comment -%}
+  MK 计数部分板块
+
+  展示数字统计信息
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-countdown-section color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-countdown-section__container">
+    <div class="mk-countdown-section__grid">
+      {%- for i in (1..4) -%}
+        {%- assign number_setting = 'number_' | append: i -%}
+        {%- assign label_setting = 'label_' | append: i -%}
+
+        {%- if ss[number_setting] != blank -%}
+          <div class="mk-countdown-section__item">
+            <span class="mk-countdown-section__number">{{ ss[number_setting] }}</span>
+            <span class="mk-countdown-section__label">{{ ss[label_setting] }}</span>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-countdown-section {
+    padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-countdown-section {
+      padding: {{ ss.padding_top_desktop | default: 64 }}px 0 {{ ss.padding_bottom_desktop | default: 64 }}px;
+    }
+  }
+
+  .mk-countdown-section__container {
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .mk-countdown-section__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    text-align: center;
+  }
+
+  @media (min-width: 750px) {
+    .mk-countdown-section__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 48px;
+    }
+  }
+
+  .mk-countdown-section__item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mk-countdown-section__number {
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-primary, #000);
+  }
+
+  @media (min-width: 750px) {
+    .mk-countdown-section__number {
+      font-size: 56px;
+    }
+  }
+
+  .mk-countdown-section__label {
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 数字统计",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "number_1",
+      "label": "数字 1"
+    },
+    {
+      "type": "text",
+      "id": "label_1",
+      "label": "标签 1"
+    },
+    {
+      "type": "text",
+      "id": "number_2",
+      "label": "数字 2"
+    },
+    {
+      "type": "text",
+      "id": "label_2",
+      "label": "标签 2"
+    },
+    {
+      "type": "text",
+      "id": "number_3",
+      "label": "数字 3"
+    },
+    {
+      "type": "text",
+      "id": "label_3",
+      "label": "标签 3"
+    },
+    {
+      "type": "text",
+      "id": "number_4",
+      "label": "数字 4"
+    },
+    {
+      "type": "text",
+      "id": "label_4",
+      "label": "标签 4"
+    },
+    {
+      "type": "header",
+      "content": "间距"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 数字统计"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,118 @@
+{%- doc -%}
+  MK 图库导航组件
+
+  渲染图库缩略图导航
+
+  @param {object[]} images - 图片数组
+  @param {number} [current_index] - 当前图片索引
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-gallery-nav', images: product.images, current_index: 0 %}
+{%- enddoc -%}
+
+{% liquid
+  assign images = images | default: empty_array
+  assign current_index = current_index | default: 0
+  assign class = class | default: ''
+
+  if images == empty_array
+    assign images = '[]' | parse_json
+  endif
+-%}
+
+{%- if images.size > 1 -%}
+  <div class="mk-gallery-nav {{ class }}" data-gallery-nav>
+    <button type="button" class="mk-gallery-nav__btn mk-gallery-nav__btn--prev" data-prev aria-label="{{ 'gallery.previous' | t | default: '上一张' }}">
+      {{- 'icon-arrow-left.svg' | inline_asset_content -}}
+    </button>
+
+    <div class="mk-gallery-nav__thumbs">
+      {%- for image in images -%}
+        <button
+          type="button"
+          class="mk-gallery-nav__thumb {% if forloop.index0 == current_index %}mk-gallery-nav__thumb--active{% endif %}"
+          data-index="{{ forloop.index0 }}"
+        >
+          {{ image | image_url: width: 100 | image_tag: loading: 'lazy' }}
+        </button>
+      {%- endfor -%}
+    </div>
+
+    <button type="button" class="mk-gallery-nav__btn mk-gallery-nav__btn--next" data-next aria-label="{{ 'gallery.next' | t | default: '下一张' }}">
+      {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+    </button>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-gallery-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mk-gallery-nav__thumbs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+
+  .mk-gallery-nav__thumbs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mk-gallery-nav__btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--color-foreground);
+    transition: all 0.2s ease;
+  }
+
+  .mk-gallery-nav__btn:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-gallery-nav__btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .mk-gallery-nav__thumb {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    padding: 2px;
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .mk-gallery-nav__thumb:hover {
+    border-color: var(--color-border);
+  }
+
+  .mk-gallery-nav__thumb--active {
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-gallery-nav__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+{% endstylesheet %}

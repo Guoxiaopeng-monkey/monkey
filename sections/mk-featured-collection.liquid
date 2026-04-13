@@ -1,248 +1,143 @@
 {%- comment -%}
-  MK 推荐产品组件
-  
-  功能：展示精选产品网格
-  
+  MK 特色产品推荐板块
+
+  展示精选产品推荐
+
   作者：崽崽 (AI助手)
-  基于：demo-horizon featured-collection, whale ug-recommended.liquid
 {%- endcomment -%}
 
-{%- liquid
+{% liquid
   assign ss = section.settings
-  assign bg_color = ss.background_color | default: '#ffffff'
-  assign products = ss.collection.products
-  
-  assign pt_mob = ss.padding_top_mobile | default: 48
-  assign pb_mob = ss.padding_bottom_mobile | default: 48
-  assign pt_desk = ss.padding_top_desktop | default: 80
-  assign pb_desk = ss.padding_bottom_desktop | default: 80
-  
-  assign products_to_show = ss.products_to_show | default: 8
-  assign columns_mobile = ss.columns_mobile | default: 2
-  assign columns_desktop = ss.columns_desktop | default: 4
-  assign image_ratio = ss.image_ratio | default: '1/1'
-  assign show_vendor = ss.show_vendor
-  assign show_rating = ss.show_rating
+  assign collection = collections[ss.collection] | default: nil
+  assign products = collection.products | default: empty_array | slice: 0, ss.products_to_show | default: 8
 -%}
-
-<style>
-  #{{ section.id }} {
-    --fc-bg: {{ bg_color }};
-    --fc-pt-mob: {{ pt_mob }}px;
-    --fc-pb-mob: {{ pb_mob }}px;
-    --fc-pt-desk: {{ pt_desk }}px;
-    --fc-pb-desk: {{ pb_desk }}px;
-    --fc-cols-mob: {{ columns_mobile }};
-    --fc-cols-desk: {{ columns_desktop }};
-    --fc-ratio: {{ image_ratio }};
-    background-color: var(--fc-bg);
-    padding: var(--fc-pt-mob) 0 var(--fc-pb-mob);
-  }
-  
-  @media (min-width: 750px) {
-    #{{ section.id }} {
-      padding: var(--fc-pt-desk) 0 var(--fc-pb-desk);
-    }
-  }
-</style>
 
 <section
   id="{{ section.id }}"
-  class="mk-featured-collection"
-  data-skip-node-update
+  class="mk-featured-collection color-{{ ss.color_scheme | default: 'background-1' }}"
 >
   <div class="mk-featured-collection__container">
-    
-    {%- comment -%} 头部 {%- endcomment -%}
-    <div class="mk-featured-collection__header">
-      <div class="mk-featured-collection__header-content">
-        {% if ss.label != blank %}
-          <p class="mk-featured-collection__label">{{ ss.label }}</p>
-        {% endif %}
-        {% if ss.heading != blank %}
-          <h2 class="mk-featured-collection__heading">{{ ss.heading }}</h2>
-        {% endif %}
-        {% if ss.description != blank %}
-          <p class="mk-featured-collection__description">{{ ss.description }}</p>
-        {% endif %}
-      </div>
-      
-      {% if ss.show_view_all and ss.view_all_link != blank %}
-        <a href="{{ ss.view_all_link }}" class="mk-featured-collection__view-all">
-          {{ ss.view_all_text | default: '查看全部' }}
+    <header class="mk-featured-collection__header">
+      {%- if ss.title != blank -%}
+        <h2 class="mk-featured-collection__title">{{ ss.title }}</h2>
+      {%- endif -%}
+
+      {%- if ss.show_description and collection.description != blank -%}
+        <p class="mk-featured-collection__description">{{ collection.description }}</p>
+      {%- endif -%}
+
+      {%- if ss.show_view_all -%}
+        <a href="{{ collection.url | default: routes.collections_url }}" class="mk-featured-collection__link">
+          {{ 'sections.featured_collection.view_all' | t | default: '查看全部' }}
           {{- 'icon-arrow-right.svg' | inline_asset_content -}}
         </a>
-      {% endif %}
-    </div>
-    
-    {%- comment -%} 产品网格 {%- endcomment -%}
-    <div class="mk-featured-collection__grid">
-      {%- if ss.collection != blank -%}
-        {%- for product in ss.collection.products limit: products_to_show -%}
-          <div class="mk-featured-collection__item">
-            {% render 'mk-product-card', 
-              product: product,
-              show_vendor: show_vendor,
-              show_rating: show_rating,
-              aspect_ratio: image_ratio
-            %}
-          </div>
-        {%- endfor -%}
-      {%- else -%}
-        {%- for i in (1..products_to_show) -%}
-          <div class="mk-featured-collection__item">
-            {% render 'mk-product-card', 
-              product: blank,
-              show_vendor: show_vendor,
-              show_rating: show_rating,
-              aspect_ratio: image_ratio
-            %}
-          </div>
-        {%- endfor -%}
       {%- endif -%}
-    </div>
+    </header>
+
+    {%- if products.size > 0 -%}
+      <div class="mk-featured-collection__grid">
+        {%- for product in products -%}
+          {% render 'mk-product-card', product: product %}
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <div class="mk-featured-collection__empty">
+        {% render 'mk-empty-state', title: 'sections.featured_collection.empty' %}
+      </div>
+    {%- endif -%}
   </div>
 </section>
 
 {% stylesheet %}
+  .mk-featured-collection {
+    padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-featured-collection {
+      padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px;
+    }
+  }
+
   .mk-featured-collection__container {
-    max-width: var(--container-max-width, 1440px);
+    max-width: var(--container-max-width, 1200px);
     margin: 0 auto;
     padding: 0 var(--container-padding, 32px);
   }
 
-  /* Header */
   .mk-featured-collection__header {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 40px;
+    margin-bottom: 32px;
     text-align: center;
   }
 
-  @media (min-width: 750px) {
-    .mk-featured-collection__header {
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: flex-end;
-      text-align: left;
-    }
-  }
-
-  .mk-featured-collection__header-content {
-    max-width: 600px;
-  }
-
-  .mk-featured-collection__label {
-    margin: 0 0 8px 0;
-    font-size: 13px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--color-primary, #000);
-  }
-
-  .mk-featured-collection__heading {
+  .mk-featured-collection__title {
     margin: 0 0 12px 0;
-    font-size: clamp(26px, 4vw, 36px);
+    font-size: 28px;
     font-weight: 700;
-    line-height: 1.2;
   }
 
   .mk-featured-collection__description {
-    margin: 0;
+    margin: 0 0 16px 0;
     font-size: 16px;
-    line-height: 1.5;
-    opacity: 0.8;
+    color: var(--color-text-secondary, #666);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
-  /* View All */
-  .mk-featured-collection__view-all {
+  .mk-featured-collection__link {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    flex-shrink: 0;
     font-size: 14px;
     font-weight: 600;
-    text-decoration: none;
     color: var(--color-primary, #000);
-    transition: gap 0.2s ease;
+    text-decoration: none;
   }
 
-  .mk-featured-collection__view-all:hover {
-    gap: 12px;
+  .mk-featured-collection__link:hover {
+    text-decoration: underline;
   }
 
-  .mk-featured-collection__view-all svg {
+  .mk-featured-collection__link svg {
     width: 16px;
     height: 16px;
   }
 
-  /* Grid */
   .mk-featured-collection__grid {
     display: grid;
-    grid-template-columns: repeat(var(--fc-cols-mob, 2), 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
-  }
-
-  @media (min-width: 480px) {
-    .mk-featured-collection__grid {
-      gap: 20px;
-    }
   }
 
   @media (min-width: 750px) {
     .mk-featured-collection__grid {
-      grid-template-columns: repeat(var(--fc-cols-desk, 4), 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 24px;
     }
   }
 
-  .mk-featured-collection__item {
-    /* Product card wrapper */
+  .mk-featured-collection__empty {
+    padding: 64px 0;
+    text-align: center;
   }
-
-  /* No products state */
-  {%- if ss.collection == blank -%}
-    .mk-featured-collection__item:nth-child(n+5) {
-      display: none;
-    }
-  {%- endif -%}
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "MK 推荐产品",
+  "name": "MK 特色产品推荐",
   "tag": "section",
   "settings": [
     {
-      "type": "header",
-      "content": "内容设置"
-    },
-    {
       "type": "text",
-      "id": "label",
-      "label": "标签文字"
-    },
-    {
-      "type": "text",
-      "id": "heading",
+      "id": "title",
       "label": "标题",
-      "default": "精选产品"
-    },
-    {
-      "type": "textarea",
-      "id": "description",
-      "label": "描述文字"
-    },
-    {
-      "type": "header",
-      "content": "产品设置"
+      "default": "精选推荐"
     },
     {
       "type": "collection",
       "id": "collection",
-      "label": "产品集合"
+      "label": "收藏夹"
     },
     {
       "type": "range",
@@ -253,86 +148,20 @@
       "default": 8
     },
     {
-      "type": "header",
-      "content": "布局设置"
-    },
-    {
-      "type": "range",
-      "id": "columns_mobile",
-      "label": "列数 (移动端)",
-      "min": 1,
-      "max": 3,
-      "default": 2
-    },
-    {
-      "type": "range",
-      "id": "columns_desktop",
-      "label": "列数 (PC端)",
-      "min": 2,
-      "max": 6,
-      "default": 4
-    },
-    {
-      "type": "select",
-      "id": "image_ratio",
-      "label": "图片比例",
-      "options": [
-        { "value": "1/1", "label": "正方形 1:1" },
-        { "value": "3/4", "label": "竖向 3:4" },
-        { "value": "4/3", "label": "横向 4:3" }
-      ],
-      "default": "1/1"
-    },
-    {
-      "type": "header",
-      "content": "产品信息"
-    },
-    {
       "type": "checkbox",
-      "id": "show_vendor",
-      "label": "显示供应商",
+      "id": "show_description",
+      "label": "显示描述",
       "default": false
     },
     {
       "type": "checkbox",
-      "id": "show_rating",
-      "label": "显示评分",
-      "default": true
-    },
-    {
-      "type": "header",
-      "content": "查看全部链接"
-    },
-    {
-      "type": "checkbox",
       "id": "show_view_all",
-      "label": "显示查看全部按钮",
+      "label": "显示查看全部链接",
       "default": true
     },
     {
-      "type": "text",
-      "id": "view_all_text",
-      "label": "按钮文字",
-      "default": "查看全部"
-    },
-    {
-      "type": "url",
-      "id": "view_all_link",
-      "label": "链接地址"
-    },
-    {
       "type": "header",
-      "content": "颜色设置"
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "背景颜色",
-      "default": "#ffffff"
-    },
-    {
-      "type": "header",
-      "content": "间距设置"
+      "content": "间距"
     },
     {
       "type": "range",
@@ -369,11 +198,17 @@
       "max": 200,
       "default": 80,
       "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
     }
   ],
   "presets": [
     {
-      "name": "MK 推荐产品"
+      "name": "MK 特色产品推荐"
     }
   ]
 }

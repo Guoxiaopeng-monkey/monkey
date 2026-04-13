@@ -1,0 +1,190 @@
+{%- doc -%}
+  MK 礼品卡表单组件
+
+  渲染礼品卡赠送表单
+
+  @param {object} product - 产品对象
+  @param {object} form - 表单对象
+
+  @example
+  {% render 'mk-gift-card-form', product: product, form: form %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign form = form | default: nil
+-%}
+
+{%- if product and product.gift_card? -%}
+  <div class="mk-gift-card-form" data-gift-card-form>
+    <fieldset class="mk-gift-card-form__fieldset">
+      <legend class="mk-gift-card-form__legend">
+        {{ 'gift_card.recipient' | t | default: '礼品卡收件人' }}
+      </legend>
+
+      <label class="mk-gift-card-form__radio">
+        <input
+          type="radio"
+          name="gift_card_delivery"
+          value="self"
+          checked
+          class="mk-gift-card-form__radio-input"
+        >
+        <span class="mk-gift-card-form__radio-label">{{ 'gift_card.send_to_myself' | t | default: '发送给我自己' }}</span>
+      </label>
+
+      <label class="mk-gift-card-form__radio">
+        <input
+          type="radio"
+          name="gift_card_delivery"
+          value="recipient"
+          class="mk-gift-card-form__radio-input"
+        >
+        <span class="mk-gift-card-form__radio-label">{{ 'gift_card.send_to_recipient' | t | default: '发送给收件人' }}</span>
+      </label>
+    </fieldset>
+
+    <div class="mk-gift-card-form__fields" data-recipient-fields hidden>
+      <div class="mk-gift-card-form__field">
+        <label for="recipient-email" class="mk-gift-card-form__label">
+          {{ 'gift_card.recipient_email' | t | default: '收件人邮箱' }}
+        </label>
+        <input
+          type="email"
+          id="recipient-email"
+          name="properties[Recipient email]"
+          class="mk-gift-card-form__input"
+          placeholder="{{ 'gift_card.recipient_email_placeholder' | t | default: '收件人邮箱地址' }}"
+        >
+      </div>
+
+      <div class="mk-gift-card-form__field">
+        <label for="recipient-name" class="mk-gift-card-form__label">
+          {{ 'gift_card.recipient_name' | t | default: '收件人姓名' }}
+        </label>
+        <input
+          type="text"
+          id="recipient-name"
+          name="properties[Recipient name]"
+          class="mk-gift-card-form__input"
+          placeholder="{{ 'gift_card.recipient_name_placeholder' | t | default: '收件人姓名' }}"
+        >
+      </div>
+
+      <div class="mk-gift-card-form__field">
+        <label for="message" class="mk-gift-card-form__label">
+          {{ 'gift_card.message' | t | default: '祝福语' }}
+        </label>
+        <textarea
+          id="message"
+          name="properties[Message]"
+          class="mk-gift-card-form__textarea"
+          rows="4"
+          placeholder="{{ 'gift_card.message_placeholder' | t | default: '输入您的祝福语...' }}"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-gift-card-form {
+    margin: 24px 0;
+    padding: 20px;
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border-radius: 12px;
+  }
+
+  .mk-gift-card-form__fieldset {
+    margin: 0 0 16px 0;
+    padding: 0;
+    border: none;
+  }
+
+  .mk-gift-card-form__legend {
+    margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .mk-gift-card-form__radio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+
+  .mk-gift-card-form__radio-input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-primary, #000);
+  }
+
+  .mk-gift-card-form__radio-label {
+    font-size: 14px;
+    color: var(--color-foreground);
+  }
+
+  .mk-gift-card-form__fields {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mk-gift-card-form__fields[hidden] {
+    display: none;
+  }
+
+  .mk-gift-card-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .mk-gift-card-form__label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .mk-gift-card-form__input,
+  .mk-gift-card-form__textarea {
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: border-color 0.2s ease;
+  }
+
+  .mk-gift-card-form__input:focus,
+  .mk-gift-card-form__textarea:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-gift-card-form__textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelectorAll('[data-gift-card-form]').forEach(form => {
+    const radios = form.querySelectorAll('input[name="gift_card_delivery"]');
+    const fields = form.querySelector('[data-recipient-fields]');
+
+    radios.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (e.target.value === 'recipient') {
+          fields.hidden = false;
+        } else {
+          fields.hidden = true;
+        }
+      });
+    });
+  });
+{% endjavascript %}

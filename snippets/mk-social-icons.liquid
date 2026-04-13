@@ -1,0 +1,78 @@
+{%- doc -%}
+  MK 社交图标组件
+
+  渲染社交媒体图标链接
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-social-icons' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+  assign socials = 'facebook|twitter|instagram|youtube|tiktok|pinterest|snapchat|linkedin' | split: '|'
+-%}
+
+<div class="mk-social-icons {{ class }}">
+  {%- for social in socials -%}
+    {%- assign settings_key = 'social_' | append: social | append: '_link' -%}
+    {%- assign link = settings[settings_key] | default: shop.social_accounts[social] -%}
+
+    {%- if link != blank -%}
+      <a
+        href="{{ link }}"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="mk-social-icons__link mk-social-icons__link--{{ social }}"
+        aria-label="{{ social }}"
+      >
+        {{- 'icon-' | append: social | append: '.svg' | inline_asset_content -}}
+      </a>
+    {%- endif -%}
+  {%- endfor -%}
+</div>
+
+{% stylesheet %}
+  .mk-social-icons {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .mk-social-icons__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: var(--color-foreground);
+    border-radius: 50%;
+    transition: all 0.2s ease;
+  }
+
+  .mk-social-icons__link:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+    transform: translateY(-2px);
+  }
+
+  .mk-social-icons__link svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* 紧凑模式 */
+  .mk-social-icons--compact {
+    gap: 8px;
+  }
+
+  .mk-social-icons--compact .mk-social-icons__link {
+    width: 32px;
+    height: 32px;
+  }
+
+  .mk-social-icons--compact .mk-social-icons__link svg {
+    width: 16px;
+    height: 16px;
+  }
+{% endstylesheet %}

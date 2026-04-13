@@ -1,0 +1,111 @@
+{%- doc -%}
+  MK 编辑产品网格组件
+
+  渲染编辑风格的产品网格（大图+信息）
+
+  @param {object[]} products - 产品数组
+  @param {number} [limit] - 显示数量
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-editorial-product-grid', products: products, limit: 3 %}
+{%- enddoc -%}
+
+{% liquid
+  assign products = products | default: empty_array
+  assign limit = limit | default: 3
+  assign class = class | default: ''
+  assign display_products = products | slice: 0, limit
+-%}
+
+{%- if display_products.size > 0 -%}
+  <div class="mk-editorial-product-grid {{ class }}">
+    {%- for product in display_products -%}
+      <article class="mk-editorial-product-grid__item">
+        <a href="{{ product.url }}" class="mk-editorial-product-grid__image">
+          {{ product.featured_image | image_url: width: 800 | image_tag: loading: 'lazy' }}
+        </a>
+
+        <div class="mk-editorial-product-grid__content">
+          <h3 class="mk-editorial-product-grid__title">
+            <a href="{{ product.url }}">{{ product.title }}</a>
+          </h3>
+          <p class="mk-editorial-product-grid__price">
+            {%- if product.price_varies -%}
+              {{ 'products.from' | t }} {{ product.price_min | money }}
+            {%- else -%}
+              {{ product.price | money }}
+            {%- endif -%}
+          </p>
+        </div>
+      </article>
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-editorial-product-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-editorial-product-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .mk-editorial-product-grid__item {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mk-editorial-product-grid__image {
+    display: block;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  .mk-editorial-product-grid__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .mk-editorial-product-grid__item:hover .mk-editorial-product-grid__image img {
+    transform: scale(1.05);
+  }
+
+  .mk-editorial-product-grid__content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .mk-editorial-product-grid__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .mk-editorial-product-grid__title a {
+    color: var(--color-foreground);
+    text-decoration: none;
+  }
+
+  .mk-editorial-product-grid__title a:hover {
+    text-decoration: underline;
+  }
+
+  .mk-editorial-product-grid__price {
+    margin: 0;
+    font-size: 14px;
+    text-align: center;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}

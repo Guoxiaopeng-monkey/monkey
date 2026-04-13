@@ -1,0 +1,35 @@
+{%- doc -%}
+  MK 二维码组件
+
+  渲染二维码图片
+
+  @param {string} data - 二维码数据
+  @param {number} [size] - 二维码尺寸
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-qr-code', data: gift_card.code, size: 150 %}
+{%- enddoc -%}
+
+{% liquid
+  assign data = data | default: ''
+  assign size = size | default: 120
+  assign class = class | default: ''
+  assign qr_url = 'https://api.qrserver.com/v1/create-qr-code/?size=' | append: size | append: 'x' | append: size | append: '&data=' | append: data | url_encode
+-%}
+
+<img
+  src="{{ qr_url }}"
+  alt="{{ 'qr_code.alt' | t | default: '二维码' }}"
+  class="mk-qr-code {{ class }}"
+  width="{{ size }}"
+  height="{{ size }}"
+  loading="lazy"
+>
+
+{% stylesheet %}
+  .mk-qr-code {
+    display: block;
+    border-radius: 8px;
+  }
+{% endstylesheet %}

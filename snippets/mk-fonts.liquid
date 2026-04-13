@@ -1,0 +1,37 @@
+{%- doc -%}
+  MK Fonts字体加载组件
+
+  加载自定义字体
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-fonts' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+{% schema %}
+{
+  "name": "MK Fonts",
+  "settings": [
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Heading Font",
+      "default": "sans-serif"
+    },
+    {
+      "type": "font_picker",
+      "id": "body_font",
+      "label": "Body Font",
+      "default": "sans-serif"
+    }
+  ]
+}
+{% endschema %}

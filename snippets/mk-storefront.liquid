@@ -1,0 +1,63 @@
+{%- doc -%}
+  MK Storefront图标组件
+
+  渲染Shopify storefront相关图标
+
+  @param {string} name - 图标名称
+  @param {number} [size] - 图标尺寸
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-storefront', name: 'account', size: 24 %}
+{%- enddoc -%}
+
+{% liquid
+  assign name = name | default: ''
+  assign size = size | default: 24
+  assign class = class | default: ''
+
+  case name
+    when 'account'
+      echo 'icon-account.svg' | inline_asset_content
+    when 'cart'
+      echo 'icon-cart.svg' | inline_asset_content
+    when 'search'
+      echo 'icon-search.svg' | inline_asset_content
+    when 'menu'
+      echo 'icon-menu.svg' | inline_asset_content
+    when 'wishlist'
+      echo 'icon-heart.svg' | inline_asset_content
+    when 'compare'
+      echo 'icon-compare.svg' | inline_asset_content
+    when 'filter'
+      echo 'icon-filter.svg' | inline_asset_content
+    when 'sort'
+      echo 'icon-sort.svg' | inline_asset_content
+    when 'grid'
+      echo 'icon-grid.svg' | inline_asset_content
+    when 'list'
+      echo 'icon-list.svg' | inline_asset_content
+    when 'close'
+      echo 'icon-close.svg' | inline_asset_content
+    when 'chevron-down'
+      echo 'icon-chevron-down.svg' | inline_asset_content
+    when 'chevron-right'
+      echo 'icon-chevron-right.svg' | inline_asset_content
+    when 'arrow-right'
+      echo 'icon-arrow-right.svg' | inline_asset_content
+    when 'arrow-left'
+      echo 'icon-arrow-left.svg' | inline_asset_content
+    else
+      echo 'icon-placeholder.svg' | inline_asset_content
+  endcase
+-%}
+
+{% comment %} Storefront icons helper - maps icon names to SVG content {% endcomment %}
+{%- endcomment -%}
+
+{% stylesheet %}
+  /* Storefront icons base styles */
+  .mk-storefront svg {
+    display: block;
+  }
+{% endstylesheet %}

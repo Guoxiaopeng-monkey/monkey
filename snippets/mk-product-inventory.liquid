@@ -1,0 +1,50 @@
+{%- doc -%}
+  MK 产品库存状态组件
+
+  渲染产品库存数量状态
+
+  @param {number} [inventory] - 当前库存
+  @param {boolean} [show_quantity] - 是否显示具体数量
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-product-inventory', inventory: variant.inventory_quantity, show_quantity: true %}
+{%- enddoc -%}
+
+{% liquid
+  assign inventory = inventory | default: 0
+  assign show_quantity = show_quantity | default: false
+  assign class = class | default: ''
+-%}
+
+{%- if inventory > 0 -%}
+  <p class="mk-product-inventory {{ class }}" data-inventory>
+    {%- if show_quantity -%}
+      <span class="mk-product-inventory__quantity">{{ inventory }}</span> {{ 'products.in_stock' | t | default: '件现货' }}
+    {%- else -%}
+      {{ 'products.in_stock' | t | default: '有货' }}
+    {%- endif -%}
+  </p>
+{%- else -%}
+  <p class="mk-product-inventory mk-product-inventory--out {{ class }}" data-inventory>
+    {{ 'products.out_of_stock' | t | default: '缺货' }}
+  </p>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-product-inventory {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--color-success, #2e7d32);
+  }
+
+  .mk-product-inventory--out {
+    color: var(--color-error, #e53935);
+  }
+
+  .mk-product-inventory__quantity {
+    font-weight: 600;
+  }
+{% endstylesheet %}

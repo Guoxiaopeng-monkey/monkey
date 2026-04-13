@@ -1,0 +1,81 @@
+{%- doc -%}
+  MK 产品徽章组合组件
+
+  渲染产品相关徽章组合
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-product-badges', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if product != blank -%}
+  <div class="mk-product-badges {{ class }}">
+    {%- if product.tags contains 'new' -%}
+      <span class="mk-product-badges__item mk-product-badges__item--new">{{ 'products.new' | t | default: '新品' }}</span>
+    {%- endif -%}
+
+    {%- if product.tags contains 'hot' -%}
+      <span class="mk-product-badges__item mk-product-badges__item--hot">{{ 'products.hot' | t | default: '热卖' }}</span>
+    {%- endif -%}
+
+    {%- if product.compare_at_price > product.price -%}
+      {% liquid
+        assign discount = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
+      %}
+      <span class="mk-product-badges__item mk-product-badges__item--sale">-{{ discount }}%</span>
+    {%- endif -%}
+
+    {%- if product.inventory_quantity <= 0 -%}
+      <span class="mk-product-badges__item mk-product-badges__item--soldout">{{ 'products.sold_out' | t | default: '售罄' }}</span>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-product-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 1;
+  }
+
+  .mk-product-badges__item {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 4px;
+  }
+
+  .mk-product-badges__item--new {
+    color: #fff;
+    background-color: var(--color-primary, #000);
+  }
+
+  .mk-product-badges__item--hot {
+    color: #fff;
+    background-color: #f57c00;
+  }
+
+  .mk-product-badges__item--sale {
+    color: #fff;
+    background-color: var(--color-sale, #e53935);
+  }
+
+  .mk-product-badges__item--soldout {
+    color: #fff;
+    background-color: #9e9e9e;
+  }
+{% endstylesheet %}

@@ -1,0 +1,78 @@
+{%- doc -%}
+  MK 内联倒计时组件
+
+  渲染内联样式的倒计时
+
+  @param {string} end_date - 结束日期
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-countdown-inline', end_date: product.metafields.custom.countdown %}
+{%- enddoc -%}
+
+{% liquid
+  assign end_date = end_date | default: ''
+  assign class = class | default: ''
+-%}
+
+{%- if end_date != blank -%}
+  <span
+    class="mk-countdown-inline {{ class }}"
+    data-countdown-inline
+    data-end-date="{{ end_date | date: '%Y-%m-%dT%H:%M:%S%z' }}"
+  >
+    <span class="mk-countdown-inline__time" data-days>0</span>d
+    <span class="mk-countdown-inline__time" data-hours>0</span>h
+    <span class="mk-countdown-inline__time" data-minutes>0</span>m
+    <span class="mk-countdown-inline__time" data-seconds>0</span>s
+  </span>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-countdown-inline {
+    display: inline;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mk-countdown-inline__time {
+    font-weight: 600;
+    color: var(--color-sale, #e53935);
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class CountdownInline extends HTMLElement {
+    constructor() {
+      super();
+      this.endDate = new Date(this.dataset.endDate).getTime();
+      this.days = this.querySelector('[data-days]');
+      this.hours = this.querySelector('[data-hours]');
+      this.minutes = this.querySelector('[data-minutes]');
+      this.seconds = this.querySelector('[data-seconds]');
+      this.update();
+      setInterval(() => this.update(), 1000);
+    }
+
+    update() {
+      const now = Date.now();
+      const distance = this.endDate - now;
+
+      if (distance < 0) {
+        this.innerHTML = '已过期';
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      this.days.textContent = days;
+      this.hours.textContent = hours;
+      this.minutes.textContent = minutes;
+      this.seconds.textContent = seconds;
+    }
+  }
+
+  customElements.define('countdown-inline', CountdownInline);
+{% endjavascript %}

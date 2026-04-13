@@ -1,0 +1,98 @@
+{%- doc -%}
+  MK 产品卡片占位组件
+
+  渲染产品卡片占位骨架
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-product-card-placeholder' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-product-card-placeholder {{ class }}">
+  <div class="mk-product-card-placeholder__image"></div>
+  <div class="mk-product-card-placeholder__content">
+    <div class="mk-product-card-placeholder__title"></div>
+    <div class="mk-product-card-placeholder__price"></div>
+    <div class="mk-product-card-placeholder__button"></div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-product-card-placeholder {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mk-product-card-placeholder__image {
+    aspect-ratio: 3 / 4;
+    background: linear-gradient(
+      90deg,
+      var(--color-background-secondary, #f5f5f5) 25%,
+      var(--color-background, #fff) 50%,
+      var(--color-background-secondary, #f5f5f5) 75%
+    );
+    background-size: 200% 100%;
+    animation: mk-shimmer 1.5s ease-in-out infinite;
+    border-radius: 12px;
+  }
+
+  .mk-product-card-placeholder__content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mk-product-card-placeholder__title {
+    height: 16px;
+    width: 80%;
+    background: linear-gradient(
+      90deg,
+      var(--color-background-secondary, #f5f5f5) 25%,
+      var(--color-background, #fff) 50%,
+      var(--color-background-secondary, #f5f5f5) 75%
+    );
+    background-size: 200% 100%;
+    animation: mk-shimmer 1.5s ease-in-out infinite;
+    border-radius: 4px;
+  }
+
+  .mk-product-card-placeholder__price {
+    height: 14px;
+    width: 40%;
+    background: linear-gradient(
+      90deg,
+      var(--color-background-secondary, #f5f5f5) 25%,
+      var(--color-background, #fff) 50%,
+      var(--color-background-secondary, #f5f5f5) 75%
+    );
+    background-size: 200% 100%;
+    animation: mk-shimmer 1.5s ease-in-out infinite;
+    border-radius: 4px;
+  }
+
+  .mk-product-card-placeholder__button {
+    height: 44px;
+    width: 100%;
+    margin-top: 8px;
+    background: linear-gradient(
+      90deg,
+      var(--color-background-secondary, #f5f5f5) 25%,
+      var(--color-background, #fff) 50%,
+      var(--color-background-secondary, #f5f5f5) 75%
+    );
+    background-size: 200% 100%;
+    animation: mk-shimmer 1.5s ease-in-out infinite;
+    border-radius: 8px;
+  }
+
+  @keyframes mk-shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+{% endstylesheet %}

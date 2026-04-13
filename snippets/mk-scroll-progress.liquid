@@ -1,0 +1,75 @@
+{%- doc -%}
+  MK 滚动进度组件
+
+  渲染页面滚动进度条
+
+  @param {string} [color] - 进度条颜色
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-scroll-progress' %}
+{%- enddoc -%}
+
+{% liquid
+  assign color = color | default: 'var(--color-primary, #000)'
+  assign class = class | default: ''
+-%}
+
+<div class="mk-scroll-progress {{ class }}" data-scroll-progress hidden>
+  <div class="mk-scroll-progress__bar" style="--progress-color: {{ color }};"></div>
+</div>
+
+{% stylesheet %}
+  .mk-scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 1001;
+    background-color: transparent;
+  }
+
+  .mk-scroll-progress[hidden] {
+    display: none;
+  }
+
+  .mk-scroll-progress__bar {
+    height: 100%;
+    width: var(--scroll-progress, 0%);
+    background-color: var(--progress-color);
+    transition: width 0.1s linear;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class ScrollProgress extends HTMLElement {
+    constructor() {
+      super();
+      this.bar = this.querySelector('.mk-scroll-progress__bar');
+      this.throttleTimer = null;
+      this.init();
+    }
+
+    init() {
+      this.update();
+      window.addEventListener('scroll', () => {
+        if (!this.throttleTimer) {
+          this.throttleTimer = setTimeout(() => {
+            this.update();
+            this.throttleTimer = null;
+          }, 50);
+        }
+      }, { passive: true });
+    }
+
+    update() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      this.bar.style.setProperty('--scroll-progress', `${Math.min(100, Math.max(0, progress))}%`);
+    }
+  }
+
+  customElements.define('scroll-progress', ScrollProgress);
+{% endjavascript %}

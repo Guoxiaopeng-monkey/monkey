@@ -1,0 +1,227 @@
+{%- comment -%}
+  MK 可折叠内容板块
+
+  展示可折叠展开的内容区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-collapsible-content color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-collapsible-content__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-collapsible-content__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-collapsible-content__items">
+      {%- for i in (1..10) -%}
+        {%- assign item_title_setting = 'item_title_' | append: i -%}
+        {%- assign item_content_setting = 'item_content_' | append: i -%}
+
+        {%- if ss[item_title_setting] != blank -%}
+          <details class="mk-collapsible-content__item" {% if forloop.first %}open{% endif %}>
+            <summary class="mk-collapsible-content__summary">
+              <span class="mk-collapsible-content__item-title">{{ ss[item_title_setting] }}</span>
+              <span class="mk-collapsible-content__icon">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+            </summary>
+            <div class="mk-collapsible-content__body">
+              <div class="mk-collapsible-content__content">
+                {{ ss[item_content_setting] }}
+              </div>
+            </div>
+          </details>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-collapsible-content {
+    padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-collapsible-content {
+      padding: {{ ss.padding_top_desktop | default: 64 }}px 0 {{ ss.padding_bottom_desktop | default: 64 }}px;
+    }
+  }
+
+  .mk-collapsible-content__container {
+    max-width: var(--container-max-width, 800px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .mk-collapsible-content__title {
+    margin: 0 0 32px 0;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .mk-collapsible-content__items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mk-collapsible-content__item {
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .mk-collapsible-content__item[open] {
+    border-color: var(--color-foreground);
+  }
+
+  .mk-collapsible-content__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .mk-collapsible-content__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mk-collapsible-content__item-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .mk-collapsible-content__icon {
+    display: flex;
+    width: 20px;
+    height: 20px;
+    color: var(--color-text-secondary, #666);
+    transition: transform 0.2s ease;
+  }
+
+  .mk-collapsible-content__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-collapsible-content__item[open] .mk-collapsible-content__icon {
+    transform: rotate(45deg);
+  }
+
+  .mk-collapsible-content__body {
+    padding: 0 20px 20px 20px;
+  }
+
+  .mk-collapsible-content__content {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-collapsible-content__content p {
+    margin: 0 0 12px 0;
+  }
+
+  .mk-collapsible-content__content p:last-child {
+    margin-bottom: 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 可折叠内容",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题"
+    },
+    {
+      "type": "header",
+      "content": "内容项"
+    },
+    {
+      "type": "text",
+      "id": "item_title_1",
+      "label": "标题 1"
+    },
+    {
+      "type": "richtext",
+      "id": "item_content_1",
+      "label": "内容 1"
+    },
+    {
+      "type": "text",
+      "id": "item_title_2",
+      "label": "标题 2"
+    },
+    {
+      "type": "richtext",
+      "id": "item_content_2",
+      "label": "内容 2"
+    },
+    {
+      "type": "header",
+      "content": "间距"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 可折叠内容"
+    }
+  ]
+}
+{% endschema %}

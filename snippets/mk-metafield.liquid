@@ -1,0 +1,86 @@
+{%- doc -%}
+  MK Metafield渲染组件
+
+  渲染自定义 metafield 内容
+
+  @param {object} metafield - metafield 对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-metafield', metafield: product.metafields.custom.feature %}
+{%- enddoc -%}
+
+{% liquid
+  assign metafield = metafield | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if metafield != blank -%}
+  {%- case metafield.type -%}
+    {%- when 'text' -%}
+      <p class="mk-metafield mk-metafield--text {{ class }}">{{ metafield.value }}</p>
+    {%- when 'richtext' -%}
+      <div class="mk-metafield mk-metafield--richtext {{ class }}">{{ metafield.value }}</div>
+    {%- when 'number' -%}
+      <span class="mk-metafield mk-metafield--number {{ class }}">{{ metafield.value }}</span>
+    {%- when 'weight' -%}
+      <span class="mk-metafield mk-metafield--weight {{ class }}">{{ metafield.value }} {{ metafield.unit }}</span>
+    {%- when 'dimension' -%}
+      <span class="mk-metafield mk-metafield--dimension {{ class }}">{{ metafield.value }} {{ metafield.unit }}</span>
+    {%- when 'volume' -%}
+      <span class="mk-metafield mk-metafield--volume {{ class }}">{{ metafield.value }} {{ metafield.unit }}</span>
+    {%- when 'rating' -%}
+      <span class="mk-metafield mk-metafield--rating {{ class }}" data-rating="{{ metafield.value }}">
+        {{ metafield.value }}/5
+      </span>
+    {%- when 'url' -%}
+      <a href="{{ metafield.value }}" class="mk-metafield mk-metafield--url {{ class }}">{{ metafield.value }}</a>
+    {%- when 'json' -%}
+      <script type="application/json" class="mk-metafield mk-metafield--json {{ class }}">{{ metafield.value | json }}</script>
+    {%- else -%}
+      <span class="mk-metafield mk-metafield--default {{ class }}">{{ metafield.value }}</span>
+  {%- endcase -%}
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-metafield {
+    margin: 0;
+  }
+
+  .mk-metafield--text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-foreground);
+  }
+
+  .mk-metafield--richtext {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-foreground);
+  }
+
+  .mk-metafield--richtext h2 {
+    margin: 24px 0 12px 0;
+    font-size: 18px;
+  }
+
+  .mk-metafield--number {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .mk-metafield--weight,
+  .mk-metafield--dimension,
+  .mk-metafield--volume {
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-metafield--url {
+    font-size: 14px;
+    color: var(--color-primary, #000);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+{% endstylesheet %}

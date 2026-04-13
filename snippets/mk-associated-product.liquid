@@ -1,0 +1,82 @@
+{%- doc -%}
+  MK 关联产品组件
+
+  渲染关联/配套产品卡片
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-associated-product', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if product != blank -%}
+  <a href="{{ product.url }}" class="mk-associated-product {{ class }}">
+    <div class="mk-associated-product__image">
+      {{ product.featured_image | image_url: width: 300 | image_tag: loading: 'lazy' }}
+    </div>
+    <div class="mk-associated-product__info">
+      <h4 class="mk-associated-product__title">{{ product.title }}</h4>
+      <p class="mk-associated-product__price">{{ product.price | money }}</p>
+    </div>
+  </a>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-associated-product {
+    display: flex;
+    gap: 12px;
+    text-decoration: none;
+    padding: 12px;
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-associated-product:hover {
+    border-color: var(--color-foreground);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .mk-associated-product__image {
+    width: 80px;
+    flex-shrink: 0;
+  }
+
+  .mk-associated-product__image img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .mk-associated-product__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .mk-associated-product__title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .mk-associated-product__price {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-primary, #000);
+  }
+{% endstylesheet %}

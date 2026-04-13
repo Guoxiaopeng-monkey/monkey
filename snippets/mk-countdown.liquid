@@ -1,0 +1,157 @@
+{%- doc -%}
+  MK 倒计时组件
+
+  渲染倒计时显示
+
+  @param {string} end_date - 结束日期时间
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-countdown', end_date: section.settings.end_date %}
+{%- enddoc -%}
+
+{% liquid
+  assign end_date = end_date | default: ''
+  assign class = class | default: ''
+-%}
+
+{%- if end_date != blank -%}
+  <div
+    class="mk-countdown {{ class }}"
+    data-countdown
+    data-end-date="{{ end_date | date: '%Y-%m-%dT%H:%M:%S%z' }}"
+  >
+    <div class="mk-countdown__item" data-days>
+      <span class="mk-countdown__value">00</span>
+      <span class="mk-countdown__label">{{ 'general.days' | t | default: '天' }}</span>
+    </div>
+    <span class="mk-countdown__separator">:</span>
+    <div class="mk-countdown__item" data-hours>
+      <span class="mk-countdown__value">00</span>
+      <span class="mk-countdown__label">{{ 'general.hours' | t | default: '时' }}</span>
+    </div>
+    <span class="mk-countdown__separator">:</span>
+    <div class="mk-countdown__item" data-minutes>
+      <span class="mk-countdown__value">00</span>
+      <span class="mk-countdown__label">{{ 'general.minutes' | t | default: '分' }}</span>
+    </div>
+    <span class="mk-countdown__separator">:</span>
+    <div class="mk-countdown__item" data-seconds>
+      <span class="mk-countdown__value">00</span>
+      <span class="mk-countdown__label">{{ 'general.seconds' | t | default: '秒' }}</span>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-countdown {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .mk-countdown__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .mk-countdown__value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    height: 48px;
+    padding: 0 8px;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-foreground);
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border-radius: 8px;
+  }
+
+  .mk-countdown__label {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-countdown__separator {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-text-secondary, #666);
+    margin-bottom: 16px;
+  }
+
+  /* 紧凑版 */
+  .mk-countdown--compact {
+    gap: 2px;
+  }
+
+  .mk-countdown--compact .mk-countdown__value {
+    min-width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .mk-countdown--compact .mk-countdown__separator {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  /* 紧凑版标签 */
+  .mk-countdown--compact .mk-countdown__label {
+    font-size: 9px;
+  }
+
+  /* 内联版 */
+  .mk-countdown--inline {
+    display: inline-flex;
+    gap: 8px;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class CountdownTimer extends HTMLElement {
+    constructor() {
+      super();
+      this.endDate = new Date(this.dataset.endDate).getTime();
+      this.days = this.querySelector('[data-days] .mk-countdown__value');
+      this.hours = this.querySelector('[data-hours] .mk-countdown__value');
+      this.minutes = this.querySelector('[data-minutes] .mk-countdown__value');
+      this.seconds = this.querySelector('[data-seconds] .mk-countdown__value');
+
+      this.update();
+      this.interval = setInterval(() => this.update(), 1000);
+    }
+
+    update() {
+      const now = Date.now();
+      const distance = this.endDate - now;
+
+      if (distance < 0) {
+        clearInterval(this.interval);
+        this.days.textContent = '00';
+        this.hours.textContent = '00';
+        this.minutes.textContent = '00';
+        this.seconds.textContent = '00';
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      this.days.textContent = String(days).padStart(2, '0');
+      this.hours.textContent = String(hours).padStart(2, '0');
+      this.minutes.textContent = String(minutes).padStart(2, '0');
+      this.seconds.textContent = String(seconds).padStart(2, '0');
+    }
+  }
+
+  customElements.define('countdown-timer', CountdownTimer);
+{% endjavascript %}

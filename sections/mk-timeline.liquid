@@ -1,0 +1,255 @@
+{%- comment -%}
+  MK 时间线板块
+
+  展示时间线/发展历程
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-timeline color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-timeline__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-timeline__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-timeline__items">
+      {%- for i in (1..6) -%}
+        {%- assign year_setting = 'year_' | append: i -%}
+        {%- assign heading_setting = 'heading_' | append: i -%}
+        {%- assign text_setting = 'text_' | append: i -%}
+
+        {%- if ss[year_setting] != blank -%}
+          <div class="mk-timeline__item">
+            <div class="mk-timeline__marker">
+              <span class="mk-timeline__year">{{ ss[year_setting] }}</span>
+            </div>
+            <div class="mk-timeline__content">
+              {%- if ss[heading_setting] != blank -%}
+                <h3 class="mk-timeline__heading">{{ ss[heading_setting] }}</h3>
+              {%- endif -%}
+              {%- if ss[text_setting] != blank -%}
+                <p class="mk-timeline__text">{{ ss[text_setting] }}</p>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-timeline {
+    padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-timeline {
+      padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px;
+    }
+  }
+
+  .mk-timeline__container {
+    max-width: var(--container-max-width, 800px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .mk-timeline__title {
+    margin: 0 0 48px 0;
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .mk-timeline__items {
+    position: relative;
+    padding-left: 32px;
+  }
+
+  .mk-timeline__items::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 8px;
+    width: 2px;
+    height: 100%;
+    background-color: var(--color-border);
+  }
+
+  .mk-timeline__item {
+    position: relative;
+    padding-bottom: 32px;
+  }
+
+  .mk-timeline__item:last-child {
+    padding-bottom: 0;
+  }
+
+  .mk-timeline__marker {
+    position: absolute;
+    left: -32px;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    background-color: var(--color-primary, #000);
+    border-radius: 50%;
+    z-index: 1;
+  }
+
+  .mk-timeline__year {
+    position: absolute;
+    left: 28px;
+    top: -2px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-primary, #000);
+  }
+
+  .mk-timeline__content {
+    padding-left: 8px;
+  }
+
+  .mk-timeline__heading {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .mk-timeline__text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 时间线",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题"
+    },
+    {
+      "type": "header",
+      "content": "时间点 1"
+    },
+    {
+      "type": "text",
+      "id": "year_1",
+      "label": "年份 1"
+    },
+    {
+      "type": "text",
+      "id": "heading_1",
+      "label": "标题 1"
+    },
+    {
+      "type": "textarea",
+      "id": "text_1",
+      "label": "描述 1"
+    },
+    {
+      "type": "header",
+      "content": "时间点 2"
+    },
+    {
+      "type": "text",
+      "id": "year_2",
+      "label": "年份 2"
+    },
+    {
+      "type": "text",
+      "id": "heading_2",
+      "label": "标题 2"
+    },
+    {
+      "type": "textarea",
+      "id": "text_2",
+      "label": "描述 2"
+    },
+    {
+      "type": "header",
+      "content": "时间点 3"
+    },
+    {
+      "type": "text",
+      "id": "year_3",
+      "label": "年份 3"
+    },
+    {
+      "type": "text",
+      "id": "heading_3",
+      "label": "标题 3"
+    },
+    {
+      "type": "textarea",
+      "id": "text_3",
+      "label": "描述 3"
+    },
+    {
+      "type": "header",
+      "content": "间距"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 时间线"
+    }
+  ]
+}
+{% endschema %}

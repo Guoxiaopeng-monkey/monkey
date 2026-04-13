@@ -1,352 +1,175 @@
 {%- comment -%}
-  MK 404 页面组件
-  
-  功能：404错误页面
-  
+  MK 404错误页面
+
+  展示404错误页面
+
   作者：崽崽 (AI助手)
 {%- endcomment -%}
 
-{%- liquid
+{% liquid
   assign ss = section.settings
-  assign pt_mob = ss.padding_top_mobile | default: 32
-  assign pb_mob = ss.padding_bottom_mobile | default: 32
-  assign pt_desk = ss.padding_top_desktop | default: 48
-  assign pb_desk = ss.padding_bottom_desktop | default: 48
 -%}
-
-<style>
-  #{{ section.id }} {
-    --error-pt-mob: {{ pt_mob }}px;
-    --error-pb-mob: {{ pb_mob }}px;
-    --error-pt-desk: {{ pt_desk }}px;
-    --error-pb-desk: {{ pb_desk }}px;
-    padding: var(--error-pt-mob) 0 var(--error-pb-mob);
-    min-height: 60vh;
-    display: flex;
-    align-items: center;
-  }
-  
-  @media (min-width: 750px) {
-    #{{ section.id }} {
-      padding: var(--error-pt-desk) 0 var(--error-pb-desk);
-    }
-  }
-</style>
 
 <section
   id="{{ section.id }}"
-  class="mk-404"
-  data-skip-node-update
+  class="mk-404 color-{{ ss.color_scheme | default: 'background-1' }}"
 >
   <div class="mk-404__container">
-    <div class="mk-404__content">
-      
-      {%- comment -%} 404 大数字 {%- endcomment -%}
-      <div class="mk-404__code">
-        <span class="mk-404__code-digit">4</span>
-        <span class="mk-404__code-digit">0</span>
-        <span class="mk-404__code-digit">4</span>
-      </div>
-      
-      {%- comment -%} 标题和描述 {%- endcomment -%}
-      <h1 class="mk-404__title">{{ '404.title' | t | default: '页面未找到' }}</h1>
-      <p class="mk-404__description">
-        {{ '404.not_found' | t | default: '抱歉，您访问的页面不存在或已被移除。' }}
-      </p>
-      
-      {%- comment -%} 搜索框 {%- endcomment -%}
-      {% if ss.show_search %}
-        <div class="mk-404__search">
-          <form action="{{ routes.search_url }}" method="get" class="mk-404__search-form">
-            <input
-              type="search"
-              name="q"
-              class="mk-404__search-input"
-              placeholder="{{ 'search.placeholder' | t | default: '搜索您需要的内容...' }}"
-            >
-            <button type="submit" class="mk-404__search-btn">
-              {{- 'icon-search.svg' | inline_asset_content -}}
-            </button>
-          </form>
-        </div>
-      {% endif %}
-      
-      {%- comment -%} 操作按钮 {%- endcomment -%}
-      <div class="mk-404__actions">
-        <a href="{{ routes.root_url }}" class="mk-404__btn mk-404__btn--primary">
-          {{- 'icon-home.svg' | inline_asset_content -}}
-          返回首页
+    <h1 class="mk-404__title">404</h1>
+
+    {%- if ss.title != blank -%}
+      <h2 class="mk-404__subtitle">{{ ss.title }}</h2>
+    {%- else -%}
+      <h2 class="mk-404__subtitle">{{ '404.title' | t | default: '页面未找到' }}</h2>
+    {%- endif -%}
+
+    {%- if ss.description != blank -%}
+      <p class="mk-404__description">{{ ss.description }}</p>
+    {%- else -%}
+      <p class="mk-404__description">{{ '404.message' | t | default: '抱歉，您访问的页面不存在或已移除。' }}</p>
+    {%- endif -%}
+
+    <div class="mk-404__actions">
+      <a href="{{ routes.root_url }}" class="mk-404__button mk-404__button--primary">
+        {{ '404.homepage' | t | default: '返回首页' }}
+      </a>
+
+      {%- if ss.show_search -%}
+        <a href="{{ routes.search_url }}" class="mk-404__button mk-404__button--secondary">
+          {{ '404.search' | t | default: '搜索产品' }}
         </a>
-        <a href="{{ routes.all_products_collection_url }}" class="mk-404__btn mk-404__btn--secondary">
-          浏览产品
-        </a>
-      </div>
-      
-      {%- comment -%} 热门分类 {%- endcomment -%}
-      {% if ss.show_collections and ss.featured_collections != blank %}
-        <div class="mk-404__collections">
-          <h2 class="mk-404__collections-title">热门分类</h2>
-          <div class="mk-404__collections-grid">
-            {%- for collection in ss.featured_collections -%}
-              <a href="{{ collection.url }}" class="mk-404__collection">
-                {% if collection.image != blank %}
-                  <img
-                    src="{{ collection.image | image_url: width: 300 }}"
-                    alt="{{ collection.title }}"
-                    width="300"
-                    height="300"
-                    loading="lazy"
-                  >
-                {% else %}
-                  <div class="mk-404__collection-placeholder">
-                    {{ collection.title | slice: 0 }}
-                  </div>
-                {% endif %}
-                <span class="mk-404__collection-title">{{ collection.title }}</span>
-              </a>
-            {%- endfor -%}
-          </div>
-        </div>
-      {% endif %}
+      {%- endif -%}
     </div>
   </div>
 </section>
 
 {% stylesheet %}
-  .mk-404__container {
-    max-width: var(--container-max-width, 800px);
-    margin: 0 auto;
-    padding: 0 var(--container-padding, 32px);
-    width: 100%;
+  .mk-404 {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px;
   }
 
-  .mk-404__content {
+  @media (min-width: 750px) {
+    .mk-404 {
+      padding: {{ ss.padding_top_desktop | default: 64 }}px 0 {{ ss.padding_bottom_desktop | default: 64 }}px;
+    }
+  }
+
+  .mk-404__container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
     text-align: center;
   }
 
-  /* Code */
-  .mk-404__code {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .mk-404__code-digit {
-    font-size: clamp(80px, 15vw, 140px);
-    font-weight: 800;
+  .mk-404__title {
+    margin: 0 0 16px 0;
+    font-size: 120px;
+    font-weight: 700;
     line-height: 1;
     color: var(--color-primary, #000);
     opacity: 0.1;
   }
 
-  .mk-404__code-digit:nth-child(2) {
-    color: var(--color-primary, #000);
-    opacity: 0.2;
+  @media (min-width: 750px) {
+    .mk-404__title {
+      font-size: 180px;
+    }
   }
 
-  /* Title */
-  .mk-404__title {
+  .mk-404__subtitle {
     margin: 0 0 16px 0;
-    font-size: clamp(24px, 4vw, 36px);
+    font-size: 24px;
     font-weight: 700;
+  }
+
+  @media (min-width: 750px) {
+    .mk-404__subtitle {
+      font-size: 32px;
+    }
   }
 
   .mk-404__description {
     margin: 0 0 32px 0;
     font-size: 16px;
-    line-height: 1.6;
+    line-height: 1.7;
     color: var(--color-text-secondary, #666);
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
   }
 
-  /* Search */
-  .mk-404__search {
-    max-width: 500px;
-    margin: 0 auto 40px auto;
-  }
-
-  .mk-404__search-form {
-    display: flex;
-    gap: 8px;
-  }
-
-  .mk-404__search-input {
-    flex: 1;
-    padding: 14px 18px;
-    font-size: 15px;
-    border: 1px solid rgba(var(--color-border), 0.4);
-    border-radius: 6px;
-    background: var(--color-background, #fff);
-  }
-
-  .mk-404__search-input:focus {
-    outline: none;
-    border-color: var(--color-primary, #000);
-  }
-
-  .mk-404__search-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    padding: 0;
-    background: var(--color-primary, #000);
-    border: none;
-    border-radius: 6px;
-    color: var(--color-background, #fff);
-    cursor: pointer;
-    transition: opacity 0.2s ease;
-  }
-
-  .mk-404__search-btn:hover {
-    opacity: 0.85;
-  }
-
-  .mk-404__search-btn svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  /* Actions */
   .mk-404__actions {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 60px;
+    flex-direction: column;
+    gap: 12px;
   }
 
-  .mk-404__btn {
+  @media (min-width: 480px) {
+    .mk-404__actions {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+
+  .mk-404__button {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
     padding: 14px 28px;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     text-decoration: none;
-    border-radius: 6px;
+    border-radius: 8px;
     transition: all 0.2s ease;
   }
 
-  .mk-404__btn--primary {
-    color: var(--color-background, #fff);
-    background: var(--color-primary, #000);
+  .mk-404__button--primary {
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
   }
 
-  .mk-404__btn--primary:hover {
+  .mk-404__button--primary:hover {
     opacity: 0.85;
-    transform: translateY(-2px);
   }
 
-  .mk-404__btn--secondary {
-    color: inherit;
-    background: transparent;
-    border: 1px solid rgba(var(--color-border), 0.4);
+  .mk-404__button--secondary {
+    color: var(--color-foreground);
+    background-color: transparent;
+    border: 1px solid var(--color-border);
   }
 
-  .mk-404__btn--secondary:hover {
-    border-color: var(--color-primary, #000);
-  }
-
-  .mk-404__btn svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  /* Collections */
-  .mk-404__collections {
-    padding-top: 48px;
-    border-top: 1px solid rgba(var(--color-border), 0.15);
-  }
-
-  .mk-404__collections-title {
-    margin: 0 0 28px 0;
-    font-size: 18px;
-    font-weight: 600;
-  }
-
-  .mk-404__collections-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 20px;
-  }
-
-  .mk-404__collection {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    padding: 20px;
-    text-decoration: none;
-    color: inherit;
-    border-radius: 12px;
-    transition: background 0.2s ease;
-  }
-
-  .mk-404__collection:hover {
-    background: var(--color-background-secondary, #f5f5f5);
-  }
-
-  .mk-404__collection img {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 50%;
-  }
-
-  .mk-404__collection-placeholder {
-    width: 80px;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    font-weight: 700;
-    background: var(--color-background-secondary, #f5f5f5);
-    border-radius: 50%;
-  }
-
-  .mk-404__collection-title {
-    font-size: 14px;
-    font-weight: 500;
-    text-align: center;
+  .mk-404__button--secondary:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
   }
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "MK 404 页面",
+  "name": "MK 404页面",
   "tag": "section",
   "settings": [
     {
-      "type": "header",
-      "content": "显示设置"
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "页面未找到"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "描述",
+      "default": "抱歉，您访问的页面不存在或已移除。"
     },
     {
       "type": "checkbox",
       "id": "show_search",
-      "label": "显示搜索框",
+      "label": "显示搜索按钮",
       "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_collections",
-      "label": "显示热门分类",
-      "default": true
-    },
-    {
-      "type": "collection_list",
-      "id": "featured_collections",
-      "label": "热门分类",
-      "limit": 4
     },
     {
       "type": "header",
-      "content": "间距设置"
+      "content": "间距"
     },
     {
       "type": "range",
@@ -354,7 +177,7 @@
       "label": "上边距 (移动端)",
       "min": 0,
       "max": 120,
-      "default": 32,
+      "default": 48,
       "unit": "px"
     },
     {
@@ -363,7 +186,7 @@
       "label": "下边距 (移动端)",
       "min": 0,
       "max": 120,
-      "default": 32,
+      "default": 48,
       "unit": "px"
     },
     {
@@ -372,7 +195,7 @@
       "label": "上边距 (PC端)",
       "min": 0,
       "max": 200,
-      "default": 48,
+      "default": 64,
       "unit": "px"
     },
     {
@@ -381,13 +204,19 @@
       "label": "下边距 (PC端)",
       "min": 0,
       "max": 200,
-      "default": 48,
+      "default": 64,
       "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
     }
   ],
   "presets": [
     {
-      "name": "MK 404 页面"
+      "name": "MK 404页面"
     }
   ]
 }

@@ -1,0 +1,69 @@
+{%- doc -%}
+  MK Facet操作组件
+
+  渲染筛选操作（清除全部、查看结果按钮）
+
+  @param {string} [results_url] - 结果URL
+  @param {boolean} [has_active] - 是否有激活的筛选
+  @param {number} [products_count] - 产品数量
+
+  @example
+  {% render 'mk-facets-actions', results_url: collection.url, has_active: true, products_count: collection.products_count %}
+{%- enddoc -%}
+
+{% liquid
+  assign results_url = results_url | default: ''
+  assign has_active = has_active | default: false
+  assign products_count = products_count | default: 0
+-%}
+
+<div class="mk-facets-actions" data-has-active="{{ has_active }}">
+  {%- if has_active -%}
+    <a href="{{ results_url }}" class="mk-facets-actions__clear">
+      {{ 'actions.clear_all' | t | default: '清除全部' }}
+    </a>
+  {%- endif -%}
+
+  <button type="button" class="mk-facets-actions__see-results">
+    {{ 'actions.see_items' | t: count: products_count | default: '查看产品' }}
+  </button>
+</div>
+
+{% stylesheet %}
+  .mk-facets-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+  }
+
+  .mk-facets-actions__clear {
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.2s ease;
+  }
+
+  .mk-facets-actions__clear:hover {
+    color: var(--color-foreground);
+  }
+
+  .mk-facets-actions__see-results {
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-facets-actions__see-results:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+{% endstylesheet %}

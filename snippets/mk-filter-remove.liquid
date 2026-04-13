@@ -1,0 +1,103 @@
+{%- doc -%}
+  MK 筛选器移除按钮组件
+
+  渲染已选中的筛选条件标签
+
+  @param {object[]} filters - 筛选条件数组
+  @param {string} [results_url] - 结果页面URL
+
+  @example
+  {% render 'mk-filter-remove', filters: collection.filters %}
+{%- enddoc -%}
+
+{% liquid
+  assign filters = filters | default: empty_array
+  assign results_url = results_url | default: collection.url
+  if filters == empty_array
+    assign filters = '[]' | parse_json
+  endif
+-%}
+
+{%- if filters.size > 0 -%}
+  <div class="mk-filter-remove">
+    {%- for filter in filters -%}
+      {%- case filter.type -%}
+        {%- when 'price_range' -%}
+          {%- if filter.min_value.value != null or filter.max_value.value != null -%}
+            <a href="{{ filter.url_to_remove }}" class="mk-filter-remove__pill">
+              {%- if filter.min_value.value != null and filter.max_value.value != null -%}
+                {{ filter.min_value.value | money }} - {{ filter.max_value.value | money }}
+              {%- elsif filter.min_value.value != null -%}
+                {{ filter.min_value.value | money }}+
+              {%- elsif filter.max_value.value != null -%}
+                - {{ filter.max_value.value | money }}
+              {%- endif -%}
+              <span class="mk-filter-remove__icon">{{- 'icon-close.svg' | inline_asset_content -}}</span>
+            </a>
+          {%- endif -%}
+
+        {%- when 'list' -%}
+          {%- for value in filter.active_values -%}
+            <a href="{{ value.url_to_remove }}" class="mk-filter-remove__pill">
+              {% if value.swatch %}
+                <span class="mk-filter-remove__swatch" style="background-color: {{ value.swatch.color }};"></span>
+              {% endif %}
+              {{ value.label | escape }}
+              <span class="mk-filter-remove__icon">{{- 'icon-close.svg' | inline_asset_content -}}</span>
+            </a>
+          {%- endfor -%}
+
+        {%- when 'boolean' -%}
+          <a href="{{ filter.url_to_remove }}" class="mk-filter-remove__pill">
+            {{ filter.label | escape }}
+            <span class="mk-filter-remove__icon">{{- 'icon-close.svg' | inline_asset_content -}}</span>
+          </a>
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-filter-remove {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 0;
+  }
+
+  .mk-filter-remove__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--color-foreground);
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border-radius: 100px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .mk-filter-remove__pill:hover {
+    background-color: var(--color-border);
+  }
+
+  .mk-filter-remove__icon {
+    display: flex;
+    width: 14px;
+    height: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-filter-remove__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-filter-remove__swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+  }
+{% endstylesheet %}

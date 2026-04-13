@@ -1,0 +1,52 @@
+{%- doc -%}
+  MK 颜色方案组件
+
+  应用颜色方案到元素
+
+  @param {string} scheme - 颜色方案：scheme-1, scheme-2, scheme-3
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-color-schemes', scheme: 'scheme-1' %}
+{%- enddoc -%}
+
+{% liquid
+  assign scheme = scheme | default: 'scheme-1'
+  assign class = class | default: ''
+-%}
+
+<div class="mk-color-schemes color-{{ scheme }} {{ class }}">
+  {{ content }}
+</div>
+
+{% stylesheet %}
+  /* Color scheme 1 - Background 1 */
+  .color-scheme-1 {
+    --color-foreground: var(--color-foreground, #1a1a1a);
+    --color-background: var(--color-background, #ffffff);
+    --color-background-secondary: var(--color-background-secondary, #f5f5f5);
+    --color-border: var(--color-border, #e5e5e5);
+    --color-primary: var(--color-primary, #000000);
+    --color-on-primary: var(--color-on-primary, #ffffff);
+  }
+
+  /* Color scheme 2 - Background 2 */
+  .color-scheme-2 {
+    --color-foreground: var(--color-foreground-2, #ffffff);
+    --color-background: var(--color-background-2, #1a1a1a);
+    --color-background-secondary: var(--color-background-secondary-2, #2d2d2d);
+    --color-border: var(--color-border-2, #404040);
+    --color-primary: var(--color-primary-2, #ffffff);
+    --color-on-primary: var(--color-on-primary-2, #000000);
+  }
+
+  /* Color scheme 3 - Accent */
+  .color-scheme-3 {
+    --color-foreground: var(--color-foreground-3, #1a1a1a);
+    --color-background: var(--color-background-3, #f5f0e8);
+    --color-background-secondary: var(--color-background-secondary-3, #ebe5db);
+    --color-border: var(--color-border-3, #d4cec4);
+    --color-primary: var(--color-primary-3, #8b7355);
+    --color-on-primary: var(--color-on-primary-3, #ffffff);
+  }
+{% endstylesheet %}

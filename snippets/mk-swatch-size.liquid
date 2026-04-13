@@ -1,0 +1,124 @@
+{%- doc -%}
+  MK 尺寸选项组件
+
+  渲染尺寸选择按钮组
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-swatch-size', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+  assign option = nil
+
+  for opt in product.options_with_values
+    if opt.name == 'Size' or opt.name == 'size' or opt.name == '尺寸'
+      assign option = opt
+      break
+    endif
+  endfor
+-%}
+
+{%- if option != blank -%}
+  <div class="mk-swatch-size {{ class }}" data-option-index="{{ option.position | minus: 1 }}">
+    <label class="mk-swatch-size__label">
+      {{ option.name }}: <span class="mk-swatch-size__selected">{{ option.selected_value }}</span>
+    </label>
+
+    <div class="mk-swatch-size__options">
+      {%- for value in option.values -%}
+        {% liquid
+          assign is_selected = false
+          if option.selected_value == value
+            assign is_selected = true
+          endif
+
+          assign is_available = true
+          for variant in product.variants
+            if variant.options[forloop.index0] == value and variant.available == false
+              assign is_available = false
+              break
+            endif
+          endfor
+        %}
+
+        <button
+          type="button"
+          class="mk-swatch-size__option {% if is_selected %}mk-swatch-size__option--selected{% endif %} {% unless is_available %}mk-swatch-size__option--unavailable{% endunless %}"
+          data-value="{{ value }}"
+          {% unless is_available %}disabled{% endunless %}
+        >
+          {{ value }}
+        </button>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-swatch-size {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .mk-swatch-size__label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .mk-swatch-size__selected {
+    font-weight: 400;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-swatch-size__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mk-swatch-size__option {
+    min-width: 44px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-swatch-size__option:hover:not(:disabled) {
+    border-color: var(--color-foreground);
+  }
+
+  .mk-swatch-size__option--selected {
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-swatch-size__option--unavailable {
+    opacity: 0.5;
+    cursor: not-allowed;
+    position: relative;
+  }
+
+  .mk-swatch-size__option--unavailable::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 4px;
+    right: 4px;
+    height: 1px;
+    background-color: var(--color-text-secondary, #999);
+  }
+{% endstylesheet %}

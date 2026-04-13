@@ -1,0 +1,111 @@
+{%- doc -%}
+  MK 粘性加购按钮组件
+
+  渲染粘性在屏幕底部的加购按钮
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-sticky-atc', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if product != blank -%}
+  <div class="mk-sticky-atc {{ class }}" data-sticky-atc>
+    <div class="mk-sticky-atc__info">
+      <h3 class="mk-sticky-atc__title">{{ product.title }}</h3>
+      <p class="mk-sticky-atc__price">
+        {%- if product.price_varies -%}
+          {{ 'products.from' | t }} {{ product.price | money }}
+        {%- else -%}
+          {{ product.price | money }}
+        {%- endif -%}
+
+        {%- if product.compare_at_price > product.price -%}
+          <s class="mk-sticky-atc__compare">{{ product.compare_at_price | money }}</s>
+        {%- endif -%}
+      </p>
+    </div>
+
+    <button type="button" class="mk-sticky-atc__button" data-add-to-cart>
+      {{ 'products.add_to_cart' | t | default: '加入购物车' }}
+    </button>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-sticky-atc {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 20px;
+    background-color: var(--color-background);
+    border-top: 1px solid var(--color-border);
+    z-index: 100;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .mk-sticky-atc[hidden] {
+    display: none;
+  }
+
+  .mk-sticky-atc__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .mk-sticky-atc__title {
+    margin: 0 0 2px 0;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mk-sticky-atc__price {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-primary, #000);
+  }
+
+  .mk-sticky-atc__compare {
+    margin-left: 6px;
+    font-weight: 400;
+    color: var(--color-text-secondary, #666);
+    text-decoration: line-through;
+  }
+
+  .mk-sticky-atc__button {
+    flex-shrink: 0;
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-sticky-atc__button:hover {
+    opacity: 0.85;
+  }
+
+  .mk-sticky-atc__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+{% endstylesheet %}

@@ -1,0 +1,41 @@
+{%- doc -%}
+  MK 数量价格计算组件
+
+  根据数量计算显示价格
+
+  @param {number} price - 单价
+  @param {number} [quantity] - 数量
+
+  @example
+  {% render 'mk-quantity-price', price: product.price, quantity: item.quantity %}
+{%- enddoc -%}
+
+{% liquid
+  assign price = price | default: 0
+  assign quantity = quantity | default: 1
+  assign total = price | times: quantity
+-%}
+
+<div class="mk-quantity-price">
+  <span class="mk-quantity-price__unit">{{ price | money }}/件</span>
+  <span class="mk-quantity-price__total">{{ total | money }}</span>
+</div>
+
+{% stylesheet %}
+  .mk-quantity-price {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .mk-quantity-price__unit {
+    font-size: 12px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-quantity-price__total {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+{% endstylesheet %}

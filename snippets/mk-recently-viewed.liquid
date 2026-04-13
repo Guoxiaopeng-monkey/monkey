@@ -1,0 +1,89 @@
+{%- doc -%}
+  MK 最近浏览组件
+
+  渲染最近浏览的产品
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-recently-viewed' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-recently-viewed {{ class }}" data-recently-viewed>
+  <h3 class="mk-recently-viewed__title">{{ 'products.recently_viewed' | t | default: '最近浏览' }}</h3>
+  <div class="mk-recently-viewed__grid" data-recently-viewed-grid></div>
+</div>
+
+{% stylesheet %}
+  .mk-recently-viewed {
+    padding: 32px 0;
+  }
+
+  .mk-recently-viewed__title {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .mk-recently-viewed__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-recently-viewed__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class RecentlyViewed extends HTMLElement {
+    constructor() {
+      super();
+      this.grid = this.querySelector('[data-recently-viewed-grid]');
+      this.init();
+    }
+
+    async init() {
+      const productHandles = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+      if (productHandles.length === 0) {
+        this.hidden = true;
+        return;
+      }
+
+      // Fetch and render products
+      try {
+        const response = await fetch(`/products.js?ids=${productHandles.slice(0, 4).join(',')}`);
+        const products = await response.json();
+
+        if (products.length > 0) {
+          this.render(products);
+        } else {
+          this.hidden = true;
+        }
+      } catch {
+        this.hidden = true;
+      }
+    }
+
+    render(products) {
+      this.grid.innerHTML = products.map(product => `
+        <a href="${product.url}" class="mk-recently-viewed__item">
+          <img src="${product.featured_image}" alt="${product.title}" loading="lazy">
+          <h4>${product.title}</h4>
+          <p>${Shopify.formatMoney(product.price)}</p>
+        </a>
+      `).join('');
+    }
+  }
+
+  customElements.define('recently-viewed', RecentlyViewed);
+{% endjavascript %}

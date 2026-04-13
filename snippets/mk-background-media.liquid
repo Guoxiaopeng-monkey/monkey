@@ -1,0 +1,60 @@
+{%- doc -%}
+  MK 背景媒体组件
+
+  设置背景图片或视频
+
+  @param {object} image - 背景图片
+  @param {string} [focal_point] - 焦点位置：center, top, bottom, left, right
+  @param {string} [overlay] - 叠加透明度
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-background-media', image: section.settings.background_image, focal_point: 'center', overlay: '0.3' %}
+{%- enddoc -%}
+
+{% liquid
+  assign image = image | default: nil
+  assign focal_point = focal_point | default: 'center'
+  assign overlay = overlay | default: '0'
+  assign class = class | default: ''
+
+  assign bg_image = ''
+  if image != nil
+    assign bg_image = image | image_url
+  endif
+-%}
+
+<div
+  class="mk-background-media {{ class }}"
+  style="
+    --bg-media: url('{{ bg_image }}');
+    --bg-focal: {{ focal_point }};
+    --bg-overlay: {{ overlay }};
+  "
+>
+  <div class="mk-background-media__overlay"></div>
+  <div class="mk-background-media__content">
+    {{ content }}
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-background-media {
+    position: relative;
+    background-image: var(--bg-media);
+    background-size: cover;
+    background-position: var(--bg-focal, center);
+  }
+
+  .mk-background-media__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, var(--bg-overlay, 0));
+    pointer-events: none;
+  }
+
+  .mk-background-media__content {
+    position: relative;
+    z-index: 1;
+  }
+{% endstylesheet %}

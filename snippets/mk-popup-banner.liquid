@@ -1,0 +1,125 @@
+{%- doc -%}
+  MK 弹出横幅组件
+
+  渲染顶部弹出横幅
+
+  @param {string} [text] - 横幅文字
+  @param {string} [link] - 链接
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-popup-banner', text: '全场满100包邮', link: '/collections/all' %}
+{%- enddoc -%}
+
+{% liquid
+  assign text = text | default: ''
+  assign link = link | default: ''
+  assign class = class | default: ''
+-%}
+
+{%- if text != blank -%}
+  <div class="mk-popup-banner {{ class }}" data-popup-banner>
+    <div class="mk-popup-banner__container">
+      <p class="mk-popup-banner__text">
+        {%- if link != blank -%}
+          <a href="{{ link }}">{{ text }}</a>
+        {%- else -%}
+          {{ text }}
+        {%- endif -%}
+      </p>
+      <button type="button" class="mk-popup-banner__close" data-popup-close aria-label="{{ 'actions.close' | t }}">
+        {{- 'icon-close.svg' | inline_asset_content -}}
+      </button>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-popup-banner {
+    position: relative;
+    background-color: var(--color-primary, #000);
+    color: var(--color-on-primary, #fff);
+  }
+
+  .mk-popup-banner[hidden] {
+    display: none;
+  }
+
+  .mk-popup-banner__container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 10px 48px;
+  }
+
+  .mk-popup-banner__text {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .mk-popup-banner__text a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .mk-popup-banner__close {
+    position: absolute;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+
+  .mk-popup-banner__close:hover {
+    opacity: 1;
+  }
+
+  .mk-popup-banner__close svg {
+    width: 14px;
+    height: 14px;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class PopupBanner extends HTMLElement {
+    constructor() {
+      super();
+      this.banner = this.querySelector('.mk-popup-banner');
+      this.closeBtn = this.querySelector('[data-popup-close]');
+      this.init();
+    }
+
+    init() {
+      // 检查是否已关闭
+      if (sessionStorage.getItem('popup-banner-closed')) {
+        this.banner.hidden = true;
+        return;
+      }
+
+      this.closeBtn?.addEventListener('click', () => {
+        this.close();
+      });
+    }
+
+    close() {
+      this.banner.hidden = true;
+      sessionStorage.setItem('popup-banner-closed', 'true');
+    }
+  }
+
+  customElements.define('popup-banner', PopupBanner);
+{% endjavascript %}

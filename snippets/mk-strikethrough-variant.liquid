@@ -1,0 +1,42 @@
+{%- doc -%}
+  MK 变体删除线组件
+
+  为不可用的变体显示删除线效果
+
+  @param {boolean} available - 变体是否可用
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-strikethrough-variant', available: variant.available %}
+{%- enddoc -%}
+
+{% liquid
+  assign available = available | default: true
+  assign class = class | default: ''
+-%}
+
+<span class="mk-strikethrough-variant {% unless available %}mk-strikethrough-variant--unavailable{% endunless %} {{ class }}">
+  {{- 'icon-strikethrough.svg' | default: '' -}}
+</span>
+
+{% stylesheet %}
+  .mk-strikethrough-variant {
+    position: relative;
+    display: inline-block;
+  }
+
+  .mk-strikethrough-variant--unavailable {
+    opacity: 0.5;
+  }
+
+  .mk-strikethrough-variant--unavailable::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -2px;
+    right: -2px;
+    height: 1px;
+    background-color: currentColor;
+    transform: rotate(-10deg);
+  }
+{% endstylesheet %}

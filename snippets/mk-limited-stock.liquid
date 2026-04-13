@@ -1,0 +1,63 @@
+{%- doc -%}
+  MK 库存警告组件
+
+  渲染库存不足警告
+
+  @param {number} [inventory] - 当前库存数量
+  @param {number} [threshold] - 警告阈值
+
+  @example
+  {% render 'mk-limited-stock', inventory: variant.inventory_quantity, threshold: 10 %}
+{%- enddoc -%}
+
+{% liquid
+  assign inventory = inventory | default: 0
+  assign threshold = threshold | default: 10
+
+  assign is_low = false
+  if inventory > 0 and inventory <= threshold
+    assign is_low = true
+  endif
+-%}
+
+{%- if is_low -%}
+  <p class="mk-limited-stock" data-limited-stock>
+    <span class="mk-limited-stock__icon">{{- 'icon-warning.svg' | inline_asset_content -}}</span>
+    <span class="mk-limited-stock__text">
+      {%- if inventory == 1 -%}
+        {{ 'products.only_left_one' | t | default: '仅剩1件' }}
+      {%- else -%}
+        {{ 'products.only_left' | t: count: inventory | default: '仅剩' | append: inventory | append: '件' }}
+      {%- endif -%}
+    </span>
+  </p>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-limited-stock {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background-color: rgba(229, 57, 53, 0.1);
+    border-radius: 8px;
+    font-size: 13px;
+  }
+
+  .mk-limited-stock__icon {
+    display: flex;
+    width: 16px;
+    height: 16px;
+    color: var(--color-error, #e53935);
+  }
+
+  .mk-limited-stock__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-limited-stock__text {
+    color: var(--color-error, #e53935);
+    font-weight: 500;
+  }
+{% endstylesheet %}

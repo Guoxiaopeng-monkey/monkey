@@ -1,0 +1,45 @@
+{%- doc -%}
+  MK 订单项属性组件
+
+  渲染订单项的自定义属性
+
+  @param {object} property - 属性对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% for property in line_item.properties %}
+    {% render 'mk-line-item-property', property: property %}
+  {% endfor %}
+{%- enddoc -%}
+
+{% liquid
+  assign property = property | default: nil
+  assign class = class | default: ''
+
+  if property == nil
+    continue
+  endif
+-%}
+
+{%- if property.first != '_is_required' -%}
+  <p class="mk-line-item-property {{ class }}">
+    <span class="mk-line-item-property__name">{{ property.first }}:</span>
+    <span class="mk-line-item-property__value">{{ property.last }}</span>
+  </p>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-line-item-property {
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-line-item-property__name {
+    font-weight: 500;
+  }
+
+  .mk-line-item-property__value {
+    margin-left: 4px;
+  }
+{% endstylesheet %}

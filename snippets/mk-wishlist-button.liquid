@@ -1,0 +1,105 @@
+{%- doc -%}
+  MK 愿望清单按钮组件
+
+  渲染收藏/愿望清单按钮
+
+  @param {string} product_id - 产品ID
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-wishlist-button', product_id: product.id %}
+{%- enddoc -%}
+
+{% liquid
+  assign product_id = product_id | default: ''
+  assign class = class | default: ''
+-%}
+
+<button
+  type="button"
+  class="mk-wishlist-button {{ class }}"
+  data-product-id="{{ product_id }}"
+  aria-label="{{ 'wishlist.add' | t | default: '添加到愿望清单' }}"
+>
+  {{- 'icon-heart.svg' | inline_asset_content -}}
+</button>
+
+{% stylesheet %}
+  .mk-wishlist-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--color-foreground);
+    transition: all 0.2s ease;
+  }
+
+  .mk-wishlist-button:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+    color: var(--color-sale, #e53935);
+  }
+
+  .mk-wishlist-button[active] {
+    color: var(--color-sale, #e53935);
+  }
+
+  .mk-wishlist-button[active] svg {
+    fill: currentColor;
+  }
+
+  .mk-wishlist-button svg {
+    width: 20px;
+    height: 20px;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class WishlistButton extends HTMLElement {
+    constructor() {
+      super();
+      this.button = this.querySelector('.mk-wishlist-button');
+      this.productId = this.dataset.productId;
+
+      this.init();
+    }
+
+    init() {
+      // 检查是否已收藏
+      const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+      if (wishlist.includes(this.productId)) {
+        this.button.setAttribute('active', '');
+      }
+
+      this.button.addEventListener('click', () => this.toggle());
+    }
+
+    toggle() {
+      let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+      const index = wishlist.indexOf(this.productId);
+
+      if (index > -1) {
+        wishlist.splice(index, 1);
+        this.button.removeAttribute('active');
+      } else {
+        wishlist.push(this.productId);
+        this.button.setAttribute('active', '');
+      }
+
+      localStorage.setItem('wishlist', JSON.stringify(wishlist));
+
+      // 触发事件
+      this.dispatchEvent(new CustomEvent('wishlist:update', {
+        bubbles: true,
+        detail: { productId: this.productId, added: index === -1 }
+      }));
+    }
+  }
+
+  customElements.define('wishlist-button', WishlistButton);
+{% endjavascript %}

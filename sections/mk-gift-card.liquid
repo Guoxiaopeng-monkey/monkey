@@ -1,0 +1,283 @@
+{%- comment -%}
+  MK 礼品卡板块
+
+  展示礼品卡余额和激活
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+  assign gift_card = gift_card | default: nil
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-gift-card color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-gift-card__container">
+    {%- if gift_card != blank -%}
+      <div class="mk-gift-card__header">
+        <h1 class="mk-gift-card__title">{{ 'gift_cards.remaining' | t | default: '余额' }}</h1>
+        <p class="mk-gift-card__balance">{{ gift_card.balance | money }}</p>
+      </div>
+
+      <div class="mk-gift-card__code">
+        <p class="mk-gift-card__code-label">{{ 'gift_cards.code' | t | default: '礼品卡代码' }}</p>
+        <div class="mk-gift-card__code-value">
+          {%- for code in gift_card.code | split: '' -%}
+            <span class="mk-gift-card__code-char">{{ code }}</span>
+          {%- endfor -%}
+        </div>
+      </div>
+
+      {%- if ss.show_qr_code -%}
+        <div class="mk-gift-card__qr">
+          {% render 'mk-qr-code', data: gift_card.code %}
+        </div>
+      {%- endif -%}
+
+      <div class="mk-gift-card__actions">
+        <button type="button" class="mk-gift-card__button" data-copy-code>
+          {{ 'gift_cards.copy_code' | t | default: '复制代码' }}
+        </button>
+        <a href="{{ routes.cart_url }}" class="mk-gift-card__button mk-gift-card__button--secondary">
+          {{ 'gift_cards.shop_now' | t | default: '立即购物' }}
+        </a>
+      </div>
+    {%- else -%}
+      <div class="mk-gift-card__illustration">
+        {{- 'icon-giftcard.svg' | inline_asset_content -}}
+      </div>
+      <h1 class="mk-gift-card__title">{{ 'gift_cards.title' | t | default: '检查礼品卡余额' }}</h1>
+
+      {% form 'gift_card', class: 'mk-gift-card__form' %}
+        <div class="mk-gift-card__fields">
+          <input
+            type="text"
+            name="gift_card_code"
+            id="gift-card-code"
+            class="mk-gift-card__input"
+            placeholder="{{ 'gift_cards.code_placeholder' | t | default: '输入礼品卡代码' }}"
+            required
+          >
+          <button type="submit" class="mk-gift-card__button">
+            {{ 'gift_cards.check' | t | default: '查询' }}
+          </button>
+        </div>
+      {% endform %}
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-gift-card {
+    padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-gift-card {
+      padding: {{ ss.padding_top_desktop | default: 64 }}px 0 {{ ss.padding_bottom_desktop | default: 64 }}px;
+    }
+  }
+
+  .mk-gift-card__container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+    text-align: center;
+  }
+
+  .mk-gift-card__illustration {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .mk-gift-card__illustration svg {
+    width: 80px;
+    height: 80px;
+    color: var(--color-primary, #000);
+    opacity: 0.8;
+  }
+
+  .mk-gift-card__header {
+    margin-bottom: 32px;
+  }
+
+  .mk-gift-card__title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-gift-card__balance {
+    margin: 0;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--color-primary, #000);
+  }
+
+  .mk-gift-card__code {
+    margin-bottom: 32px;
+  }
+
+  .mk-gift-card__code-label {
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-gift-card__code-value {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .mk-gift-card__code-char {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 44px;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: monospace;
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border-radius: 6px;
+  }
+
+  .mk-gift-card__qr {
+    margin-bottom: 32px;
+  }
+
+  .mk-gift-card__qr img {
+    width: 150px;
+    height: 150px;
+  }
+
+  .mk-gift-card__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mk-gift-card__fields {
+    display: flex;
+    gap: 8px;
+  }
+
+  .mk-gift-card__input {
+    flex: 1;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: border-color 0.2s ease;
+  }
+
+  .mk-gift-card__input:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-gift-card__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .mk-gift-card__button:hover {
+    opacity: 0.85;
+  }
+
+  .mk-gift-card__button--secondary {
+    color: var(--color-foreground);
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+  }
+
+  .mk-gift-card__button--secondary:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 礼品卡",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_qr_code",
+      "label": "显示二维码",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "间距"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 礼品卡"
+    }
+  ]
+}
+{% endschema %}

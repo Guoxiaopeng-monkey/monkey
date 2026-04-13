@@ -1,0 +1,232 @@
+{%- comment -%}
+  MK 弹窗板块
+
+  展示弹窗内容
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-popup color-{{ ss.color_scheme | default: 'background-1' }}"
+  data-popup
+  data-popup-id="{{ section.id }}"
+>
+  <div class="mk-popup__overlay" data-popup-overlay></div>
+
+  <div class="mk-popup__container">
+    <button type="button" class="mk-popup__close" aria-label="{{ 'actions.close' | t }}" data-popup-close>
+      {{- 'icon-close.svg' | inline_asset_content -}}
+    </button>
+
+    {%- if ss.title != blank -%}
+      <h2 class="mk-popup__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    {%- if ss.image != blank -%}
+      <div class="mk-popup__image">
+        {{ ss.image | image_url: width: 600 | image_tag: class: 'mk-popup__image-img' }}
+      </div>
+    {%- endif -%}
+
+    <div class="mk-popup__content">
+      {{ ss.text }}
+    </div>
+
+    {%- if ss.button_text != blank -%}
+      <a href="{{ ss.button_link | default: '#' }}" class="mk-popup__button">
+        {{ ss.button_text }}
+      </a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-popup {
+    display: none;
+  }
+
+  .mk-popup[open] {
+    display: block;
+  }
+
+  .mk-popup__overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  .mk-popup__container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: var(--color-background);
+    border-radius: 16px;
+    padding: 32px;
+    z-index: 1000;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .mk-popup__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--color-text-secondary, #666);
+    transition: background-color 0.2s ease;
+  }
+
+  .mk-popup__close:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-popup__close svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .mk-popup__title {
+    margin: 0 0 20px 0;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .mk-popup__image {
+    margin-bottom: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .mk-popup__image-img {
+    width: 100%;
+    height: auto;
+  }
+
+  .mk-popup__content {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--color-text-secondary, #666);
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .mk-popup__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .mk-popup__button:hover {
+    opacity: 0.85;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class PopupSection extends HTMLElement {
+    constructor() {
+      super();
+      this.popup = this.querySelector('.mk-popup');
+      this.overlay = this.querySelector('[data-popup-overlay]');
+      this.closeBtn = this.querySelector('[data-popup-close]');
+
+      this.init();
+    }
+
+    init() {
+      this.closeBtn?.addEventListener('click', () => this.close());
+      this.overlay?.addEventListener('click', () => this.close());
+
+      // ESC键关闭
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.popup?.hasAttribute('open')) {
+          this.close();
+        }
+      });
+    }
+
+    open() {
+      this.popup.setAttribute('open', '');
+      document.body.style.overflow = 'hidden';
+    }
+
+    close() {
+      this.popup.removeAttribute('open');
+      document.body.style.overflow = '';
+    }
+  }
+
+  customElements.define('popup-section', PopupSection);
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK 弹窗",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "图片"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "内容"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "按钮文字"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "按钮链接"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 弹窗"
+    }
+  ]
+}
+{% endschema %}

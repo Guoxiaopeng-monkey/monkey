@@ -1,0 +1,113 @@
+{%- doc -%}
+  MK 视图切换组件
+
+  渲染产品列表视图切换（网格/列表）
+
+  @param {string} [current_view] - 当前视图
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-view-toggle', current_view: view %}
+{%- enddoc -%}
+
+{% liquid
+  assign current_view = current_view | default: 'grid'
+  assign class = class | default: ''
+-%}
+
+<div class="mk-view-toggle {{ class }}" data-view-toggle>
+  <button
+    type="button"
+    class="mk-view-toggle__btn {% if current_view == 'grid' %}mk-view-toggle__btn--active{% endif %}"
+    data-view="grid"
+    aria-label="{{ 'products.grid_view' | t | default: '网格视图' }}"
+  >
+    {{- 'icon-grid.svg' | inline_asset_content -}}
+  </button>
+
+  <button
+    type="button"
+    class="mk-view-toggle__btn {% if current_view == 'list' %}mk-view-toggle__btn--active{% endif %}"
+    data-view="list"
+    aria-label="{{ 'products.list_view' | t | default: '列表视图' }}"
+  >
+    {{- 'icon-list.svg' | inline_asset_content -}}
+  </button>
+</div>
+
+{% stylesheet %}
+  .mk-view-toggle {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border-radius: 8px;
+  }
+
+  .mk-view-toggle__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--color-text-secondary, #666);
+    transition: all 0.2s ease;
+  }
+
+  .mk-view-toggle__btn:hover {
+    color: var(--color-foreground);
+  }
+
+  .mk-view-toggle__btn--active {
+    background-color: var(--color-background);
+    color: var(--color-primary, #000);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .mk-view-toggle__btn svg {
+    width: 18px;
+    height: 18px;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class ViewToggle extends HTMLElement {
+    constructor() {
+      super();
+      this.buttons = this.querySelectorAll('.mk-view-toggle__btn');
+      this.init();
+    }
+
+    init() {
+      this.buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const view = btn.dataset.view;
+          this.setView(view);
+        });
+      });
+    }
+
+    setView(view) {
+      this.buttons.forEach(btn => {
+        btn.classList.toggle('mk-view-toggle__btn--active', btn.dataset.view === view);
+      });
+
+      document.querySelectorAll('.product-grid').forEach(grid => {
+        grid.dataset.view = view;
+        grid.classList.toggle('product-grid--list', view === 'list');
+      });
+
+      // 保存偏好
+      try {
+        localStorage.setItem('product-view', view);
+      } catch {}
+    }
+  }
+
+  customElements.define('view-toggle', ViewToggle);
+{% endjavascript %}

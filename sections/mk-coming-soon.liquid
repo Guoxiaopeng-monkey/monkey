@@ -1,0 +1,278 @@
+{%- comment -%}
+  MK 即将上线板块
+
+  展示即将上线/缺货产品页面
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-coming-soon color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-coming-soon__container">
+    {%- if ss.icon != blank -%}
+      <div class="mk-coming-soon__icon">
+        {{ ss.icon | image_url: width: 128 | image_tag }}
+      </div>
+    {%- else -%}
+      <div class="mk-coming-soon__icon">
+        {{- 'icon-clock.svg' | inline_asset_content -}}
+      </div>
+    {%- endif -%}
+
+    {%- if ss.title != blank -%}
+      <h1 class="mk-coming-soon__title">{{ ss.title }}</h1>
+    {%- else -%}
+      <h1 class="mk-coming-soon__title">{{ 'products.coming_soon' | t | default: '即将上线' }}</h1>
+    {%- endif -%}
+
+    {%- if ss.description != blank -%}
+      <p class="mk-coming-soon__description">{{ ss.description }}</p>
+    {%- endif -%}
+
+    {%- if ss.show_notify_form -%}
+      <form class="mk-coming-soon__form" action="{{ ss.form_action | default: '#' }}" method="post">
+        <input type="hidden" name="contact[product]" value="{{ product.title | default: 'Product' }}">
+        <div class="mk-coming-soon__input-group">
+          <input
+            type="email"
+            name="contact[email]"
+            class="mk-coming-soon__input"
+            placeholder="{{ 'newsletter.placeholder' | t | default: '输入邮箱获取通知' }}"
+            required
+          >
+          <button type="submit" class="mk-coming-soon__button">
+            {{ 'newsletter.subscribe' | t | default: '通知我' }}
+          </button>
+        </div>
+      </form>
+    {%- endif -%}
+
+    {%- if section.settings.countdown_end_date != blank -%}
+      <div class="mk-coming-soon__countdown">
+        {% render 'mk-countdown', end_date: section.settings.countdown_end_date %}
+      </div>
+    {%- endif -%}
+
+    {%- if ss.back_link_text != blank -%}
+      <a href="{{ ss.back_link | default: '/' }}" class="mk-coming-soon__back">
+        {{ ss.back_link_text }}
+      </a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-coming-soon {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-coming-soon {
+      padding: {{ ss.padding_top_desktop | default: 64 }}px 0 {{ ss.padding_bottom_desktop | default: 64 }}px;
+    }
+  }
+
+  .mk-coming-soon__container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+    text-align: center;
+  }
+
+  .mk-coming-soon__icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .mk-coming-soon__icon img,
+  .mk-coming-soon__icon svg {
+    width: 80px;
+    height: 80px;
+    color: var(--color-primary, #000);
+  }
+
+  .mk-coming-soon__title {
+    margin: 0 0 16px 0;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  @media (min-width: 750px) {
+    .mk-coming-soon__title {
+      font-size: 42px;
+    }
+  }
+
+  .mk-coming-soon__description {
+    margin: 0 0 32px 0;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-coming-soon__form {
+    max-width: 400px;
+    margin: 0 auto 32px;
+  }
+
+  .mk-coming-soon__input-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  .mk-coming-soon__input {
+    flex: 1;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: border-color 0.2s ease;
+  }
+
+  .mk-coming-soon__input:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-coming-soon__button {
+    padding: 14px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .mk-coming-soon__button:hover {
+    opacity: 0.85;
+  }
+
+  .mk-coming-soon__countdown {
+    margin-bottom: 32px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .mk-coming-soon__back {
+    font-size: 14px;
+    color: var(--color-primary, #000);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 即将上线",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "icon",
+      "label": "图标"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "即将上线"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "描述"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_notify_form",
+      "label": "显示订阅表单",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "countdown_end_date",
+      "label": "倒计时结束日期",
+      "info": "格式: 2024-12-31T23:59:59"
+    },
+    {
+      "type": "text",
+      "id": "back_link_text",
+      "label": "返回链接文字"
+    },
+    {
+      "type": "url",
+      "id": "back_link",
+      "label": "返回链接"
+    },
+    {
+      "type": "header",
+      "content": "间距"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 即将上线"
+    }
+  ]
+}
+{% endschema %}

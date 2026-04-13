@@ -1,0 +1,27 @@
+{%- doc -%}
+  MK 格式化价格组件
+
+  格式化显示价格
+
+  @param {number} price - 价格（分）
+  @param {string} [currency] - 货币代码
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-format-price', price: product.price %}
+{%- enddoc -%}
+
+{% liquid
+  assign price = price | default: 0
+  assign currency = currency | default: shop.currency
+  assign class = class | default: ''
+  assign formatted_price = price | money
+-%}
+
+<span class="mk-format-price {{ class }}">{{ formatted_price }}</span>
+
+{% stylesheet %}
+  .mk-format-price {
+    font-variant-numeric: tabular-nums;
+  }
+{% endstylesheet %}

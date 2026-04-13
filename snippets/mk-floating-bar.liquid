@@ -1,0 +1,84 @@
+{%- doc -%}
+  MK 浮动栏组件
+
+  渲染底部浮动操作栏
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-floating-bar', class: 'floating-bar--sticky' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-floating-bar {{ class }}" data-floating-bar hidden>
+  <div class="mk-floating-bar__container">
+    <div class="mk-floating-bar__content">
+      {{ content }}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-floating-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--color-background);
+    border-top: 1px solid var(--color-border);
+    padding: 12px 16px;
+    z-index: 100;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .mk-floating-bar[hidden] {
+    display: none;
+  }
+
+  .mk-floating-bar__container {
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+  }
+
+  .mk-floating-bar__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class FloatingBar extends HTMLElement {
+    constructor() {
+      super();
+      this.bar = this.querySelector('.mk-floating-bar');
+      this.init();
+    }
+
+    init() {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              this.bar.hidden = true;
+            } else {
+              this.bar.hidden = false;
+            }
+          });
+        },
+        { threshold: 0 }
+      );
+
+      const sentinel = document.querySelector('[data-floating-bar-sentinel]');
+      if (sentinel) {
+        observer.observe(sentinel);
+      }
+    }
+  }
+
+  customElements.define('floating-bar', FloatingBar);
+{% endjavascript %}

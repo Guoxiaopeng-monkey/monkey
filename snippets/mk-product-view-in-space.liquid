@@ -1,0 +1,65 @@
+{%- doc -%}
+  MK 产品AR预览组件
+
+  渲染AR/3D预览按钮
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-product-view-in-space', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+
+  assign has_3d_model = false
+  if product.media | where: 'media_type', 'model' | size > 0
+    assign has_3d_model = true
+  endif
+-%}
+
+{%- if has_3d_model -%}
+  <button
+    type="button"
+    class="mk-product-view-in-space {{ class }}"
+    data-view-in-space
+    data-model-id="{{ product.media | where: 'media_type', 'model' | first | attribute: 'id' }}"
+  >
+    <span class="mk-product-view-in-space__icon">{{- 'icon-3d.svg' | inline_asset_content -}}</span>
+    <span class="mk-product-view-in-space__text">{{ 'products.view_in_space' | t | default: '在空间中查看' }}</span>
+  </button>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-product-view-in-space {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-product-view-in-space:hover {
+    border-color: var(--color-foreground);
+  }
+
+  .mk-product-view-in-space__icon {
+    display: flex;
+    width: 20px;
+    height: 20px;
+  }
+
+  .mk-product-view-in-space__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+{% endstylesheet %}

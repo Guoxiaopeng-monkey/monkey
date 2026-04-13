@@ -1,0 +1,129 @@
+{%- doc -%}
+  MK 变体单选组件
+
+  渲染变体单选按钮组
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-variant-radio', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if product != blank -%}
+  <div class="mk-variant-radio {{ class }}" data-variant-radio>
+    {%- for option in product.options_with_values -%}
+      <fieldset class="mk-variant-radio__option" data-option-index="{{ forloop.index0 }}">
+        <legend class="mk-variant-radio__legend">{{ option.name }}</legend>
+
+        <div class="mk-variant-radio__values">
+          {%- for value in option.values -%}
+            {% liquid
+              assign is_selected = false
+              if option.selected_value == value
+                assign is_selected = true
+              endif
+
+              assign is_available = true
+              for variant in product.variants
+                if variant.options[forloop.index0] == value and variant.available == false
+                  assign is_available = false
+                  break
+                endif
+              endfor
+            %}
+
+            <label class="mk-variant-radio__label {% unless is_available %}mk-variant-radio__label--unavailable{% endunless %}">
+              <input
+                type="radio"
+                name="option-{{ option.position }}"
+                value="{{ value }}"
+                {% if is_selected %}checked{% endif %}
+                {% unless is_available %}disabled{% endunless %}
+                class="mk-variant-radio__input"
+              >
+              <span class="mk-variant-radio__text">{{ value }}</span>
+            </label>
+          {%- endfor -%}
+        </div>
+      </fieldset>
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-variant-radio {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .mk-variant-radio__option {
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+
+  .mk-variant-radio__legend {
+    margin-bottom: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .mk-variant-radio__values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mk-variant-radio__label {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .mk-variant-radio__label--unavailable {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .mk-variant-radio__input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .mk-variant-radio__text {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-variant-radio__label:hover .mk-variant-radio__text {
+    border-color: var(--color-foreground);
+  }
+
+  .mk-variant-radio__input:checked + .mk-variant-radio__text {
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-variant-radio__input:disabled + .mk-variant-radio__text {
+    text-decoration: line-through;
+  }
+{% endstylesheet %}

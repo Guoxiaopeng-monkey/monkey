@@ -1,0 +1,80 @@
+{%- doc -%}
+  MK Shop The Look组件
+
+  渲染穿搭/搭配展示
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-shop-the-look' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-shop-the-look {{ class }}" data-shop-the-look>
+  <div class="mk-shop-the-look__grid">
+    {%- for i in (1..4) -%}
+      <div class="mk-shop-the-look__item" data-item-index="{{ forloop.index0 }}">
+        <img src="" alt="" class="mk-shop-the-look__image" loading="lazy">
+        <button type="button" class="mk-shop-the-look__hotspot" aria-label="{{ 'products.shop_the_look' | t | default: '查看产品' }}">
+          <span class="mk-shop-the-look__plus">+</span>
+        </button>
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-shop-the-look__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-shop-the-look__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+  }
+
+  .mk-shop-the-look__item {
+    position: relative;
+    aspect-ratio: 3 / 4;
+  }
+
+  .mk-shop-the-look__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .mk-shop-the-look__hotspot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px;
+    height: 36px;
+    background-color: var(--color-background);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+  }
+
+  .mk-shop-the-look__hotspot:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  .mk-shop-the-look__plus {
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--color-foreground);
+    line-height: 1;
+  }
+{% endstylesheet %}

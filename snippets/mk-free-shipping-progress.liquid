@@ -1,0 +1,85 @@
+{%- doc -%}
+  MK 免费配送进度组件
+
+  渲染达到免费配送的进度
+
+  @param {number} [threshold] - 免费配送门槛
+  @param {number} [current] - 当前金额
+
+  @example
+  {% render 'mk-free-shipping-progress', threshold: 99, current: cart.total_price %}
+{%- enddoc -%}
+
+{% liquid
+  assign threshold = threshold | default: 99
+  assign current = current | default: 0
+  assign threshold_money = threshold | times: 100 | money
+
+  assign remaining = threshold | minus: current | at_least: 0
+  assign remaining_money = remaining | times: 100 | money
+  assign percent = current | times: 100.0 | divided_by: threshold | at_most: 100
+-%}
+
+{%- if remaining > 0 -%}
+  <div class="mk-free-shipping-progress" data-free-shipping-progress>
+    {%- if current > 0 -%}
+      <p class="mk-free-shipping-progress__message">
+        {{ 'cart.free_shipping_remaining' | t: amount: remaining_money | default: '再购买' }} {{ remaining_money }} {{ 'cart.free_shipping_to_go' | t | default: '即可享受免费配送' }}
+      </p>
+    {%- else -%}
+      <p class="mk-free-shipping-progress__message">
+        {{ 'cart.free_shipping_threshold' | t: amount: threshold_money | default: '满' | append: threshold_money | append: '免费配送' }}
+      </p>
+    {%- endif -%}
+
+    <div class="mk-free-shipping-progress__bar">
+      <div class="mk-free-shipping-progress__fill" style="--percent: {{ percent }}%;"></div>
+    </div>
+  </div>
+{%- else -%}
+  <div class="mk-free-shipping-progress mk-free-shipping-progress--achieved">
+    <p class="mk-free-shipping-progress__message">
+      🎉 {{ 'cart.free_shipping_achieved' | t | default: '您已享受免费配送！' }}
+    </p>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-free-shipping-progress {
+    padding: 16px;
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border-radius: 12px;
+  }
+
+  .mk-free-shipping-progress__message {
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    color: var(--color-foreground);
+    text-align: center;
+  }
+
+  .mk-free-shipping-progress__bar {
+    width: 100%;
+    height: 6px;
+    background-color: var(--color-border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .mk-free-shipping-progress__fill {
+    height: 100%;
+    width: var(--percent, 0%);
+    background-color: var(--color-primary, #000);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  .mk-free-shipping-progress--achieved {
+    background-color: rgba(46, 125, 50, 0.1);
+  }
+
+  .mk-free-shipping-progress--achieved .mk-free-shipping-progress__message {
+    color: var(--color-success, #2e7d32);
+    font-weight: 500;
+  }
+{% endstylesheet %}

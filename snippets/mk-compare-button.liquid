@@ -1,0 +1,108 @@
+{%- doc -%}
+  MK 比较按钮组件
+
+  渲染产品比较按钮
+
+  @param {string} product_id - 产品ID
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-compare-button', product_id: product.id %}
+{%- enddoc -%}
+
+{% liquid
+  assign product_id = product_id | default: ''
+  assign class = class | default: ''
+-%}
+
+<button
+  type="button"
+  class="mk-compare-button {{ class }}"
+  data-product-id="{{ product_id }}"
+  aria-label="{{ 'compare.add' | t | default: '添加到比较' }}"
+>
+  {{- 'icon-compare.svg' | inline_asset_content -}}
+</button>
+
+{% stylesheet %}
+  .mk-compare-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--color-foreground);
+    transition: all 0.2s ease;
+  }
+
+  .mk-compare-button:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-compare-button[active] {
+    color: var(--color-primary, #000);
+  }
+
+  .mk-compare-button[active] svg {
+    fill: currentColor;
+  }
+
+  .mk-compare-button svg {
+    width: 20px;
+    height: 20px;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class CompareButton extends HTMLElement {
+    constructor() {
+      super();
+      this.button = this.querySelector('.mk-compare-button');
+      this.productId = this.dataset.productId;
+
+      this.init();
+    }
+
+    init() {
+      // 检查是否已添加
+      const compareList = JSON.parse(localStorage.getItem('compare') || '[]');
+      if (compareList.includes(this.productId)) {
+        this.button.setAttribute('active', '');
+      }
+
+      this.button.addEventListener('click', () => this.toggle());
+    }
+
+    toggle() {
+      let compareList = JSON.parse(localStorage.getItem('compare') || '[]');
+      const index = compareList.indexOf(this.productId);
+
+      if (index > -1) {
+        compareList.splice(index, 1);
+        this.button.removeAttribute('active');
+      } else {
+        if (compareList.length >= 4) {
+          alert('最多只能比较4个产品');
+          return;
+        }
+        compareList.push(this.productId);
+        this.button.setAttribute('active', '');
+      }
+
+      localStorage.setItem('compare', JSON.stringify(compareList));
+
+      // 触发事件
+      this.dispatchEvent(new CustomEvent('compare:update', {
+        bubbles: true,
+        detail: { productId: this.productId, added: index === -1 }
+      }));
+    }
+  }
+
+  customElements.define('compare-button', CompareButton);
+{% endjavascript %}

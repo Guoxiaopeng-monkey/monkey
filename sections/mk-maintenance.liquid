@@ -1,0 +1,177 @@
+{%- comment -%}
+  MK 维护模式板块
+
+  展示网站维护中页面
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-maintenance color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-maintenance__container">
+    {%- if ss.icon != blank -%}
+      <div class="mk-maintenance__icon">
+        {{ ss.icon | image_url: width: 128 | image_tag }}
+      </div>
+    {%- else -%}
+      <div class="mk-maintenance__icon">
+        {{- 'icon-tools.svg' | inline_asset_content -}}
+      </div>
+    {%- endif -%}
+
+    <h1 class="mk-maintenance__title">
+      {{ ss.title | default: '网站维护中' }}
+    </h1>
+
+    <p class="mk-maintenance__description">
+      {{ ss.description | default: '抱歉，网站正在进行维护。请稍后再试。' }}
+    </p>
+
+    {%- if ss.show_contact -%}
+      {%- if shop.email != blank -%}
+        <p class="mk-maintenance__contact">
+          {{ 'maintenance.contact' | t | default: '如有紧急事宜，请联系' }}:
+          <a href="mailto:{{ shop.email }}">{{ shop.email }}</a>
+        </p>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- if ss.countdown_end_date != blank -%}
+      <div class="mk-maintenance__countdown">
+        <p class="mk-maintenance__countdown-label">{{ ss.countdown_label | default: '预计恢复时间' }}</p>
+        {% render 'mk-countdown', end_date: ss.countdown_end_date %}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-maintenance {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    text-align: center;
+  }
+
+  .mk-maintenance__container {
+    max-width: 500px;
+  }
+
+  .mk-maintenance__icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+
+  .mk-maintenance__icon img,
+  .mk-maintenance__icon svg {
+    width: 80px;
+    height: 80px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-maintenance__title {
+    margin: 0 0 16px 0;
+    font-size: 32px;
+    font-weight: 700;
+  }
+
+  @media (min-width: 750px) {
+    .mk-maintenance__title {
+      font-size: 42px;
+    }
+  }
+
+  .mk-maintenance__description {
+    margin: 0 0 24px 0;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-maintenance__contact {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-maintenance__contact a {
+    color: var(--color-primary, #000);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .mk-maintenance__countdown {
+    margin-top: 32px;
+    padding-top: 32px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .mk-maintenance__countdown-label {
+    margin: 0 0 16px 0;
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 维护模式",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "icon",
+      "label": "图标"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "网站维护中"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "描述",
+      "default": "抱歉，网站正在进行维护。请稍后再试。"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_contact",
+      "label": "显示联系方式",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "countdown_end_date",
+      "label": "倒计时结束日期",
+      "info": "格式: 2024-12-31T23:59:59"
+    },
+    {
+      "type": "text",
+      "id": "countdown_label",
+      "label": "倒计时标签"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 维护模式"
+    }
+  ]
+}
+{% endschema %}

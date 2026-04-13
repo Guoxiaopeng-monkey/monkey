@@ -1,0 +1,76 @@
+{%- doc -%}
+  MK 头部操作组件
+
+  渲染头部操作按钮（账户、购物车等）
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-header-actions', class: 'header-actions' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-header-actions {{ class }}">
+  {%- if shop.customer_accounts_enabled -%}
+    <a href="{{ routes.account_url | default: '/account' }}" class="mk-header-actions__item" aria-label="{{ 'accessibility.account' | t }}">
+      {{- 'icon-account.svg' | inline_asset_content -}}
+    </a>
+  {%- endif -%}
+
+  <a href="{{ routes.cart_url }}" class="mk-header-actions__item mk-header-actions__item--cart" aria-label="{{ 'accessibility.cart' | t }}">
+    {{- 'icon-cart.svg' | inline_asset_content -}}
+    {%- if cart.item_count > 0 -%}
+      <span class="mk-header-actions__cart-count">{{ cart.item_count }}</span>
+    {%- endif -%}
+  </a>
+</div>
+
+{% stylesheet %}
+  .mk-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mk-header-actions__item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: var(--color-foreground);
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+  }
+
+  .mk-header-actions__item:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-header-actions__item svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .mk-header-actions__cart-count {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    background-color: var(--color-sale, #e53935);
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+{% endstylesheet %}

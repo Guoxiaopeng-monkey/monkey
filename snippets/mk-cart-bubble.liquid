@@ -1,48 +1,84 @@
 {%- doc -%}
-  MK 购物车计数气泡组件
+  MK 购物车气泡组件
 
-  渲染购物车图标旁的计数气泡
+  渲染购物车数量气泡
 
-  @param {number} [count] - 购物车商品数量
+  @param {string} [class] - 额外CSS类名
 
   @example
-  {% render 'mk-cart-bubble', count: cart.item_count %}
+  {% render 'mk-cart-bubble' %}
 {%- enddoc -%}
 
 {% liquid
-  assign count = count | default: 0
+  assign class = class | default: ''
+  assign cart_count = cart.item_count | default: 0
 -%}
 
-{%- if count > 0 -%}
-  <span class="mk-cart-bubble" data-count="{{ count }}">
-    {%- if count > 9 -%}
-      <span class="mk-cart-bubble__text">9+</span>
-    {%- else -%}
-      <span class="mk-cart-bubble__text">{{ count }}</span>
-    {%- endif -%}
-  </span>
-{%- endif -%}
+<a
+  href="{{ routes.cart_url }}"
+  class="mk-cart-bubble {{ class }}"
+  aria-label="{{ 'cart.title' | t | default: '购物车' }}: {{ cart_count }}"
+>
+  {{- 'icon-cart.svg' | inline_asset_content -}}
+  {%- if cart_count > 0 -%}
+    <span class="mk-cart-bubble__count" data-cart-count>{{ cart_count }}</span>
+  {%- endif -%}
+</a>
 
 {% stylesheet %}
   .mk-cart-bubble {
-    position: absolute;
-    top: -6px;
-    right: -6px;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 4px;
-    background-color: var(--color-sale, #e53935);
-    border-radius: 9px;
-    z-index: 1;
+    width: 40px;
+    height: 40px;
+    color: var(--color-foreground);
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
   }
 
-  .mk-cart-bubble__text {
+  .mk-cart-bubble:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-cart-bubble svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .mk-cart-bubble__count {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
     font-size: 10px;
     font-weight: 700;
-    color: #fff;
-    line-height: 1;
+    line-height: 18px;
+    text-align: center;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border-radius: 100px;
   }
 {% endstylesheet %}
+
+{% javascript %}
+  document.addEventListener('cart:updated', () => {
+    fetch('/cart.js')
+      .then(res => res.json())
+      .then(cart => {
+        const countEl = document.querySelector('[data-cart-count]');
+        if (countEl) {
+          const count = cart.item_count;
+          if (count > 0) {
+            countEl.textContent = count;
+            countEl.hidden = false;
+          } else {
+            countEl.hidden = true;
+          }
+        }
+      });
+  });
+{% endjavascript %}

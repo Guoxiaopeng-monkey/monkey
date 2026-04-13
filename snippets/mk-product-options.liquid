@@ -1,0 +1,124 @@
+{%- doc -%}
+  MK 产品选项组件
+
+  渲染产品的所有选项选择器
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-product-options', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if product != blank -%}
+  <div class="mk-product-options {{ class }}" data-product-options>
+    {%- for option in product.options_with_values -%}
+      <div class="mk-product-options__option" data-option-index="{{ forloop.index0 }}">
+        <label class="mk-product-options__label">
+          {{ option.name }}: <span class="mk-product-options__selected">{{ option.selected_value }}</span>
+        </label>
+
+        <div class="mk-product-options__values">
+          {%- for value in option.values -%}
+            {% liquid
+              assign is_available = true
+              assign is_selected = false
+              if option.selected_value == value
+                assign is_selected = true
+              endif
+
+              for variant in product.variants
+                if variant.options[forloop.index0] == value and variant.available == false
+                  assign is_available = false
+                  break
+                endif
+              endfor
+            %}
+
+            <button
+              type="button"
+              class="mk-product-options__value {% if is_selected %}mk-product-options__value--selected{% endif %} {% unless is_available %}mk-product-options__value--unavailable{% endunless %}"
+              data-value="{{ value }}"
+              data-option-index="{{ forloop.index0 }}"
+              {% unless is_available %}disabled{% endunless %}
+            >
+              {{ value }}
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-product-options {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .mk-product-options__label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .mk-product-options__selected {
+    font-weight: 400;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-product-options__values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mk-product-options__value {
+    min-width: 44px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-product-options__value:hover:not(:disabled) {
+    border-color: var(--color-foreground);
+  }
+
+  .mk-product-options__value--selected {
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-product-options__value--unavailable {
+    opacity: 0.5;
+    cursor: not-allowed;
+    position: relative;
+  }
+
+  .mk-product-options__value--unavailable::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--color-text-secondary, #999);
+    transform: rotate(-45deg);
+  }
+{% endstylesheet %}

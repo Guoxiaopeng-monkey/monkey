@@ -1,0 +1,87 @@
+{%- doc -%}
+  MK 缩略图网格组件
+
+  渲染图片缩略图网格
+
+  @param {object[]} images - 图片数组
+  @param {number} [limit] - 显示数量限制
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-thumbnail', images: product.images, limit: 8 %}
+{%- enddoc -%}
+
+{% liquid
+  assign images = images | default: empty_array
+  assign limit = limit | default: 6
+  assign class = class | default: ''
+
+  if images == empty_array
+    assign images = '[]' | parse_json
+  endif
+-%}
+
+{%- if images.size > 0 -%}
+  <div class="mk-thumbnail {{ class }}" data-thumbnail-grid>
+    {%- for image in images limit: limit -%}
+      <button
+        type="button"
+        class="mk-thumbnail__item {% if forloop.first %}mk-thumbnail__item--active{% endif %}"
+        data-index="{{ forloop.index0 }}"
+        data-src="{{ image | image_url: width: 1200 }}"
+      >
+        {{ image | image_url: width: 100 | image_tag: loading: 'lazy' }}
+      </button>
+    {%- endfor -%}
+
+    {%- if images.size > limit -%}
+      <button type="button" class="mk-thumbnail__item mk-thumbnail__item--more" data-more>
+        <span>+{{ images.size | minus: limit }}</span>
+      </button>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-thumbnail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mk-thumbnail__item {
+    width: 64px;
+    height: 64px;
+    padding: 0;
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-thumbnail__item:hover {
+    border-color: var(--color-border);
+  }
+
+  .mk-thumbnail__item--active {
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-thumbnail__item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mk-thumbnail__item--more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-background-secondary, #f5f5f5);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}

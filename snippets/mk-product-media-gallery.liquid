@@ -1,0 +1,157 @@
+{%- doc -%}
+  MK 产品媒体图库组件
+
+  渲染产品媒体图库
+
+  @param {object} product - 产品对象
+  @param {number} [current_index] - 当前选中索引
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-product-media-gallery', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign current_index = current_index | default: 0
+  assign class = class | default: ''
+  assign media = product.media | default: empty_array
+-%}
+
+{%- if media.size > 0 -%}
+  <div class="mk-product-media-gallery {{ class }}" data-product-media-gallery>
+    <div class="mk-product-media-gallery__main">
+      {%- case media[current_index].media_type -%}
+        {%- when 'image' -%}
+          {{ media[current_index] | image_url: width: 1200 | image_tag: class: 'mk-product-media-gallery__image', alt: product.title, loading: 'lazy' }}
+        {%- when 'video' -%}
+          <video
+            class="mk-product-media-gallery__video"
+            src="{{ media[current_index].sources[0].url }}"
+            autoplay
+            loop
+            muted
+            playsinline
+          ></video>
+        {%- when 'external_video' -%}
+          <iframe
+            class="mk-product-media-gallery__external"
+            src="https://www.youtube.com/embed/{{ media[current_index].external_id }}"
+            frameborder="0"
+            allowfullscreen
+          ></iframe>
+        {%- when 'model' -%}
+          <model-viewer
+            class="mk-product-media-gallery__model"
+            src="{{ media[current_index].sources[0].url }}"
+            auto-rotate
+            camera-controls
+          ></model-viewer>
+        {%- else -%}
+          {{ media[current_index] | image_url: width: 1200 | image_tag: class: 'mk-product-media-gallery__image', alt: product.title }}
+      {%- endcase -%}
+    </div>
+
+    {%- if media.size > 1 -%}
+      <div class="mk-product-media-gallery__nav">
+        {%- for item in media -%}
+          <button
+            type="button"
+            class="mk-product-media-gallery__thumb {% if forloop.index0 == current_index %}mk-product-media-gallery__thumb--active{% endif %}"
+            data-index="{{ forloop.index0 }}"
+            aria-label="{{ 'gallery.image' | t: index: forloop.index }}"
+          >
+            {%- case item.media_type -%}
+              {%- when 'image' -%}
+                {{ item | image_url: width: 100 | image_tag: loading: 'lazy' }}
+              {%- when 'video' -%}
+                {{ 'icon-play.svg' | inline_asset_content }}
+              {%- when 'model' -%}
+                {{ 'icon-3d.svg' | inline_asset_content }}
+              {%- else -%}
+                {{ 'icon-image.svg' | inline_asset_content }}
+            {%- endcase -%}
+          </button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-product-media-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mk-product-media-gallery__main {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .mk-product-media-gallery__image,
+  .mk-product-media-gallery__video,
+  .mk-product-media-gallery__external,
+  .mk-product-media-gallery__model {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mk-product-media-gallery__external {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-product-media-gallery__model {
+    aspect-ratio: 1;
+  }
+
+  .mk-product-media-gallery__nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+
+  .mk-product-media-gallery__nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mk-product-media-gallery__thumb {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    padding: 2px;
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .mk-product-media-gallery__thumb:hover {
+    border-color: var(--color-border);
+  }
+
+  .mk-product-media-gallery__thumb--active {
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-product-media-gallery__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+{% endstylesheet %}

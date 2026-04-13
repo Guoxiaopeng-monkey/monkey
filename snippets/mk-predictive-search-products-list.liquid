@@ -1,0 +1,54 @@
+{%- doc -%}
+  MK 预测搜索产品列表组件
+
+  渲染预测搜索产品列表
+
+  @param {object[]} products - 产品数组
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-predictive-search-products-list', products: search.results %}
+{%- enddoc -%}
+
+{% liquid
+  assign products = products | default: empty_array
+  assign class = class | default: ''
+
+  if products == empty_array
+    assign products = '[]' | parse_json
+  endif
+-%}
+
+{%- if products.size > 0 -%}
+  <div class="mk-predictive-search-products-list {{ class }}">
+    <h3 class="mk-predictive-search-products-list__title">{{ 'search.products' | t | default: '产品' }}</h3>
+    <ul class="mk-predictive-search-products-list__items">
+      {%- for product in products limit: 4 -%}
+        <li class="mk-predictive-search-products-list__item">
+          <a href="{{ product.url }}" class="mk-predictive-search-products-list__link">
+            <div class="mk-predictive-search-products-list__image">
+              {{ product.featured_image | image_url: width: 80 | image_tag: loading: 'lazy' }}
+            </div>
+            <div class="mk-predictive-search-products-list__info">
+              <h4 class="mk-predictive-search-products-list__name">{{ product.title }}</h4>
+              <p class="mk-predictive-search-products-list__price">{{ product.price | money }}</p>
+            </div>
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-predictive-search-products-list { padding: 12px 0; }
+  .mk-predictive-search-products-list__title { margin: 0 16px 12px 16px; font-size: 12px; font-weight: 600; color: var(--color-text-secondary, #666); text-transform: uppercase; letter-spacing: 0.5px; }
+  .mk-predictive-search-products-list__items { list-style: none; margin: 0; padding: 0; }
+  .mk-predictive-search-products-list__link { display: flex; gap: 12px; padding: 8px 16px; text-decoration: none; }
+  .mk-predictive-search-products-list__link:hover { background: var(--color-background-secondary, #f5f5f5); }
+  .mk-predictive-search-products-list__image { width: 56px; height: 56px; flex-shrink: 0; border-radius: 8px; overflow: hidden; }
+  .mk-predictive-search-products-list__image img { width: 100%; height: 100%; object-fit: cover; }
+  .mk-predictive-search-products-list__info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .mk-predictive-search-products-list__name { margin: 0; font-size: 14px; font-weight: 500; color: var(--color-foreground); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mk-predictive-search-products-list__price { margin: 0; font-size: 13px; font-weight: 600; color: var(--color-primary, #000); }
+{% endstylesheet %}

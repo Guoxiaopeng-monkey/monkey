@@ -1,0 +1,33 @@
+{%- doc -%}
+  MK 背景图片组件
+
+  设置背景图片
+
+  @param {object} image - 图片对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-background-image', image: section.settings.background %}
+{%- enddoc -%}
+
+{% liquid
+  assign image = image | default: nil
+  assign class = class | default: ''
+
+  assign bg_url = ''
+  if image != nil
+    assign bg_url = image | image_url
+  endif
+-%}
+
+<div class="mk-background-image {{ class }}" style="--bg-image: url('{{ bg_url }}');">
+  {{ content }}
+</div>
+
+{% stylesheet %}
+  .mk-background-image {
+    background-image: var(--bg-image);
+    background-size: cover;
+    background-position: center;
+  }
+{% endstylesheet %}

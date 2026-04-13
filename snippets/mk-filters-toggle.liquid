@@ -1,0 +1,40 @@
+{%- doc -%}
+  MK 筛选器切换组件
+
+  渲染移动端筛选器切换按钮
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-filters-toggle' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<button type="button" class="mk-filters-toggle {{ class }}" data-filters-toggle>
+  <span class="mk-filters-toggle__icon">{{- 'icon-filter.svg' | inline_asset_content -}}</span>
+  <span class="mk-filters-toggle__text">{{ 'products.filters' | t | default: '筛选' }}</span>
+  {%- if active_count > 0 -%}
+    <span class="mk-filters-toggle__count">{{ active_count }}</span>
+  {%- endif -%}
+</button>
+
+{% stylesheet %}
+  .mk-filters-toggle {
+    display: flex; align-items: center; gap: 8px; padding: 10px 16px;
+    font-size: 14px; font-weight: 500; color: var(--color-foreground);
+    background: var(--color-background); border: 1px solid var(--color-border);
+    border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
+  }
+  .mk-filters-toggle:hover { border-color: var(--color-foreground); }
+  .mk-filters-toggle__icon { display: flex; width: 18px; height: 18px; }
+  .mk-filters-toggle__icon svg { width: 100%; height: 100%; }
+  .mk-filters-toggle__count {
+    display: flex; align-items: center; justify-content: center;
+    min-width: 20px; height: 20px; padding: 0 6px;
+    font-size: 11px; font-weight: 600; color: var(--color-on-primary, #fff);
+    background: var(--color-primary, #000); border-radius: 100px;
+  }
+{% endstylesheet %}

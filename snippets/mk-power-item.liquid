@@ -1,0 +1,33 @@
+{%- doc -%}
+  MK 能量展示项组件
+
+  渲染能量/功率展示项
+
+  @param {string} value - 数值
+  @param {string} unit - 单位
+  @param {string} label - 标签
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-power-item', value: '1500', unit: 'W', label: '功率' %}
+{%- enddoc -%}
+
+{% liquid
+  assign value = value | default: ''
+  assign unit = unit | default: ''
+  assign label = label | default: ''
+  assign class = class | default: ''
+-%}
+
+<div class="mk-power-item {{ class }}">
+  <span class="mk-power-item__value">{{ value }}</span>
+  <span class="mk-power-item__unit">{{ unit }}</span>
+  <span class="mk-power-item__label">{{ label }}</span>
+</div>
+
+{% stylesheet %}
+  .mk-power-item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; }
+  .mk-power-item__value { font-size: 32px; font-weight: 700; color: var(--color-primary, #000); line-height: 1; }
+  .mk-power-item__unit { font-size: 16px; font-weight: 500; color: var(--color-text-secondary, #666); }
+  .mk-power-item__label { font-size: 12px; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}

@@ -1,0 +1,40 @@
+{%- doc -%}
+  MK 产品媒体全屏Photoswipe组件
+
+  渲染支持全屏浏览的产品媒体
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-product-media-fullscreen-photoswipe', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+  assign media = product.media | default: empty_array
+-%}
+
+{%- if media.size > 0 -%}
+  <div class="mk-product-media-fullscreen-photoswipe {{ class }}" data-photoswipe data-product-media>
+    {%- for item in media -%}
+      <div class="mk-product-media-fullscreen-photoswipe__item" data-index="{{ forloop.index0 }}">
+        {%- case item.media_type -%}
+          {%- when 'image' -%}
+            {{ item | image_url: width: 1600 | image_tag: class: 'mk-product-media-fullscreen-photoswipe__image', alt: product.title, loading: 'lazy' }}
+          {%- else -%}
+            {{ item | image_url: width: 1600 | image_tag: alt: product.title }}
+        {%- endcase -%}
+      </div>
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-product-media-fullscreen-photoswipe { display: none; }
+  .mk-product-media-fullscreen-photoswipe[data-active] { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; }
+  .mk-product-media-fullscreen-photoswipe__item { display: none; }
+  .mk-product-media-fullscreen-photoswipe__item[data-active] { display: flex; align-items: center; justify-content: center; height: 100%; }
+  .mk-product-media-fullscreen-photoswipe__image { max-width: 100%; max-height: 100%; object-fit: contain; }
+{% endstylesheet %}

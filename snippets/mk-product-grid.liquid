@@ -1,0 +1,37 @@
+{%- doc -%}
+  MK 产品网格组件
+
+  渲染产品网格布局
+
+  @param {object[]} products - 产品数组
+  @param {number} [columns] - 列数
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-product-grid', products: products, columns: 4 %}
+{%- enddoc -%}
+
+{% liquid
+  assign products = products | default: empty_array
+  assign columns = columns | default: 4
+  assign class = class | default: ''
+
+  if products == empty_array
+    assign products = '[]' | parse_json
+  endif
+-%}
+
+<div class="mk-product-grid {{ class }}" style="--grid-columns: {{ columns }};" data-product-grid>
+  {%- for product in products -%}
+    <div class="mk-product-grid__item">
+      {% render 'mk-product-card', product: product %}
+    </div>
+  {%- endfor -%}
+</div>
+
+{% stylesheet %}
+  .mk-product-grid { display: grid; grid-template-columns: repeat(var(--grid-columns, 4), 1fr); gap: 24px; }
+  @media (max-width: 1024px) { .mk-product-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 768px) { .mk-product-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+  .mk-product-grid__item { min-width: 0; }
+{% endstylesheet %}

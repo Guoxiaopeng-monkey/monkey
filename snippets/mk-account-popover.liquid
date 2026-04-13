@@ -1,0 +1,97 @@
+{%- doc -%}
+  MK 账户弹出层组件
+
+  渲染账户信息弹出层
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-account-popover' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-account-popover {{ class }}" data-account-popover>
+  <button type="button" class="mk-account-popover__trigger" aria-label="{{ 'account.account' | t | default: '账户' }}">
+    {{- 'icon-account.svg' | inline_asset_content -}}
+  </button>
+
+  <div class="mk-account-popover__content" hidden>
+    {%- if customer -%}
+      <div class="mk-account-popover__header">
+        <p class="mk-account-popover__name">{{ customer.name }}</p>
+        <p class="mk-account-popover__email">{{ customer.email }}</p>
+      </div>
+      <div class="mk-account-popover__links">
+        <a href="{{ routes.account_url }}" class="mk-account-popover__link">{{ 'account.dashboard' | t | default: '账户主页' }}</a>
+        <a href="{{ routes.account_url }}/orders" class="mk-account-popover__link">{{ 'account.orders' | t | default: '我的订单' }}</a>
+        <a href="{{ routes.account_url }}/addresses" class="mk-account-popover__link">{{ 'account.addresses' | t | default: '收货地址' }}</a>
+        <hr class="mk-account-popover__divider">
+        <a href="{{ routes.account_logout_url }}" class="mk-account-popover__link mk-account-popover__link--logout">{{ 'account.logout' | t | default: '退出' }}</a>
+      </div>
+    {%- else -%}
+      <div class="mk-account-popover__auth">
+        <p class="mk-account-popover__title">{{ 'account.guest_title' | t | default: '登录您的账户' }}</p>
+        <a href="{{ routes.login_url }}" class="mk-account-popover__btn mk-account-popover__btn--primary">{{ 'account.login' | t | default: '登录' }}</a>
+        <a href="{{ routes.register_url }}" class="mk-account-popover__btn mk-account-popover__btn--secondary">{{ 'account.create_account' | t | default: '创建账户' }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-account-popover { position: relative; }
+  .mk-account-popover__trigger {
+    display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;
+    background: transparent; border: none; border-radius: 50%; cursor: pointer; color: var(--color-foreground);
+  }
+  .mk-account-popover__trigger:hover { background-color: var(--color-background-secondary, #f5f5f5); }
+  .mk-account-popover__trigger svg { width: 22px; height: 22px; }
+  .mk-account-popover__content {
+    position: absolute; top: calc(100% + 8px); right: 0; width: 280px;
+    background: var(--color-background); border: 1px solid var(--color-border);
+    border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 100;
+  }
+  .mk-account-popover__content[hidden] { display: none; }
+  .mk-account-popover__header { padding: 16px; border-bottom: 1px solid var(--color-border); }
+  .mk-account-popover__name { margin: 0 0 4px 0; font-size: 14px; font-weight: 600; }
+  .mk-account-popover__email { margin: 0; font-size: 12px; color: var(--color-text-secondary, #666); }
+  .mk-account-popover__links { padding: 8px; }
+  .mk-account-popover__link {
+    display: block; padding: 10px 12px; font-size: 14px; color: var(--color-foreground);
+    text-decoration: none; border-radius: 6px;
+  }
+  .mk-account-popover__link:hover { background-color: var(--color-background-secondary, #f5f5f5); }
+  .mk-account-popover__link--logout { color: var(--color-error, #e53935); }
+  .mk-account-popover__divider { border: none; border-top: 1px solid var(--color-border); margin: 8px 0; }
+  .mk-account-popover__auth { padding: 20px; text-align: center; }
+  .mk-account-popover__title { margin: 0 0 16px 0; font-size: 14px; }
+  .mk-account-popover__btn {
+    display: block; padding: 12px; font-size: 14px; font-weight: 600; text-decoration: none;
+    border-radius: 8px; margin-bottom: 8px;
+  }
+  .mk-account-popover__btn--primary { color: var(--color-on-primary, #fff); background: var(--color-primary, #000); }
+  .mk-account-popover__btn--secondary { color: var(--color-foreground); background: transparent; border: 1px solid var(--color-border); }
+{% endstylesheet %}
+
+{% javascript %}
+  class AccountPopover extends HTMLElement {
+    constructor() {
+      super();
+      this.trigger = this.querySelector('.mk-account-popover__trigger');
+      this.content = this.querySelector('.mk-account-popover__content');
+      this.init();
+    }
+    init() {
+      this.trigger?.addEventListener('click', () => {
+        this.content.hidden = !this.content.hidden;
+      });
+      document.addEventListener('click', e => {
+        if (!this.contains(e.target)) this.content.hidden = true;
+      });
+    }
+  }
+  customElements.define('account-popover', AccountPopover);
+{% endjavascript %}

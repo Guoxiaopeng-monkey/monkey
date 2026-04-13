@@ -1,0 +1,19 @@
+{%- doc -%}
+  MK 产品网格卡片尺寸工具组件
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-util-product-grid-card-size' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+{% schema %}
+{
+  "name": "MK Product Grid Card Size",
+  "settings": []
+}
+{% endschema %}

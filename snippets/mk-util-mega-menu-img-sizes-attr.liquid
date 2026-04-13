@@ -1,0 +1,19 @@
+{%- doc -%}
+  MK Mega菜单图片尺寸属性工具组件
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-util-mega-menu-img-sizes-attr' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+{% schema %}
+{
+  "name": "MK Mega Menu Img Sizes",
+  "settings": []
+}
+{% endschema %}

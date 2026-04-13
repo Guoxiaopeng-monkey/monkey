@@ -1,0 +1,58 @@
+{%- doc -%}
+  MK 本地化表单组件
+
+  渲染语言/货币选择表单
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-localization-form' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+{% form 'localization', class: 'mk-localization-form {{ class }}' %}
+  <div class="mk-localization-form__row">
+    <div class="mk-localization-form__field">
+      <label for="locale-code">{{ 'localization.language' | t | default: '语言' }}</label>
+      <select name="locale_code" id="locale-code" class="mk-localization-form__select">
+        {%- for locale in form.available_locales -%}
+          <option value="{{ locale.iso_code }}" {% if locale.iso_code == localization.language.iso_code %}selected{% endif %}>
+            {{ locale.endonym_name }}
+          </option>
+        {%- endfor -%}
+      </select>
+    </div>
+
+    <div class="mk-localization-form__field">
+      <label for="currency-code">{{ 'localization.currency' | t | default: '货币' }}</label>
+      <select name="currency_code" id="currency-code" class="mk-localization-form__select">
+        {%- for currency in form.available_currencies -%}
+          <option value="{{ currency.iso_code }}" {% if currency.iso_code == localization.currency.iso_code %}selected{% endif %}>
+            {{ currency.iso_code }} ({{ currency.symbol }})
+          </option>
+        {%- endfor -%}
+      </select>
+    </div>
+  </div>
+  <button type="submit" class="mk-localization-form__submit">{{ 'localization.update' | t | default: '更新' }}</button>
+{% endform %}
+
+{% stylesheet %}
+  .mk-localization-form { display: flex; flex-direction: column; gap: 16px; }
+  .mk-localization-form__row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .mk-localization-form__field { flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 6px; }
+  .mk-localization-form__field label { font-size: 13px; font-weight: 500; }
+  .mk-localization-form__select {
+    padding: 10px 12px; font-size: 14px; border: 1px solid var(--color-border);
+    border-radius: 8px; background: var(--color-background); cursor: pointer;
+  }
+  .mk-localization-form__select:focus { outline: none; border-color: var(--color-primary, #000); }
+  .mk-localization-form__submit {
+    align-self: flex-start; padding: 10px 20px; font-size: 14px; font-weight: 600;
+    color: var(--color-on-primary, #fff); background: var(--color-primary, #000);
+    border: none; border-radius: 8px; cursor: pointer;
+  }
+{% endstylesheet %}

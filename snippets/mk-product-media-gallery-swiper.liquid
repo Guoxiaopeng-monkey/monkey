@@ -1,0 +1,71 @@
+{%- doc -%}
+  MK 产品媒体Swiper图库组件
+
+  渲染滑动轮播的产品媒体图库
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-product-media-gallery-swiper', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+  assign media = product.media | default: empty_array
+-%}
+
+{%- if media.size > 0 -%}
+  <div class="mk-product-media-gallery-swiper {{ class }}" data-swiper-gallery>
+    <div class="mk-product-media-gallery-swiper__main" data-swiper-main>
+      <div class="mk-product-media-gallery-swiper__wrapper">
+        {%- for item in media -%}
+          <div class="mk-product-media-gallery-swiper__slide" data-index="{{ forloop.index0 }}">
+            {%- case item.media_type -%}
+              {%- when 'image' -%}
+                {{ item | image_url: width: 1200 | image_tag: loading: 'lazy', class: 'mk-product-media-gallery-swiper__image' }}
+              {%- when 'video' -%}
+                <video src="{{ item.sources[0].url }}" autoplay loop muted playsinline class="mk-product-media-gallery-swiper__video"></video>
+              {%- else -%}
+                {{ item | image_url: width: 1200 | image_tag: loading: 'lazy' }}
+            {%- endcase -%}
+          </div>
+        {%- endfor -%}
+      </div>
+      {%- if media.size > 1 -%}
+        <button type="button" class="mk-product-media-gallery-swiper__btn mk-product-media-gallery-swiper__btn--prev" aria-label="Previous">prev</button>
+        <button type="button" class="mk-product-media-gallery-swiper__btn mk-product-media-gallery-swiper__btn--next" aria-label="Next">next</button>
+      {%- endif -%}
+    </div>
+    {%- if media.size > 1 -%}
+      <div class="mk-product-media-gallery-swiper__thumbs" data-swiper-thumbs>
+        {%- for item in media -%}
+          <button type="button" class="mk-product-media-gallery-swiper__thumb {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}">
+            {%- case item.media_type -%}
+              {%- when 'image' -%}
+                {{ item | image_url: width: 100 | image_tag: loading: 'lazy' }}
+              {%- else -%}
+                <span class="mk-product-media-gallery-swiper__thumb-icon">🎬</span>
+            {%- endcase -%}
+          </button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-product-media-gallery-swiper__main { position: relative; border-radius: 16px; overflow: hidden; background: var(--color-background-secondary, #f5f5f5); }
+  .mk-product-media-gallery-swiper__wrapper { display: flex; transition: transform 0.3s ease; }
+  .mk-product-media-gallery-swiper__slide { flex: 0 0 100%; }
+  .mk-product-media-gallery-swiper__image { width: 100%; height: auto; display: block; aspect-ratio: 1; object-fit: cover; }
+  .mk-product-media-gallery-swiper__video { width: 100%; display: block; }
+  .mk-product-media-gallery-swiper__btn { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; cursor: pointer; z-index: 1; }
+  .mk-product-media-gallery-swiper__btn--prev { left: 16px; }
+  .mk-product-media-gallery-swiper__btn--next { right: 16px; }
+  .mk-product-media-gallery-swiper__thumbs { display: flex; gap: 8px; margin-top: 12px; overflow-x: auto; }
+  .mk-product-media-gallery-swiper__thumb { flex-shrink: 0; width: 64px; height: 64px; padding: 2px; background: transparent; border: 2px solid transparent; border-radius: 8px; cursor: pointer; overflow: hidden; }
+  .mk-product-media-gallery-swiper__thumb.active { border-color: var(--color-primary, #000); }
+  .mk-product-media-gallery-swiper__thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+{% endstylesheet %}

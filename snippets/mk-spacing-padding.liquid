@@ -1,0 +1,30 @@
+{%- doc -%}
+  MK 内边距样式组件
+
+  设置元素内边距
+
+  @param {number} [top] - 上边距
+  @param {number} [right] - 右边距
+  @param {number} [bottom] - 下边距
+  @param {number} [left] - 左边距
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-spacing-padding', top: 16, right: 24, bottom: 16, left: 24 %}
+{%- enddoc -%}
+
+{% liquid
+  assign top = top | default: 0
+  assign right = right | default: 0
+  assign bottom = bottom | default: 0
+  assign left = left | default: 0
+  assign class = class | default: ''
+-%}
+
+<div class="mk-spacing-padding {{ class }}" style="padding: {{ top }}px {{ right }}px {{ bottom }}px {{ left }}px;">
+  {{ content }}
+</div>
+
+{% stylesheet %}
+  .mk-spacing-padding { box-sizing: border-box; }
+{% endstylesheet %}

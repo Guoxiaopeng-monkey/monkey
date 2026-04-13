@@ -1,0 +1,53 @@
+{%- doc -%}
+  MK 资源卡片组件
+
+  渲染通用资源卡片
+
+  @param {object} resource - 资源对象（产品/文章/收藏）
+  @param {string} type - 资源类型：product, article, collection
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-resource-card', resource: article, type: 'article' %}
+{%- enddoc -%}
+
+{% liquid
+  assign resource = resource | default: nil
+  assign type = type | default: 'product'
+  assign class = class | default: ''
+-%}
+
+{%- if resource != blank -%}
+  <a href="{{ resource.url }}" class="mk-resource-card mk-resource-card--{{ type }} {{ class }}">
+    <div class="mk-resource-card__image">
+      {%- case type -%}
+        {%- when 'product' -%}
+          {{ resource.featured_image | image_url: width: 400 | image_tag: loading: 'lazy' }}
+        {%- when 'article' -%}
+          {{ resource.image | image_url: width: 400 | image_tag: loading: 'lazy' }}
+        {%- when 'collection' -%}
+          {{ resource.image | default: resource.products.first.featured_image | image_url: width: 400 | image_tag: loading: 'lazy' }}
+      {%- endcase -%}
+    </div>
+    <div class="mk-resource-card__content">
+      <h3 class="mk-resource-card__title">{{ resource.title }}</h3>
+      {%- case type -%}
+        {%- when 'product' -%}
+          <p class="mk-resource-card__price">{{ resource.price | money }}</p>
+        {%- when 'article' -%}
+          <time class="mk-resource-card__date">{{ resource.published_at | date: '%Y-%m-%d' }}</time>
+      {%- endcase -%}
+    </div>
+  </a>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-resource-card { display: flex; flex-direction: column; gap: 12px; text-decoration: none; color: inherit; }
+  .mk-resource-card__image { aspect-ratio: 1; border-radius: 12px; overflow: hidden; }
+  .mk-resource-card__image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+  .mk-resource-card:hover .mk-resource-card__image img { transform: scale(1.05); }
+  .mk-resource-card__content { display: flex; flex-direction: column; gap: 4px; }
+  .mk-resource-card__title { margin: 0; font-size: 14px; font-weight: 500; color: var(--color-foreground); }
+  .mk-resource-card__price { margin: 0; font-size: 14px; font-weight: 600; color: var(--color-primary, #000); }
+  .mk-resource-card__date { font-size: 12px; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}

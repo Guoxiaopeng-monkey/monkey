@@ -1,0 +1,30 @@
+{%- doc -%}
+  MK 链接特色图片组件
+
+  渲染带链接的特色图片
+
+  @param {object} image - 图片对象
+  @param {string} url - 链接URL
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-link-featured-image', image: article.image, url: article.url %}
+{%- enddoc -%}
+
+{% liquid
+  assign image = image | default: nil
+  assign url = url | default: ''
+  assign class = class | default: ''
+-%}
+
+{%- if image != nil -%}
+  <a href="{{ url }}" class="mk-link-featured-image {{ class }}">
+    {{ image | image_url: width: 1200 | image_tag: loading: 'lazy', class: 'mk-link-featured-image__img' }}
+  </a>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-link-featured-image { display: block; overflow: hidden; border-radius: 12px; }
+  .mk-link-featured-image__img { width: 100%; height: auto; display: block; transition: transform 0.4s ease; }
+  .mk-link-featured-image:hover .mk-link-featured-image__img { transform: scale(1.03); }
+{% endstylesheet %}

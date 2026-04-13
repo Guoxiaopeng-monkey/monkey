@@ -1,0 +1,47 @@
+{%- doc -%}
+  MK 价格筛选器组件
+
+  渲染价格范围筛选
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-price-filter' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-price-filter {{ class }}" data-price-filter>
+  <div class="mk-price-filter__inputs">
+    <div class="mk-price-filter__field">
+      <label class="mk-price-filter__label">{{ 'search.from' | t | default: '从' }}</label>
+      <div class="mk-price-filter__input-wrap">
+        <span class="mk-price-filter__currency">{{ currency.symbol }}</span>
+        <input type="number" name="price_min" class="mk-price-filter__input" placeholder="0" min="0">
+      </div>
+    </div>
+    <span class="mk-price-filter__separator">-</span>
+    <div class="mk-price-filter__field">
+      <label class="mk-price-filter__label">{{ 'search.to' | t | default: '到' }}</label>
+      <div class="mk-price-filter__input-wrap">
+        <span class="mk-price-filter__currency">{{ currency.symbol }}</span>
+        <input type="number" name="price_max" class="mk-price-filter__input" placeholder="{{ range_max }}" min="0">
+      </div>
+    </div>
+  </div>
+  <button type="button" class="mk-price-filter__apply" data-price-filter-apply>{{ 'search.apply' | t | default: '应用' }}</button>
+</div>
+
+{% stylesheet %}
+  .mk-price-filter { display: flex; flex-direction: column; gap: 12px; }
+  .mk-price-filter__inputs { display: flex; align-items: flex-end; gap: 8px; }
+  .mk-price-filter__field { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .mk-price-filter__label { font-size: 12px; color: var(--color-text-secondary, #666); }
+  .mk-price-filter__input-wrap { display: flex; align-items: center; gap: 4px; padding: 10px 12px; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 8px; }
+  .mk-price-filter__currency { font-size: 13px; color: var(--color-text-secondary, #666); }
+  .mk-price-filter__input { width: 100%; border: none; outline: none; font-size: 14px; background: transparent; }
+  .mk-price-filter__separator { padding-bottom: 10px; color: var(--color-text-secondary, #666); }
+  .mk-price-filter__apply { padding: 10px; font-size: 13px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border: none; border-radius: 8px; cursor: pointer; }
+{% endstylesheet %}

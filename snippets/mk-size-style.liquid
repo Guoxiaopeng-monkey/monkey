@@ -1,0 +1,22 @@
+{%- doc -%}
+  MK 尺寸样式组件
+
+  设置尺寸样式变量
+
+  @param {number} [size] - 尺寸数值
+  @param {string} [property] - CSS属性
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-size-style', size: 16, property: '--font-size' %}
+{%- enddoc -%}
+
+{% liquid
+  assign size = size | default: 16
+  assign property = property | default: '--size'
+  assign class = class | default: ''
+-%}
+
+<div class="mk-size-style {{ class }}" style="{{ property }}: {{ size }}px;">
+  {{ content }}
+</div>

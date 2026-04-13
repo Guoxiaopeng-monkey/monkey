@@ -1,0 +1,39 @@
+{%- doc -%}
+  MK 轮播控制组件
+
+  渲染轮播图指示器/控制
+
+  @param {number} [count] - 幻灯片数量
+  @param {number} [current] - 当前索引
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-slideshow-controls', count: 5, current: 0 %}
+{%- enddoc -%}
+
+{% liquid
+  assign count = count | default: 0
+  assign current = current | default: 0
+  assign class = class | default: ''
+-%}
+
+{%- if count > 1 -%}
+  <div class="mk-slideshow-controls {{ class }}" data-slideshow-controls data-count="{{ count }}" data-current="{{ current }}">
+    {%- for i in (0..count) -%}
+      {%- if forloop.index0 < count -%}
+        <button
+          type="button"
+          class="mk-slideshow-controls__dot {% if forloop.index0 == current %}active{% endif %}"
+          data-index="{{ forloop.index0 }}"
+          aria-label="{{ 'slideshow.go_to' | t: index: forloop.index }}"
+        ></button>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-slideshow-controls { display: flex; justify-content: center; gap: 8px; }
+  .mk-slideshow-controls__dot { width: 8px; height: 8px; padding: 0; background: var(--color-border); border: none; border-radius: 50%; cursor: pointer; transition: all 0.2s ease; }
+  .mk-slideshow-controls__dot.active { background: var(--color-primary, #000); transform: scale(1.2); }
+{% endstylesheet %}

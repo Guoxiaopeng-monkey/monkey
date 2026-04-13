@@ -1,0 +1,69 @@
+{%- comment -%}
+  MK 视频Banner板块
+
+  展示视频背景Banner
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-video-banner color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  {%- if ss.video_url != blank -%}
+    <video class="mk-video-banner__video" src="{{ ss.video_url }}" autoplay loop muted playsinline></video>
+    <div class="mk-video-banner__overlay"></div>
+  {%- endif -%}
+
+  <div class="mk-video-banner__content">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-video-banner__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    {%- if ss.description != blank -%}
+      <p class="mk-video-banner__description">{{ ss.description }}</p>
+    {%- endif -%}
+
+    {%- if ss.button_text != blank -%}
+      <a href="{{ ss.button_link | default: '#' }}" class="mk-video-banner__button">
+        {{ ss.button_text }}
+      </a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-video-banner { position: relative; min-height: {{ ss.height_mobile | default: 400 }}px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  @media (min-width: 750px) { .mk-video-banner { min-height: {{ ss.height_desktop | default: 600 }}px; } }
+  .mk-video-banner__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .mk-video-banner__overlay { position: absolute; inset: 0; background: rgba(0,0,0,{{ ss.overlay_opacity | default: 0.4 }}); }
+  .mk-video-banner__content { position: relative; z-index: 1; text-align: center; padding: 48px 24px; max-width: 700px; }
+  .mk-video-banner__title { margin: 0 0 16px 0; font-size: 28px; font-weight: 700; color: #fff; }
+  @media (min-width: 750px) { .mk-video-banner__title { font-size: 42px; } }
+  .mk-video-banner__description { margin: 0 0 24px 0; font-size: 16px; color: rgba(255,255,255,0.9); }
+  .mk-video-banner__button { display: inline-flex; padding: 14px 32px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+  .mk-video-banner__button:hover { opacity: 0.85; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Video Banner",
+  "tag": "section",
+  "settings": [
+    { "type": "url", "id": "video_url", "label": "视频URL" },
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "textarea", "id": "description", "label": "描述" },
+    { "type": "text", "id": "button_text", "label": "按钮文字" },
+    { "type": "url", "id": "button_link", "label": "按钮链接" },
+    { "type": "range", "id": "overlay_opacity", "label": "遮罩透明度", "min": 0, "max": 1, "step": 0.1, "default": 0.4 },
+    { "type": "range", "id": "height_mobile", "label": "高度 (移动端)", "min": 200, "max": 800, "default": 400, "unit": "px" },
+    { "type": "range", "id": "height_desktop", "label": "高度 (PC端)", "min": 400, "max": 1000, "default": 600, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Video Banner" }]
+}
+{% endschema %}

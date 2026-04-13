@@ -1,0 +1,48 @@
+{%- doc -%}
+  MK 产品卡片徽章组件
+
+  渲染产品卡片上的徽章标签
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-product-card-badges', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if product != blank -%}
+  <div class="mk-product-card-badges {{ class }}">
+    {%- if product.tags contains 'new' -%}
+      <span class="mk-product-card-badges__item mk-product-card-badges__item--new">{{ 'products.new' | t | default: '新品' }}</span>
+    {%- endif -%}
+
+    {%- if product.tags contains 'best-seller' or product.tags contains 'bestseller' -%}
+      <span class="mk-product-card-badges__item mk-product-card-badges__item--best">{{ 'products.best_seller' | t | default: '畅销' }}</span>
+    {%- endif -%}
+
+    {%- if product.compare_at_price > product.price -%}
+      {% liquid
+        assign discount = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
+      %}
+      <span class="mk-product-card-badges__item mk-product-card-badges__item--sale">-{{ discount }}%</span>
+    {%- endif -%}
+
+    {%- if product.available == false -%}
+      <span class="mk-product-card-badges__item mk-product-card-badges__item--soldout">{{ 'products.sold_out' | t | default: '售罄' }}</span>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-product-card-badges { position: absolute; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 6px; z-index: 1; }
+  .mk-product-card-badges__item { display: inline-block; padding: 4px 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; border-radius: 4px; }
+  .mk-product-card-badges__item--new { background: var(--color-primary, #000); color: #fff; }
+  .mk-product-card-badges__item--best { background: #f57c00; color: #fff; }
+  .mk-product-card-badges__item--sale { background: var(--color-sale, #e53935); color: #fff; }
+  .mk-product-card-badges__item--soldout { background: #9e9e9e; color: #fff; }
+{% endstylesheet %}

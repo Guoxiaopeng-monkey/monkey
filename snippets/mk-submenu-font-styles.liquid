@@ -1,0 +1,38 @@
+{%- doc -%}
+  MK 子菜单字体样式组件
+
+  应用子菜单字体样式
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-submenu-font-styles' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+{%- if settings.submenu_font != blank -%}
+  <style>
+    .mk-header-menu__submenu,
+    .mk-mega-menu__list {
+      font-family: {{ settings.submenu_font.family }}, {{ settings.submenu_font.fallback_families }};
+      font-size: {{ settings.submenu_font.size }}px;
+    }
+  </style>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "MK Submenu Fonts",
+  "settings": [
+    {
+      "type": "font_picker",
+      "id": "submenu_font",
+      "label": "Submenu Font",
+      "default": "sans-serif"
+    }
+  ]
+}
+{% endschema %}

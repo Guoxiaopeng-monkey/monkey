@@ -1,0 +1,56 @@
+{%- doc -%}
+  MK 溢出列表组件
+
+  渲染溢出折叠列表
+
+  @param {string} [limit] - 默认显示数量
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-overflow-list', limit: 5 %}
+{%- enddoc -%}
+
+{% liquid
+  assign limit = limit | default: 3
+  assign class = class | default: ''
+-%}
+
+<div class="mk-overflow-list {{ class }}" data-overflow-list data-limit="{{ limit }}">
+  <ul class="mk-overflow-list__items">
+    {{ content }}
+  </ul>
+  <button type="button" class="mk-overflow-list__toggle" hidden data-overflow-toggle>
+    {{ 'general.show_more' | t | default: '显示更多' }}
+  </button>
+</div>
+
+{% stylesheet %}
+  .mk-overflow-list { }
+  .mk-overflow-list__items { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mk-overflow-list__toggle {
+    margin-top: 8px; padding: 8px 16px; font-size: 13px; font-weight: 500;
+    color: var(--color-primary, #000); background: transparent; border: none;
+    cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelectorAll('[data-overflow-list]').forEach(list => {
+    const items = list.querySelectorAll('li');
+    const limit = parseInt(list.dataset.limit);
+    const toggle = list.querySelector('[data-overflow-toggle]');
+    if (items.length > limit) {
+      toggle.hidden = false;
+      items.forEach((item, i) => {
+        if (i >= limit) item.hidden = true;
+      });
+      toggle.addEventListener('click', () => {
+        const isExpanded = toggle.textContent.includes('更多');
+        items.forEach((item, i) => {
+          if (i >= limit) item.hidden = !isExpanded;
+        });
+        toggle.textContent = isExpanded ? '{{ "general.show_less" | t | default: "收起" }}' : '{{ "general.show_more" | t | default: "显示更多" }}';
+      });
+    }
+  });
+{% endjavascript %}

@@ -1,0 +1,23 @@
+{%- doc -%}
+  MK Disclosure内容组件
+
+  渲染Disclosure展开内容
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-disclosure-content' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-disclosure-content {{ class }}" data-disclosure-content hidden>
+  {{ content }}
+</div>
+
+{% stylesheet %}
+  .mk-disclosure-content[hidden] { display: none; }
+  .mk-disclosure-content { padding: 12px 0; }
+{% endstylesheet %}

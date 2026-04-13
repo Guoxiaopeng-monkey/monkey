@@ -1,0 +1,82 @@
+{%- comment -%}
+  MK 滚动Logo板块
+
+  展示滚动Logo列表
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-scrolling-logos color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-scrolling-logos__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-scrolling-logos__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-scrolling-logos__wrapper">
+      <div class="mk-scrolling-logos__track" style="--duration: {{ ss.duration | default: 30 }}s;">
+        {%- for i in (1..6) -%}
+          {%- assign image_setting = 'image_' | append: i -%}
+          {%- if ss[image_setting] != blank -%}
+            <div class="mk-scrolling-logos__item">
+              {{ ss[image_setting] | image_url: width: 200 | image_tag: class: 'mk-scrolling-logos__image' }}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- for i in (1..6) -%}
+          {%- assign image_setting = 'image_' | append: i -%}
+          {%- if ss[image_setting] != blank -%}
+            <div class="mk-scrolling-logos__item">
+              {{ ss[image_setting] | image_url: width: 200 | image_tag: class: 'mk-scrolling-logos__image' }}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-scrolling-logos { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; overflow: hidden; }
+  @media (min-width: 750px) { .mk-scrolling-logos { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-scrolling-logos__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-scrolling-logos__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-scrolling-logos__wrapper { position: relative; }
+  .mk-scrolling-logos__track { display: flex; gap: 48px; animation: scroll-logos var(--duration, 30s) linear infinite; }
+  .mk-scrolling-logos__item { flex-shrink: 0; }
+  .mk-scrolling-logos__image { height: 60px; width: auto; object-fit: contain; opacity: 0.6; transition: opacity 0.2s ease; }
+  .mk-scrolling-logos__item:hover .mk-scrolling-logos__image { opacity: 1; }
+  @keyframes scroll-logos { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Scrolling Logos",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "range", "id": "duration", "label": "滚动时长 (秒)", "min": 10, "max": 60, "default": 30 },
+    { "type": "header", "content": "Logo" },
+    { "type": "image_picker", "id": "image_1", "label": "Logo 1" },
+    { "type": "image_picker", "id": "image_2", "label": "Logo 2" },
+    { "type": "image_picker", "id": "image_3", "label": "Logo 3" },
+    { "type": "image_picker", "id": "image_4", "label": "Logo 4" },
+    { "type": "image_picker", "id": "image_5", "label": "Logo 5" },
+    { "type": "image_picker", "id": "image_6", "label": "Logo 6" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Scrolling Logos" }]
+}
+{% endschema %}

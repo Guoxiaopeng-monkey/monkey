@@ -1,0 +1,23 @@
+{%- doc -%}
+  MK 3D模型图标组件
+
+  渲染3D模型图标
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-icon-3d-model' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<span class="mk-icon-3d-model {{ class }}">
+  {{- 'icon-3d-model.svg' | inline_asset_content -}}
+</span>
+
+{% stylesheet %}
+  .mk-icon-3d-model { display: flex; }
+  .mk-icon-3d-model svg { width: 24px; height: 24px; }
+{% endstylesheet %}

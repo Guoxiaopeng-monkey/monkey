@@ -1,0 +1,25 @@
+{%- doc -%}
+  MK 播放图标组件
+
+  渲染播放按钮图标
+
+  @param {string} [size] - 图标尺寸
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-icon-play', size: 48 %}
+{%- enddoc -%}
+
+{% liquid
+  assign size = size | default: 24
+  assign class = class | default: ''
+-%}
+
+<span class="mk-icon-play {{ class }}" style="--icon-size: {{ size }}px;">
+  {{- 'icon-play.svg' | inline_asset_content -}}
+</span>
+
+{% stylesheet %}
+  .mk-icon-play { display: flex; width: var(--icon-size, 24px); height: var(--icon-size, 24px); }
+  .mk-icon-play svg { width: 100%; height: 100%; }
+{% endstylesheet %}

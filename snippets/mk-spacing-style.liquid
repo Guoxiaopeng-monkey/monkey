@@ -1,0 +1,22 @@
+{%- doc -%}
+  MK 间距样式组件
+
+  设置元素间距
+
+  @param {string} [padding] - 内边距
+  @param {string} [margin] - 外边距
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-spacing-style', padding: '24px', margin: '16px' %}
+{%- enddoc -%}
+
+{% liquid
+  assign padding = padding | default: ''
+  assign margin = margin | default: ''
+  assign class = class | default: ''
+-%}
+
+<div class="mk-spacing-style {{ class }}" style="{% if padding != blank %}padding: {{ padding }};{% endif %}{% if margin != blank %}margin: {{ margin }};{% endif %}">
+  {{ content }}
+</div>

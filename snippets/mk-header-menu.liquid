@@ -1,0 +1,76 @@
+{%- doc -%}
+  MK 头部菜单组件
+
+  渲染顶部导航菜单
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-header-menu' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<nav class="mk-header-menu {{ class }}" role="navigation" aria-label="{{ 'header.main_menu' | t | default: '主菜单' }}">
+  {%- for link in linklists[section.settings.menu].links -%}
+    <div class="mk-header-menu__item" {% if link.links.size > 0 %}data-has-submenu{% endif %}>
+      <a href="{{ link.url }}" class="mk-header-menu__link">
+        {{ link.title }}
+      </a>
+      {%- if link.links.size > 0 -%}
+        <button type="button" class="mk-header-menu__toggle" aria-expanded="false">
+          {{- 'icon-chevron-down.svg' | inline_asset_content -}}
+        </button>
+        <ul class="mk-header-menu__submenu" hidden>
+          {%- for childlink in link.links -%}
+            <li>
+              <a href="{{ childlink.url }}" class="mk-header-menu__child-link">
+                {{ childlink.title }}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  {%- endfor -%}
+</nav>
+
+{% stylesheet %}
+  .mk-header-menu { display: flex; align-items: center; gap: 8px; }
+  .mk-header-menu__item { position: relative; }
+  .mk-header-menu__link {
+    display: flex; align-items: center; padding: 12px 16px;
+    font-size: 14px; font-weight: 500; color: var(--color-foreground); text-decoration: none;
+  }
+  .mk-header-menu__link:hover { opacity: 0.7; }
+  .mk-header-menu__toggle {
+    display: flex; width: 20px; height: 20px; padding: 0; background: transparent;
+    border: none; cursor: pointer; color: var(--color-foreground);
+  }
+  .mk-header-menu__toggle svg { width: 100%; height: 100%; }
+  .mk-header-menu__submenu {
+    position: absolute; top: 100%; left: 0; min-width: 200px; padding: 8px;
+    background: var(--color-background); border: 1px solid var(--color-border);
+    border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); z-index: 100;
+    list-style: none;
+  }
+  .mk-header-menu__submenu[hidden] { display: none; }
+  .mk-header-menu__child-link {
+    display: block; padding: 10px 12px; font-size: 14px; color: var(--color-foreground); text-decoration: none;
+  }
+  .mk-header-menu__child-link:hover { background: var(--color-background-secondary, #f5f5f5); border-radius: 4px; }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelectorAll('[data-has-submenu]').forEach(item => {
+    const toggle = item.querySelector('.mk-header-menu__toggle');
+    const submenu = item.querySelector('.mk-header-menu__submenu');
+    toggle?.addEventListener('click', () => {
+      const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', !isExpanded);
+      submenu.hidden = isExpanded;
+    });
+  });
+{% endjavascript %}

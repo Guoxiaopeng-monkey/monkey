@@ -1,0 +1,113 @@
+{%- doc -%}
+  MK 抽屉本地化组件
+
+  渲染语言/货币选择抽屉
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-drawer-localization' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-drawer-localization {{ class }}" data-localization-drawer>
+  <button type="button" class="mk-drawer-localization__trigger" data-localization-open>
+    {{- 'icon-globe.svg' | inline_asset_content -}}
+    <span>{{ localization.country.name | default: 'English' }}</span>
+  </button>
+
+  <div class="mk-drawer-localization__overlay" data-localization-close hidden></div>
+  <div class="mk-drawer-localization__panel" data-localization-panel hidden>
+    <div class="mk-drawer-localization__header">
+      <h3>{{ 'localization.language' | t | default: '语言/货币' }}</h3>
+      <button type="button" data-localization-close>{{- 'icon-close.svg' | inline_asset_content -}}</button>
+    </div>
+    <div class="mk-drawer-localization__content">
+      {% form 'localization', class: 'mk-drawer-localization__form' %}
+        <div class="mk-drawer-localization__field">
+          <label for="locale">{{ 'localization.language' | t | default: '语言' }}</label>
+          <select name="locale_code" class="mk-drawer-localization__select">
+            {%- for locale in form.available_locales -%}
+              <option value="{{ locale.iso_code }}" {% if locale.iso_code == localization.language.iso_code %}selected{% endif %}>
+                {{ locale.endonym_name }}
+              </option>
+            {%- endfor -%}
+          </select>
+        </div>
+        <div class="mk-drawer-localization__field">
+          <label for="currency">{{ 'localization.currency' | t | default: '货币' }}</label>
+          <select name="currency_code" class="mk-drawer-localization__select">
+            {%- for currency in form.available_currencies -%}
+              <option value="{{ currency.iso_code }}" {% if currency.iso_code == localization.currency.iso_code %}selected{% endif %}>
+                {{ currency.iso_code }} ({{ currency.symbol }})
+              </option>
+            {%- endfor -%}
+          </select>
+        </div>
+        <button type="submit" class="mk-drawer-localization__submit">{{ 'localization.update' | t | default: '更新' }}</button>
+      {% endform %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-drawer-localization { position: relative; }
+  .mk-drawer-localization__trigger {
+    display: flex; align-items: center; gap: 6px; padding: 8px 12px;
+    background: transparent; border: 1px solid var(--color-border); border-radius: 8px;
+    cursor: pointer; font-size: 13px; color: var(--color-foreground);
+  }
+  .mk-drawer-localization__trigger svg { width: 18px; height: 18px; }
+  .mk-drawer-localization__overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 998;
+  }
+  .mk-drawer-localization__overlay[hidden] { display: none; }
+  .mk-drawer-localization__panel {
+    position: fixed; top: 0; right: 0; width: 360px; max-width: 90%; height: 100vh;
+    background: var(--color-background); z-index: 999; display: flex; flex-direction: column;
+    box-shadow: -4px 0 30px rgba(0,0,0,0.15);
+  }
+  .mk-drawer-localization__panel[hidden] { display: none; }
+  .mk-drawer-localization__header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px; border-bottom: 1px solid var(--color-border);
+  }
+  .mk-drawer-localization__header h3 { margin: 0; font-size: 18px; font-weight: 600; }
+  .mk-drawer-localization__header button { background: transparent; border: none; cursor: pointer; }
+  .mk-drawer-localization__header button svg { width: 20px; height: 20px; }
+  .mk-drawer-localization__content { padding: 20px; }
+  .mk-drawer-localization__form { display: flex; flex-direction: column; gap: 16px; }
+  .mk-drawer-localization__field { display: flex; flex-direction: column; gap: 8px; }
+  .mk-drawer-localization__field label { font-size: 14px; font-weight: 500; }
+  .mk-drawer-localization__select {
+    padding: 12px 14px; font-size: 14px; border: 1px solid var(--color-border);
+    border-radius: 8px; background: var(--color-background);
+  }
+  .mk-drawer-localization__submit {
+    padding: 14px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff);
+    background: var(--color-primary, #000); border: none; border-radius: 8px; cursor: pointer;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class DrawerLocalization extends HTMLElement {
+    constructor() {
+      super();
+      this.panel = this.querySelector('[data-localization-panel]');
+      this.overlay = this.querySelector('.mk-drawer-localization__overlay');
+      this.init();
+    }
+    init() {
+      this.querySelector('[data-localization-open]')?.addEventListener('click', () => this.open());
+      this.querySelectorAll('[data-localization-close]').forEach(btn => {
+        btn.addEventListener('click', () => this.close());
+      });
+    }
+    open() { this.panel.hidden = false; this.overlay.hidden = false; document.body.style.overflow = 'hidden'; }
+    close() { this.panel.hidden = true; this.overlay.hidden = true; document.body.style.overflow = ''; }
+  }
+  customElements.define('drawer-localization', DrawerLocalization);
+{% endjavascript %}

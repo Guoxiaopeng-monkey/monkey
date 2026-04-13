@@ -1,0 +1,58 @@
+{%- doc -%}
+  MK 下拉本地化组件
+
+  渲染语言/货币下拉选择
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-dropdown-localization' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-dropdown-localization {{ class }}" data-localization-dropdown>
+  {% form 'localization', class: 'mk-dropdown-localization__form' %}
+    <div class="mk-dropdown-localization__item">
+      <label for="locale-dropdown" class="visually-hidden">{{ 'localization.language' | t }}</label>
+      <select id="locale-dropdown" name="locale_code" class="mk-dropdown-localization__select">
+        {%- for locale in form.available_locales -%}
+          <option value="{{ locale.iso_code }}" {% if locale.iso_code == localization.language.iso_code %}selected{% endif %}>
+            {{ locale.endonym_name }}
+          </option>
+        {%- endfor -%}
+      </select>
+    </div>
+    <div class="mk-dropdown-localization__item">
+      <label for="currency-dropdown" class="visually-hidden">{{ 'localization.currency' | t }}</label>
+      <select id="currency-dropdown" name="currency_code" class="mk-dropdown-localization__select">
+        {%- for currency in form.available_currencies -%}
+          <option value="{{ currency.iso_code }}" {% if currency.iso_code == localization.currency.iso_code %}selected{% endif %}>
+            {{ currency.iso_code }} ({{ currency.symbol }})
+          </option>
+        {%- endfor -%}
+      </select>
+    </div>
+    <button type="submit" class="visually-hidden">{{ 'localization.update' | t }}</button>
+  {% endform %}
+</div>
+
+{% stylesheet %}
+  .mk-dropdown-localization { display: flex; gap: 12px; }
+  .mk-dropdown-localization__select {
+    padding: 8px 32px 8px 12px; font-size: 13px; border: 1px solid var(--color-border);
+    border-radius: 6px; background: var(--color-background) url('icon-chevron-down.svg') no-repeat right 8px center;
+    background-size: 16px; cursor: pointer; appearance: none;
+  }
+  .mk-dropdown-localization__select:focus { outline: none; border-color: var(--color-primary, #000); }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelectorAll('[data-localization-dropdown]').forEach(el => {
+    el.querySelectorAll('select').forEach(select => {
+      select.addEventListener('change', () => el.querySelector('form')?.submit());
+    });
+  });
+{% endjavascript %}

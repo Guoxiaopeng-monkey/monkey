@@ -1,0 +1,51 @@
+{%- doc -%}
+  MK 列表筛选组件
+
+  渲染列表筛选器
+
+  @param {string[]} values - 筛选值数组
+  @param {string} [selected] - 选中值
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-list-filter', values: filter.values, selected: filter.active_values.first %}
+{%- enddoc -%}
+
+{% liquid
+  assign values = values | default: empty_array
+  assign selected = selected | default: ''
+  assign class = class | default: ''
+
+  if values == empty_array
+    assign values = '[]' | parse_json
+  endif
+-%}
+
+<div class="mk-list-filter {{ class }}" data-list-filter>
+  {%- for value in values -%}
+    <label class="mk-list-filter__item">
+      <input
+        type="checkbox"
+        name="filter_{{ value.param_name }}"
+        value="{{ value.value }}"
+        {% if value.active %}checked{% endif %}
+        class="mk-list-filter__checkbox"
+      >
+      <span class="mk-list-filter__label">{{ value.label }}</span>
+      <span class="mk-list-filter__count">({{ value.count }})</span>
+    </label>
+  {%- endfor -%}
+</div>
+
+{% stylesheet %}
+  .mk-list-filter { display: flex; flex-direction: column; gap: 8px; }
+  .mk-list-filter__item {
+    display: flex; align-items: center; gap: 10px; padding: 8px 0;
+    cursor: pointer;
+  }
+  .mk-list-filter__checkbox {
+    width: 18px; height: 18px; cursor: pointer; accent-color: var(--color-primary, #000);
+  }
+  .mk-list-filter__label { flex: 1; font-size: 14px; color: var(--color-foreground); }
+  .mk-list-filter__count { font-size: 12px; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}

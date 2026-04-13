@@ -1,0 +1,38 @@
+{%- doc -%}
+  MK 购物车折扣显示组件
+
+  渲染购物车已应用折扣
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-cart-discount' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+{%- if cart.discounts.size > 0 -%}
+  <div class="mk-cart-discount {{ class }}">
+    {%- for discount in cart.discounts -%}
+      <div class="mk-cart-discount__item">
+        <span class="mk-cart-discount__icon">{{- 'icon-tag.svg' | inline_asset_content -}}</span>
+        <span class="mk-cart-discount__code">{{ discount.title }}</span>
+        <span class="mk-cart-discount__amount">-{{ discount.amount | money }}</span>
+      </div>
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-cart-discount { display: flex; flex-direction: column; gap: 8px; }
+  .mk-cart-discount__item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 12px; background: rgba(46,125,50,0.1); border-radius: 8px;
+  }
+  .mk-cart-discount__icon { display: flex; width: 16px; height: 16px; color: var(--color-success, #2e7d32); }
+  .mk-cart-discount__icon svg { width: 100%; height: 100%; }
+  .mk-cart-discount__code { flex: 1; font-size: 13px; font-weight: 500; color: var(--color-success, #2e7d32); }
+  .mk-cart-discount__amount { font-size: 13px; font-weight: 600; color: var(--color-success, #2e7d32); }
+{% endstylesheet %}

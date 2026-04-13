@@ -1,0 +1,68 @@
+{%- comment -%}
+  MK 统计数字板块
+
+  展示统计数字
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-stats color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-stats__container">
+    <div class="mk-stats__grid">
+      {%- for i in (1..4) -%}
+        {%- assign value_setting = 'value_' | append: i -%}
+        {%- assign label_setting = 'label_' | append: i -%}
+
+        {%- if ss[value_setting] != blank -%}
+          <div class="mk-stats__item">
+            <span class="mk-stats__value" data-count-up="{{ ss[value_setting] }}">{{ ss[value_setting] }}</span>
+            <span class="mk-stats__label">{{ ss[label_setting] }}</span>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-stats { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-stats { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-stats__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-stats__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; text-align: center; }
+  @media (min-width: 750px) { .mk-stats__grid { grid-template-columns: repeat(4, 1fr); gap: 48px; } }
+  .mk-stats__item { display: flex; flex-direction: column; gap: 8px; }
+  .mk-stats__value { font-size: 48px; font-weight: 700; color: var(--color-primary, #000); line-height: 1; }
+  @media (min-width: 750px) { .mk-stats__value { font-size: 64px; } }
+  .mk-stats__label { font-size: 14px; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Stats",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "value_1", "label": "数值 1" },
+    { "type": "text", "id": "label_1", "label": "标签 1" },
+    { "type": "text", "id": "value_2", "label": "数值 2" },
+    { "type": "text", "id": "label_2", "label": "标签 2" },
+    { "type": "text", "id": "value_3", "label": "数值 3" },
+    { "type": "text", "id": "label_3", "label": "标签 3" },
+    { "type": "text", "id": "value_4", "label": "数值 4" },
+    { "type": "text", "id": "label_4", "label": "标签 4" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Stats" }]
+}
+{% endschema %}

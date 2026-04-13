@@ -1,0 +1,52 @@
+{%- doc -%}
+  MK 购物车备注组件
+
+  渲染购物车备注输入框
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-cart-note' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-cart-note {{ class }}" data-cart-note>
+  <label for="cart-note" class="mk-cart-note__label">
+    {{ 'cart.note_label' | t | default: '订单备注' }}
+  </label>
+  <textarea
+    id="cart-note"
+    name="note"
+    class="mk-cart-note__textarea"
+    placeholder="{{ 'cart.note_placeholder' | t | default: '添加订单备注...' }}"
+    rows="3"
+  >{{ cart.note }}</textarea>
+</div>
+
+{% stylesheet %}
+  .mk-cart-note { display: flex; flex-direction: column; gap: 8px; }
+  .mk-cart-note__label { font-size: 14px; font-weight: 500; color: var(--color-foreground); }
+  .mk-cart-note__textarea {
+    padding: 12px 14px; font-size: 14px; color: var(--color-foreground);
+    background: var(--color-background); border: 1px solid var(--color-border);
+    border-radius: 8px; resize: vertical; min-height: 80px;
+    transition: border-color 0.2s ease;
+  }
+  .mk-cart-note__textarea:focus { outline: none; border-color: var(--color-primary, #000); }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelectorAll('[data-cart-note]').forEach(el => {
+    const textarea = el.querySelector('textarea');
+    if (textarea) {
+      textarea.addEventListener('change', () => {
+        const formData = new FormData();
+        formData.append('note', textarea.value);
+        fetch('/cart/update.js', { method: 'POST', body: formData });
+      });
+    }
+  });
+{% endjavascript %}

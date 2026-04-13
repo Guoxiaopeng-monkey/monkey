@@ -1,0 +1,97 @@
+{%- comment -%}
+  MK Tab切换板块
+
+  展示Tab切换内容
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-tabs-section color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-tabs-section__container">
+    <div class="mk-tabs-section__header">
+      {%- for i in (1..4) -%}
+        {%- assign title_setting = 'tab_title_' | append: i -%}
+        {%- if ss[title_setting] != blank -%}
+          <button
+            type="button"
+            class="mk-tabs-section__tab {% if forloop.first %}active{% endif %}"
+            data-tab="{{ forloop.index0 }}"
+          >
+            {{ ss[title_setting] }}
+          </button>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    <div class="mk-tabs-section__content">
+      {%- for i in (1..4) -%}
+        {%- assign title_setting = 'tab_title_' | append: i -%}
+        {%- assign content_setting = 'tab_content_' | append: i -%}
+
+        {%- if ss[title_setting] != blank -%}
+          <div class="mk-tabs-section__panel {% if forloop.first %}active{% endif %}" data-panel="{{ forloop.index0 }}">
+            {{ ss[content_setting] }}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-tabs-section { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-tabs-section { padding: {{ ss.padding_top_desktop | default: 64 }}px 0 {{ ss.padding_bottom_desktop | default: 64 }}px; } }
+  .mk-tabs-section__container { max-width: var(--container-max-width, 1000px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-tabs-section__header { display: flex; gap: 4px; border-bottom: 1px solid var(--color-border); margin-bottom: 32px; }
+  .mk-tabs-section__tab { padding: 16px 24px; font-size: 14px; font-weight: 500; color: var(--color-text-secondary, #666); background: transparent; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.2s ease; }
+  .mk-tabs-section__tab:hover { color: var(--color-foreground); }
+  .mk-tabs-section__tab.active { color: var(--color-primary, #000); border-bottom-color: var(--color-primary, #000); }
+  .mk-tabs-section__panel { display: none; }
+  .mk-tabs-section__panel.active { display: block; }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelectorAll('.mk-tabs-section').forEach(section => {
+    section.querySelectorAll('.mk-tabs-section__tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const idx = tab.dataset.tab;
+        section.querySelectorAll('.mk-tabs-section__tab').forEach(t => t.classList.remove('active'));
+        section.querySelectorAll('.mk-tabs-section__panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        section.querySelector(`[data-panel="${idx}"]`).classList.add('active');
+      });
+    });
+  });
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Tabs Section",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Tab 1" },
+    { "type": "text", "id": "tab_title_1", "label": "标题 1" },
+    { "type": "richtext", "id": "tab_content_1", "label": "内容 1" },
+    { "type": "header", "content": "Tab 2" },
+    { "type": "text", "id": "tab_title_2", "label": "标题 2" },
+    { "type": "richtext", "id": "tab_content_2", "label": "内容 2" },
+    { "type": "header", "content": "Tab 3" },
+    { "type": "text", "id": "tab_title_3", "label": "标题 3" },
+    { "type": "richtext", "id": "tab_content_3", "label": "内容 3" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 64, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 64, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Tabs Section" }]
+}
+{% endschema %}

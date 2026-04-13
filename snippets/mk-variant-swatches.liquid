@@ -1,0 +1,73 @@
+{%- doc -%}
+  MK 变体色块组件
+
+  渲染变体颜色色块选择
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-variant-swatches', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+
+  assign color_option = nil
+  for option in product.options_with_values
+    if option.name == 'Color' or option.name == 'Colour' or option.name == '颜色'
+      assign color_option = option
+      break
+    endif
+  endfor
+-%}
+
+{%- if color_option != blank -%}
+  <div class="mk-variant-swatches {{ class }}" data-option-index="{{ color_option.position | minus: 1 }}">
+    <label class="mk-variant-swatches__label">{{ color_option.name }}: <span class="mk-variant-swatches__selected">{{ color_option.selected_value }}</span></label>
+    <div class="mk-variant-swatches__options">
+      {%- for value in color_option.values -%}
+        {% liquid
+          assign is_selected = false
+          if color_option.selected_value == value
+            assign is_selected = true
+          endif
+          assign is_available = true
+          for variant in product.variants
+            if variant.options[forloop.index0] == value and variant.available == false
+              assign is_available = false
+              break
+            endif
+          endfor
+          assign color_value = value | downcase | replace: ' ', '-'
+        %}
+        <button
+          type="button"
+          class="mk-variant-swatches__swatch {% if is_selected %}selected{% endif %} {% unless is_available %}unavailable{% endunless %}"
+          data-value="{{ value }}"
+          style="--swatch-color: {{ color_value }};"
+          {% unless is_available %}disabled{% endunless %}
+          title="{{ value }}"
+        ></button>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-variant-swatches__label { font-size: 13px; font-weight: 500; margin-bottom: 10px; display: block; }
+  .mk-variant-swatches__selected { font-weight: 400; color: var(--color-text-secondary, #666); }
+  .mk-variant-swatches__options { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mk-variant-swatches__swatch {
+    width: 32px; height: 32px; padding: 2px; background: transparent; border: 2px solid transparent;
+    border-radius: 50%; cursor: pointer; transition: all 0.2s ease;
+  }
+  .mk-variant-swatches__swatch:hover { border-color: var(--color-border); }
+  .mk-variant-swatches__swatch.selected { border-color: var(--color-primary, #000); }
+  .mk-variant-swatches__swatch.unavailable { opacity: 0.4; cursor: not-allowed; }
+  .mk-variant-swatches__swatch::before {
+    content: ''; display: block; width: 100%; height: 100%; background-color: var(--swatch-color);
+    border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+  }
+{% endstylesheet %}

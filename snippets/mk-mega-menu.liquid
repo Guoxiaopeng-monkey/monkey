@@ -1,0 +1,90 @@
+{%- doc -%}
+  MK Mega菜单组件
+
+  渲染大型下拉菜单
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-mega-menu' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-mega-menu {{ class }}" data-mega-menu>
+  {%- for link in linklists[section.settings.menu].links -%}
+    {%- if link.links.size > 0 -%}
+      <div class="mk-mega-menu__item" data-mega-menu-item>
+        <button type="button" class="mk-mega-menu__trigger" aria-expanded="false">
+          {{ link.title }}
+          {{- 'icon-chevron-down.svg' | inline_asset_content -}}
+        </button>
+
+        <div class="mk-mega-menu__panel" hidden>
+          <div class="mk-mega-menu__content">
+            {%- for childlink in link.links -%}
+              <div class="mk-mega-menu__column">
+                <a href="{{ childlink.url }}" class="mk-mega-menu__heading">{{ childlink.title }}</a>
+                {%- if childlink.links.size > 0 -%}
+                  <ul class="mk-mega-menu__list">
+                    {%- for grandchildlink in childlink.links -%}
+                      <li><a href="{{ grandchildlink.url }}" class="mk-mega-menu__link">{{ grandchildlink.title }}</a></li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+    {%- else -%}
+      <a href="{{ link.url }}" class="mk-mega-menu__link">{{ link.title }}</a>
+    {%- endif -%}
+  {%- endfor -%}
+</div>
+
+{% stylesheet %}
+  .mk-mega-menu { display: flex; align-items: center; gap: 4px; }
+  .mk-mega-menu__item { position: static; }
+  .mk-mega-menu__trigger {
+    display: flex; align-items: center; gap: 4px; padding: 12px 16px;
+    font-size: 14px; font-weight: 500; background: transparent; border: none;
+    cursor: pointer; color: var(--color-foreground);
+  }
+  .mk-mega-menu__trigger svg { width: 14px; height: 14px; }
+  .mk-mega-menu__panel {
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--color-background); border-top: 1px solid var(--color-border);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1); z-index: 99;
+  }
+  .mk-mega-menu__panel[hidden] { display: none; }
+  .mk-mega-menu__content {
+    display: flex; gap: 48px; max-width: var(--container-max-width, 1200px);
+    margin: 0 auto; padding: 32px var(--container-padding, 32px);
+  }
+  .mk-mega-menu__column { min-width: 160px; }
+  .mk-mega-menu__heading {
+    display: block; margin: 0 0 12px 0; font-size: 14px; font-weight: 600;
+    color: var(--color-foreground); text-decoration: none;
+  }
+  .mk-mega-menu__list { list-style: none; margin: 0; padding: 0; }
+  .mk-mega-menu__link { display: block; padding: 6px 0; font-size: 13px; color: var(--color-text-secondary, #666); text-decoration: none; }
+  .mk-mega-menu__link:hover { color: var(--color-foreground); }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelectorAll('[data-mega-menu-item]').forEach(item => {
+    const trigger = item.querySelector('.mk-mega-menu__trigger');
+    const panel = item.querySelector('.mk-mega-menu__panel');
+    trigger?.addEventListener('mouseenter', () => {
+      trigger.setAttribute('aria-expanded', 'true');
+      panel.hidden = false;
+    });
+    item.addEventListener('mouseleave', () => {
+      trigger.setAttribute('aria-expanded', 'false');
+      panel.hidden = true;
+    });
+  });
+{% endjavascript %}

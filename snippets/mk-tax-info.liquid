@@ -1,0 +1,22 @@
+{%- doc -%}
+  MK 税费信息组件
+
+  渲染税费说明
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-tax-info' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<p class="mk-tax-info {{ class }}">
+  {{ 'products.tax_included' | t | default: '税费包含在价格中' }}
+</p>
+
+{% stylesheet %}
+  .mk-tax-info { margin: 0; font-size: 12px; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}

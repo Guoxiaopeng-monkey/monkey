@@ -1,0 +1,23 @@
+{%- doc -%}
+  MK 轮播箭头组组件
+
+  渲染轮播图左右箭头组
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-slideshow-arrows' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-slideshow-arrows {{ class }}">
+  {% render 'mk-slideshow-arrow', direction: 'prev' %}
+  {% render 'mk-slideshow-arrow', direction: 'next' %}
+</div>
+
+{% stylesheet %}
+  .mk-slideshow-arrows { display: flex; gap: 12px; }
+{% endstylesheet %}

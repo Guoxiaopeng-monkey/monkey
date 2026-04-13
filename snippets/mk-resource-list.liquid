@@ -1,0 +1,34 @@
+{%- doc -%}
+  MK 资源列表组件
+
+  渲染资源列表布局
+
+  @param {object[]} resources - 资源数组
+  @param {string} type - 资源类型
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-resource-list', resources: articles, type: 'article' %}
+{%- enddoc -%}
+
+{% liquid
+  assign resources = resources | default: empty_array
+  assign type = type | default: 'product'
+  assign class = class | default: ''
+
+  if resources == empty_array
+    assign resources = '[]' | parse_json
+  endif
+-%}
+
+{%- if resources.size > 0 -%}
+  <div class="mk-resource-list {{ class }}">
+    {%- for resource in resources -%}
+      {% render 'mk-resource-card', resource: resource, type: type %}
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-resource-list { display: flex; flex-direction: column; gap: 24px; }
+{% endstylesheet %}

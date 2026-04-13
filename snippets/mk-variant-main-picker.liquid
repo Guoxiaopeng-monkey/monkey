@@ -1,0 +1,55 @@
+{%- doc -%}
+  MK 变体主选择器组件
+
+  渲染产品页面主要变体选择器
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-variant-main-picker', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if product != blank -%}
+  <div class="mk-variant-main-picker {{ class }}" data-variant-picker>
+    {%- for option in product.options_with_values -%}
+      <div class="mk-variant-main-picker__option" data-option-index="{{ forloop.index0 }}">
+        <label class="mk-variant-main-picker__label">{{ option.name }}</label>
+        <div class="mk-variant-main-picker__values">
+          {%- for value in option.values -%}
+            <button
+              type="button"
+              class="mk-variant-main-picker__value {% if option.selected_value == value %}selected{% endif %}"
+              data-value="{{ value }}"
+            >{{ value }}</button>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endfor -%}
+
+    <select name="id" class="mk-variant-main-picker__select" hidden>
+      {%- for variant in product.variants -%}
+        <option value="{{ variant.id }}" {% if variant == product.selected_or_first_available_variant %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>{{ variant.title }}</option>
+      {%- endfor -%}
+    </select>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-variant-main-picker { display: flex; flex-direction: column; gap: 20px; }
+  .mk-variant-main-picker__option { display: flex; flex-direction: column; gap: 10px; }
+  .mk-variant-main-picker__label { font-size: 13px; font-weight: 500; }
+  .mk-variant-main-picker__values { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mk-variant-main-picker__value {
+    min-width: 44px; padding: 10px 16px; font-size: 13px; font-weight: 500;
+    color: var(--color-foreground); background: var(--color-background);
+    border: 1px solid var(--color-border); border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
+  }
+  .mk-variant-main-picker__value:hover { border-color: var(--color-foreground); }
+  .mk-variant-main-picker__value.selected { color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-color: var(--color-primary, #000); }
+{% endstylesheet %}

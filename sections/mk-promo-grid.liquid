@@ -1,0 +1,106 @@
+{%- comment -%}
+  MK 促销网格板块
+
+  展示促销卡片网格
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-promo-grid color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-promo-grid__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-promo-grid__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-promo-grid__items">
+      {%- for i in (1..3) -%}
+        {%- assign image_setting = 'image_' | append: i -%}
+        {%- assign title_setting = 'title_' | append: i -%}
+        {%- assign text_setting = 'text_' | append: i -%}
+        {%- assign link_setting = 'link_' | append: i -%}
+        {%- assign link_text_setting = 'link_text_' | append: i -%}
+
+        {%- if ss[title_setting] != blank -%}
+          <div class="mk-promo-grid__item">
+            {%- if ss[image_setting] != blank -%}
+              <div class="mk-promo-grid__image">
+                {{ ss[image_setting] | image_url: width: 600 | image_tag: loading: 'lazy' }}
+              </div>
+            {%- endif -%}
+
+            <div class="mk-promo-grid__content">
+              <h3 class="mk-promo-grid__item-title">{{ ss[title_setting] }}</h3>
+              {%- if ss[text_setting] != blank -%}
+                <p class="mk-promo-grid__text">{{ ss[text_setting] }}</p>
+              {%- endif -%}
+              {%- if ss[link_setting] != blank -%}
+                <a href="{{ ss[link_setting] }}" class="mk-promo-grid__link">
+                  {{ ss[link_text_setting] | default: '了解更多' }}
+                </a>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-promo-grid { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-promo-grid { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-promo-grid__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-promo-grid__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-promo-grid__items { display: grid; grid-template-columns: 1fr; gap: 24px; }
+  @media (min-width: 750px) { .mk-promo-grid__items { grid-template-columns: repeat(3, 1fr); gap: 32px; } }
+  .mk-promo-grid__item { display: flex; flex-direction: column; }
+  .mk-promo-grid__image { aspect-ratio: 4/3; overflow: hidden; border-radius: 16px; margin-bottom: 16px; }
+  .mk-promo-grid__image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+  .mk-promo-grid__item:hover .mk-promo-grid__image img { transform: scale(1.03); }
+  .mk-promo-grid__item-title { margin: 0 0 8px 0; font-size: 18px; font-weight: 600; }
+  .mk-promo-grid__text { margin: 0 0 12px 0; font-size: 14px; color: var(--color-text-secondary, #666); }
+  .mk-promo-grid__link { font-size: 14px; font-weight: 600; color: var(--color-primary, #000); text-decoration: none; }
+  .mk-promo-grid__link:hover { text-decoration: underline; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Promo Grid",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "header", "content": "促销项 1" },
+    { "type": "image_picker", "id": "image_1", "label": "图片 1" },
+    { "type": "text", "id": "title_1", "label": "标题 1" },
+    { "type": "textarea", "id": "text_1", "label": "描述 1" },
+    { "type": "url", "id": "link_1", "label": "链接 1" },
+    { "type": "text", "id": "link_text_1", "label": "链接文字 1" },
+    { "type": "header", "content": "促销项 2" },
+    { "type": "image_picker", "id": "image_2", "label": "图片 2" },
+    { "type": "text", "id": "title_2", "label": "标题 2" },
+    { "type": "textarea", "id": "text_2", "label": "描述 2" },
+    { "type": "url", "id": "link_2", "label": "链接 2" },
+    { "type": "text", "id": "link_text_2", "label": "链接文字 2" },
+    { "type": "header", "content": "促销项 3" },
+    { "type": "image_picker", "id": "image_3", "label": "图片 3" },
+    { "type": "text", "id": "title_3", "label": "标题 3" },
+    { "type": "textarea", "id": "text_3", "label": "描述 3" },
+    { "type": "url", "id": "link_3", "label": "链接 3" },
+    { "type": "text", "id": "link_text_3", "label": "链接文字 3" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Promo Grid" }]
+}
+{% endschema %}

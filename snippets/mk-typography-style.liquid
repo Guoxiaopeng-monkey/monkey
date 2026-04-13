@@ -1,0 +1,28 @@
+{%- doc -%}
+  MK 排版样式组件
+
+  应用字体样式
+
+  @param {string} [font_family] - 字体族
+  @param {number} [font_size] - 字体大小
+  @param {string} [font_weight] - 字体粗细
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-typography-style', font_size: 16, font_weight: 'bold' %}
+{%- enddoc -%}
+
+{% liquid
+  assign font_family = font_family | default: ''
+  assign font_size = font_size | default: 16
+  assign font_weight = font_weight | default: 'normal'
+  assign class = class | default: ''
+-%}
+
+<div class="mk-typography-style {{ class }}" style="{% if font_family != blank %}font-family: {{ font_family }};{% endif %}font-size: {{ font_size }}px; font-weight: {{ font_weight }};">
+  {{ content }}
+</div>
+
+{% stylesheet %}
+  .mk-typography-style { line-height: 1.5; }
+{% endstylesheet %}

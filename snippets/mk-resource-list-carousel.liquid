@@ -1,0 +1,42 @@
+{%- doc -%}
+  MK 资源列表轮播组件
+
+  渲染横向滚动的资源列表
+
+  @param {object[]} resources - 资源数组
+  @param {string} type - 资源类型
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-resource-list-carousel', resources: products, type: 'product' %}
+{%- enddoc -%}
+
+{% liquid
+  assign resources = resources | default: empty_array
+  assign type = type | default: 'product'
+  assign class = class | default: ''
+
+  if resources == empty_array
+    assign resources = '[]' | parse_json
+  endif
+-%}
+
+{%- if resources.size > 0 -%}
+  <div class="mk-resource-list-carousel {{ class }}" data-carousel>
+    <div class="mk-resource-list-carousel__track">
+      {%- for resource in resources -%}
+        <div class="mk-resource-list-carousel__item">
+          {% render 'mk-resource-card', resource: resource, type: type %}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-resource-list-carousel { overflow: hidden; }
+  .mk-resource-list-carousel__track { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .mk-resource-list-carousel__track::-webkit-scrollbar { display: none; }
+  .mk-resource-list-carousel__item { flex: 0 0 280px; scroll-snap-align: start; }
+  @media (max-width: 768px) { .mk-resource-list-carousel__item { flex: 0 0 200px; } }
+{% endstylesheet %}

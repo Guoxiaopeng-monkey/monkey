@@ -1,0 +1,35 @@
+{%- doc -%}
+  MK Meta标签组件
+
+  渲染页面SEO Meta标签
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-meta-tags' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+{%- if template contains 'product' -%}
+  <meta property="og:type" content="product">
+  <meta property="og:title" content="{{ product.title | strip_html }}">
+  {%- if product.featured_image -%}
+    <meta property="og:image" content="{{ product.featured_image | image_url }}">
+  {%- endif -%}
+  <meta property="og:price:amount" content="{{ product.price | money_without_currency }}">
+  <meta property="og:price:currency" content="{{ cart.currency.iso_code }}">
+{%- elsif template contains 'article' -%}
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{ article.title | strip_html }}">
+  {%- if article.image -%}
+    <meta property="og:image" content="{{ article.image | image_url }}">
+  {%- endif -%}
+{%- else -%}
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ page_title | default: shop.name }}">
+{%- endif -%}
+
+<meta property="og:site_name" content="{{ shop.name }}">

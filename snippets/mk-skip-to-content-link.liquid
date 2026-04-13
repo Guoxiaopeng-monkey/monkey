@@ -1,0 +1,28 @@
+{%- doc -%}
+  MK 跳转到内容链接组件
+
+  渲染无障碍跳转链接
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-skip-to-content-link' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<a href="#MainContent" class="mk-skip-to-content-link {{ class }}">
+  {{ 'accessibility.skip_to_content' | t | default: '跳转到主要内容' }}
+</a>
+
+{% stylesheet %}
+  .mk-skip-to-content-link {
+    position: absolute; top: -40px; left: 0; padding: 12px 24px;
+    background: var(--color-primary, #000); color: var(--color-on-primary, #fff);
+    font-weight: 600; text-decoration: none; z-index: 9999;
+    transition: top 0.2s ease;
+  }
+  .mk-skip-to-content-link:focus { top: 0; }
+{% endstylesheet %}

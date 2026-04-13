@@ -1,0 +1,71 @@
+{%- comment -%}
+  MK 门店定位器板块
+
+  展示门店列表和地图
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+  assign shops = ss.shops | default: empty_array
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-store-locator color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-store-locator__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-store-locator__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-store-locator__content">
+      <div class="mk-store-locator__list">
+        {%- for shop in shops limit: 10 -%}
+          <div class="mk-store-locator__shop" data-lat="{{ shop.lat }}" data-lng="{{ shop.lng }}">
+            <h3 class="mk-store-locator__name">{{ shop.name }}</h3>
+            <p class="mk-store-locator__address">{{ shop.address }}</p>
+            <p class="mk-store-locator__hours">{{ shop.hours }}</p>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <div class="mk-store-locator__map" id="mk-store-locator-map"></div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-store-locator { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-store-locator { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-store-locator__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-store-locator__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-store-locator__content { display: grid; grid-template-columns: 1fr; gap: 32px; }
+  @media (min-width: 750px) { .mk-store-locator__content { grid-template-columns: 300px 1fr; } }
+  .mk-store-locator__list { display: flex; flex-direction: column; gap: 16px; max-height: 500px; overflow-y: auto; }
+  .mk-store-locator__shop { padding: 16px; background: var(--color-background-secondary, #f5f5f5); border-radius: 12px; cursor: pointer; }
+  .mk-store-locator__shop:hover { background: var(--color-border); }
+  .mk-store-locator__name { margin: 0 0 8px 0; font-size: 16px; font-weight: 600; }
+  .mk-store-locator__address, .mk-store-locator__hours { margin: 0; font-size: 13px; color: var(--color-text-secondary, #666); }
+  .mk-store-locator__map { min-height: 400px; background: var(--color-background-secondary, #f5f5f5); border-radius: 12px; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Store Locator",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题", "default": "门店位置" },
+    { "type": "header", "content": "门店" },
+    { "type": "paragraph", "content": "在下方添加门店信息" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Store Locator" }]
+}
+{% endschema %}

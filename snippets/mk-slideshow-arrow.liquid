@@ -1,0 +1,40 @@
+{%- doc -%}
+  MK 轮播箭头组件
+
+  渲染轮播图左右箭头
+
+  @param {string} direction - 方向：prev, next
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-slideshow-arrow', direction: 'prev' %}
+{%- enddoc -%}
+
+{% liquid
+  assign direction = direction | default: 'next'
+  assign class = class | default: ''
+-%}
+
+<button
+  type="button"
+  class="mk-slideshow-arrow mk-slideshow-arrow--{{ direction }} {{ class }}"
+  data-slideshow-arrow="{{ direction }}"
+  aria-label="{{ 'slideshow.' | append: direction | t | default: direction }}"
+>
+  {%- if direction == 'prev' -%}
+    {{- 'icon-arrow-left.svg' | inline_asset_content -}}
+  {%- else -%}
+    {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+  {%- endif -%}
+</button>
+
+{% stylesheet %}
+  .mk-slideshow-arrow {
+    display: flex; align-items: center; justify-content: center;
+    width: 48px; height: 48px; padding: 0; background: rgba(255,255,255,0.9);
+    border: none; border-radius: 50%; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.2s ease;
+  }
+  .mk-slideshow-arrow:hover { background: #fff; transform: scale(1.05); }
+  .mk-slideshow-arrow svg { width: 20px; height: 20px; }
+{% endstylesheet %}

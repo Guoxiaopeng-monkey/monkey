@@ -1,0 +1,42 @@
+{%- doc -%}
+  MK 变体快速添加组件
+
+  渲染变体快速添加按钮
+
+  @param {object} variant - 变体对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-variant-quick-add', variant: variant %}
+{%- enddoc -%}
+
+{% liquid
+  assign variant = variant | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if variant != blank -%}
+  <button
+    type="button"
+    class="mk-variant-quick-add {{ class }}"
+    data-quick-add
+    data-variant-id="{{ variant.id }}"
+    {% unless variant.available %}disabled{% endunless %}
+  >
+    {%- if variant.available -%}
+      {{ 'products.quick_add' | t | default: '快速添加' }}
+    {%- else -%}
+      {{ 'products.sold_out' | t | default: '售罄' }}
+    {%- endif -%}
+  </button>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-variant-quick-add {
+    padding: 12px 24px; font-size: 13px; font-weight: 600;
+    color: var(--color-on-primary, #fff); background: var(--color-primary, #000);
+    border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
+  }
+  .mk-variant-quick-add:hover:not(:disabled) { opacity: 0.85; }
+  .mk-variant-quick-add:disabled { opacity: 0.5; cursor: not-allowed; }
+{% endstylesheet %}

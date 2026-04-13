@@ -1,0 +1,25 @@
+{%- doc -%}
+  MK 预测搜索空状态组件
+
+  渲染预测搜索无结果状态
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-predictive-search-empty-state' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-predictive-search-empty-state {{ class }}">
+  <p class="mk-predictive-search-empty-state__text">{{ 'search.no_results' | t | default: '没有找到结果' }}</p>
+  <p class="mk-predictive-search-empty-state__hint">{{ 'search.try_different' | t | default: '尝试其他关键词' }}</p>
+</div>
+
+{% stylesheet %}
+  .mk-predictive-search-empty-state { padding: 24px 16px; text-align: center; }
+  .mk-predictive-search-empty-state__text { margin: 0 0 8px 0; font-size: 14px; font-weight: 500; color: var(--color-foreground); }
+  .mk-predictive-search-empty-state__hint { margin: 0; font-size: 13px; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}

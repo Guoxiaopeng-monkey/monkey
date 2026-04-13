@@ -1,0 +1,92 @@
+{%- comment -%}
+  MK Instagram板块
+
+  展示Instagram图片网格
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-instagram color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-instagram__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-instagram__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-instagram__grid">
+      {%- for i in (1..6) -%}
+        {%- assign image_setting = 'image_' | append: i -%}
+        {%- assign link_setting = 'link_' | append: i -%}
+
+        {%- if ss[image_setting] != blank -%}
+          <a href="{{ ss[link_setting] | default: '#' }}" class="mk-instagram__item" target="_blank">
+            {{ ss[image_setting] | image_url: width: 400 | image_tag: loading: 'lazy', class: 'mk-instagram__image' }}
+            <span class="mk-instagram__overlay">{{- 'icon-instagram.svg' | inline_asset_content -}}</span>
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if ss.show_follow -%}
+      <a href="{{ ss.follow_url | default: 'https://instagram.com' }}" class="mk-instagram__follow" target="_blank">
+        {{ ss.follow_text | default: '关注我们' }}
+      </a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-instagram { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-instagram { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-instagram__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-instagram__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-instagram__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  @media (min-width: 750px) { .mk-instagram__grid { grid-template-columns: repeat(6, 1fr); gap: 16px; } }
+  .mk-instagram__item { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 8px; }
+  .mk-instagram__image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+  .mk-instagram__item:hover .mk-instagram__image { transform: scale(1.05); }
+  .mk-instagram__overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.2s ease; }
+  .mk-instagram__item:hover .mk-instagram__overlay { opacity: 1; }
+  .mk-instagram__overlay svg { width: 32px; height: 32px; color: #fff; }
+  .mk-instagram__follow { display: inline-flex; margin-top: 32px; padding: 14px 32px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+  .mk-instagram__follow:hover { opacity: 0.85; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Instagram",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "checkbox", "id": "show_follow", "label": "显示关注按钮", "default": true },
+    { "type": "text", "id": "follow_text", "label": "关注按钮文字", "default": "关注我们" },
+    { "type": "url", "id": "follow_url", "label": "关注链接" },
+    { "type": "header", "content": "图片" },
+    { "type": "image_picker", "id": "image_1", "label": "图片 1" },
+    { "type": "url", "id": "link_1", "label": "链接 1" },
+    { "type": "image_picker", "id": "image_2", "label": "图片 2" },
+    { "type": "url", "id": "link_2", "label": "链接 2" },
+    { "type": "image_picker", "id": "image_3", "label": "图片 3" },
+    { "type": "url", "id": "link_3", "label": "链接 3" },
+    { "type": "image_picker", "id": "image_4", "label": "图片 4" },
+    { "type": "url", "id": "link_4", "label": "链接 4" },
+    { "type": "image_picker", "id": "image_5", "label": "图片 5" },
+    { "type": "url", "id": "link_5", "label": "链接 5" },
+    { "type": "image_picker", "id": "image_6", "label": "图片 6" },
+    { "type": "url", "id": "link_6", "label": "链接 6" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Instagram" }]
+}
+{% endschema %}

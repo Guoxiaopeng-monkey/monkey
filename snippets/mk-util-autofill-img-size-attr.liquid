@@ -1,0 +1,27 @@
+{%- doc -%}
+  MK 自动填充图片尺寸属性组件
+
+  自动设置图片尺寸属性
+
+  @param {object} image - 图片对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-util-autofill-img-size-attr', image: image %}
+{%- enddoc -%}
+
+{% liquid
+  assign image = image | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if image != blank -%}
+  <img
+    src="{{ image | image_url }}"
+    alt="{{ image.alt | default: '' }}"
+    width="{{ image.width }}"
+    height="{{ image.height }}"
+    loading="lazy"
+    class="mk-util-autofill-img-size-attr {{ class }}"
+  >
+{%- endif -%}

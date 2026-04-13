@@ -1,0 +1,29 @@
+{%- doc -%}
+  MK 资源图片组件
+
+  渲染通用资源图片
+
+  @param {object} image - 图片对象
+  @param {string} [size] - 图片尺寸
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-resource-image', image: image, size: '400x400' %}
+{%- enddoc -%}
+
+{% liquid
+  assign image = image | default: nil
+  assign size = size | default: '400x400'
+  assign class = class | default: ''
+
+  assign width = size | split: 'x' | first | default: 400
+  assign height = size | split: 'x' | last | default: 400
+-%}
+
+{%- if image != nil -%}
+  {{ image | image_url: width: width | image_tag: width: width, height: height, loading: 'lazy', class: 'mk-resource-image ' | append: class }}
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-resource-image { width: 100%; height: auto; display: block; }
+{% endstylesheet %}

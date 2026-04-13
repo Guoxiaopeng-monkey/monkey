@@ -1,0 +1,29 @@
+{%- doc -%}
+  MK 预测搜索资源轮播组件
+
+  渲染预测搜索资源横向滚动
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-predictive-search-resource-carousel' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-predictive-search-resource-carousel {{ class }}" data-predictive-carousel>
+  <div class="mk-predictive-search-resource-carousel__scroll">
+    {{ content }}
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-predictive-search-resource-carousel { overflow: hidden; }
+  .mk-predictive-search-resource-carousel__scroll {
+    display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
+    scrollbar-width: none; padding: 8px 16px;
+  }
+  .mk-predictive-search-resource-carousel__scroll::-webkit-scrollbar { display: none; }
+{% endstylesheet %}

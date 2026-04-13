@@ -1,0 +1,30 @@
+{%- doc -%}
+  MK 产品卡片变体URL组件
+
+  渲染带变体URL的产品链接
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-product-card-variant-url', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if product != blank -%}
+  {% liquid
+    assign first_variant = product.variants | first
+    assign variant_url = product.url | append: '?variant=' | append: first_variant.id
+  %}
+  <a href="{{ variant_url }}" class="mk-product-card-variant-url {{ class }}">
+    {{ content }}
+  </a>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-product-card-variant-url { display: block; text-decoration: none; color: inherit; }
+{% endstylesheet %}

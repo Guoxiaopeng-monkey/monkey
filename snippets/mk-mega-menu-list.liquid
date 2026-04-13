@@ -1,0 +1,25 @@
+{%- doc -%}
+  MK Mega菜单列表组件
+
+  渲染Mega菜单中的列
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-mega-menu-list' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<ul class="mk-mega-menu-list {{ class }}">
+  {{ content }}
+</ul>
+
+{% stylesheet %}
+  .mk-mega-menu-list { list-style: none; margin: 0; padding: 0; }
+  .mk-mega-menu-list > li { padding: 8px 0; }
+  .mk-mega-menu-list > li > a { font-size: 14px; font-weight: 500; color: var(--color-foreground); text-decoration: none; }
+  .mk-mega-menu-list > li > a:hover { text-decoration: underline; }
+{% endstylesheet %}

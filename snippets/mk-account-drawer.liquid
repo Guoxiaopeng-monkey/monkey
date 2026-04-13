@@ -1,0 +1,177 @@
+{%- doc -%}
+  MK 账户抽屉组件
+
+  渲染账户登录/注册抽屉
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-account-drawer' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-account-drawer {{ class }}" data-account-drawer>
+  <div class="mk-account-drawer__overlay" data-account-close></div>
+
+  <div class="mk-account-drawer__panel">
+    <div class="mk-account-drawer__header">
+      <h2 class="mk-account-drawer__title">{{ 'account.title' | t | default: '账户' }}</h2>
+      <button type="button" class="mk-account-drawer__close" data-account-close>
+        {{- 'icon-close.svg' | inline_asset_content -}}
+      </button>
+    </div>
+
+    <div class="mk-account-drawer__content">
+      {%- if customer -%}
+        <div class="mk-account-drawer__logged-in">
+          <p class="mk-account-drawer__welcome">{{ 'account.welcome' | t: name: customer.name | default: '欢迎' }}, {{ customer.name }}!</p>
+
+          <nav class="mk-account-drawer__nav">
+            <a href="{{ routes.account_url }}" class="mk-account-drawer__link">
+              {{- 'icon-account.svg' | inline_asset_content -}}
+              <span>{{ 'account.dashboard' | t | default: '账户主页' }}</span>
+            </a>
+            <a href="{{ routes.account_url }}/orders" class="mk-account-drawer__link">
+              {{- 'icon-order.svg' | inline_asset_content -}}
+              <span>{{ 'account.orders' | t | default: '我的订单' }}</span>
+            </a>
+            <a href="{{ routes.account_url }}/addresses" class="mk-account-drawer__link">
+              {{- 'icon-location.svg' | inline_asset_content -}}
+              <span>{{ 'account.addresses' | t | default: '收货地址' }}</span>
+            </a>
+            <a href="{{ routes.account_logout_url }}" class="mk-account-drawer__link mk-account-drawer__link--logout">
+              {{- 'icon-logout.svg' | inline_asset_content -}}
+              <span>{{ 'account.logout' | t | default: '退出登录' }}</span>
+            </a>
+          </nav>
+        </div>
+      {%- else -%}
+        <div class="mk-account-drawer__tabs">
+          <button type="button" class="mk-account-drawer__tab active" data-tab="login">{{ 'account.login' | t | default: '登录' }}</button>
+          <button type="button" class="mk-account-drawer__tab" data-tab="register">{{ 'account.register' | t | default: '注册' }}</button>
+        </div>
+
+        <div class="mk-account-drawer__tab-content" data-tab-content="login">
+          {% form 'customer_login', class: 'mk-account-drawer__form' %}
+            <div class="mk-account-drawer__field">
+              <label for="login-email" class="mk-account-drawer__label">{{ 'account.email' | t | default: '邮箱' }}</label>
+              <input type="email" id="login-email" name="customer[email]" class="mk-account-drawer__input" required>
+            </div>
+            <div class="mk-account-drawer__field">
+              <label for="login-password" class="mk-account-drawer__label">{{ 'account.password' | t | default: '密码' }}</label>
+              <input type="password" id="login-password" name="customer[password]" class="mk-account-drawer__input" required>
+            </div>
+            <button type="submit" class="mk-account-drawer__submit">{{ 'account.login' | t | default: '登录' }}</button>
+          {% endform %}
+        </div>
+
+        <div class="mk-account-drawer__tab-content" data-tab-content="register" hidden>
+          {% form 'create_customer', class: 'mk-account-drawer__form' %}
+            <div class="mk-account-drawer__field">
+              <label for="register-first-name" class="mk-account-drawer__label">{{ 'account.first_name' | t | default: '名字' }}</label>
+              <input type="text" id="register-first-name" name="customer[first_name]" class="mk-account-drawer__input">
+            </div>
+            <div class="mk-account-drawer__field">
+              <label for="register-last-name" class="mk-account-drawer__label">{{ 'account.last_name' | t | default: '姓氏' }}</label>
+              <input type="text" id="register-last-name" name="customer[last_name]" class="mk-account-drawer__input">
+            </div>
+            <div class="mk-account-drawer__field">
+              <label for="register-email" class="mk-account-drawer__label">{{ 'account.email' | t | default: '邮箱' }}</label>
+              <input type="email" id="register-email" name="customer[email]" class="mk-account-drawer__input" required>
+            </div>
+            <div class="mk-account-drawer__field">
+              <label for="register-password" class="mk-account-drawer__label">{{ 'account.password' | t | default: '密码' }}</label>
+              <input type="password" id="register-password" name="customer[password]" class="mk-account-drawer__input" required>
+            </div>
+            <button type="submit" class="mk-account-drawer__submit">{{ 'account.register' | t | default: '注册' }}</button>
+          {% endform %}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-account-drawer[hidden] { display: none; }
+  .mk-account-drawer__overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 998;
+  }
+  .mk-account-drawer__panel {
+    position: fixed; top: 0; right: 0; width: 400px; max-width: 90%; height: 100vh;
+    background: var(--color-background); z-index: 999; display: flex; flex-direction: column;
+    box-shadow: -4px 0 30px rgba(0,0,0,0.15);
+  }
+  .mk-account-drawer__header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px; border-bottom: 1px solid var(--color-border);
+  }
+  .mk-account-drawer__title { margin: 0; font-size: 18px; font-weight: 600; }
+  .mk-account-drawer__close {
+    display: flex; width: 36px; height: 36px; background: transparent; border: none;
+    border-radius: 50%; cursor: pointer; color: var(--color-foreground);
+  }
+  .mk-account-drawer__close svg { width: 18px; height: 18px; }
+  .mk-account-drawer__content { flex: 1; overflow-y: auto; padding: 20px; }
+  .mk-account-drawer__tabs { display: flex; gap: 4px; padding: 4px; background: var(--color-background-secondary, #f5f5f5); border-radius: 8px; margin-bottom: 24px; }
+  .mk-account-drawer__tab {
+    flex: 1; padding: 10px; font-size: 14px; font-weight: 500; background: transparent; border: none;
+    border-radius: 6px; cursor: pointer; transition: all 0.2s ease;
+  }
+  .mk-account-drawer__tab.active { background: var(--color-background); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .mk-account-drawer__tab-content[hidden] { display: none; }
+  .mk-account-drawer__form { display: flex; flex-direction: column; gap: 16px; }
+  .mk-account-drawer__field { display: flex; flex-direction: column; gap: 6px; }
+  .mk-account-drawer__label { font-size: 14px; font-weight: 500; }
+  .mk-account-drawer__input {
+    padding: 12px 14px; font-size: 14px; border: 1px solid var(--color-border);
+    border-radius: 8px; transition: border-color 0.2s ease;
+  }
+  .mk-account-drawer__input:focus { outline: none; border-color: var(--color-primary, #000); }
+  .mk-account-drawer__submit {
+    padding: 14px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff);
+    background: var(--color-primary, #000); border: none; border-radius: 8px; cursor: pointer;
+  }
+  .mk-account-drawer__logged-in { display: flex; flex-direction: column; gap: 20px; }
+  .mk-account-drawer__welcome { margin: 0; font-size: 16px; font-weight: 500; }
+  .mk-account-drawer__nav { display: flex; flex-direction: column; gap: 4px; }
+  .mk-account-drawer__link {
+    display: flex; align-items: center; gap: 12px; padding: 14px; font-size: 14px;
+    font-weight: 500; color: var(--color-foreground); text-decoration: none;
+    background: var(--color-background); border: 1px solid var(--color-border); border-radius: 8px;
+  }
+  .mk-account-drawer__link svg { width: 20px; height: 20px; }
+  .mk-account-drawer__link--logout { color: var(--color-error, #e53935); }
+{% endstylesheet %}
+
+{% javascript %}
+  class AccountDrawer extends HTMLElement {
+    constructor() {
+      super();
+      this.panel = this.querySelector('.mk-account-drawer__panel');
+      this.tabs = this.querySelectorAll('.mk-account-drawer__tab');
+      this.tabContents = this.querySelectorAll('.mk-account-drawer__tab-content');
+      this.init();
+    }
+    init() {
+      this.querySelectorAll('[data-account-close]').forEach(btn => {
+        btn.addEventListener('click', () => this.close());
+      });
+      this.tabs.forEach(tab => {
+        tab.addEventListener('click', () => this.switchTab(tab.dataset.tab));
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && !this.hidden) this.close();
+      });
+    }
+    switchTab(tab) {
+      this.tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+      this.tabContents.forEach(c => c.hidden = c.dataset.tabContent !== tab);
+    }
+    open() { this.hidden = false; document.body.style.overflow = 'hidden'; }
+    close() { this.hidden = true; document.body.style.overflow = ''; }
+  }
+  customElements.define('account-drawer', AccountDrawer);
+{% endjavascript %}

@@ -1,0 +1,35 @@
+{%- doc -%}
+  MK M3U8视频组件
+
+  渲染HLS M3U8视频
+
+  @param {string} url - 视频URL
+  @param {string} [poster] - 封面图
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-product-m3u8-videos', url: video_url, poster: video_poster %}
+{%- enddoc -%}
+
+{% liquid
+  assign url = url | default: ''
+  assign poster = poster | default: ''
+  assign class = class | default: ''
+-%}
+
+{%- if url != blank -%}
+  <div class="mk-product-m3u8-videos {{ class }}" data-m3u8-video>
+    <video
+      class="mk-product-m3u8-videos__video"
+      src="{{ url }}"
+      {% if poster != blank %}poster="{{ poster | image_url }}"{% endif %}
+      controls
+      playsinline
+    ></video>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-product-m3u8-videos { width: 100%; border-radius: 12px; overflow: hidden; background: #000; }
+  .mk-product-m3u8-videos__video { width: 100%; display: block; }
+{% endstylesheet %}

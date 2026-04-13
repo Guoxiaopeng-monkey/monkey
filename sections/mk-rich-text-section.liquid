@@ -1,0 +1,67 @@
+{%- comment -%}
+  MK Rich Text Section板块
+
+  富文本区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-rich-text-section color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-rich-text-section__container">
+    {%- if ss.subtitle != blank -%}
+      <p class="mk-rich-text-section__subtitle">{{ ss.subtitle }}</p>
+    {%- endif -%}
+
+    {%- if ss.title != blank -%}
+      <h2 class="mk-rich-text-section__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-rich-text-section__content">
+      {{ ss.text }}
+    </div>
+
+    {%- if ss.button_text != blank -%}
+      <a href="{{ ss.button_link | default: '#' }}" class="mk-rich-text-section__button">{{ ss.button_text }}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-rich-text-section { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-rich-text-section { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-rich-text-section__container { max-width: var(--container-max-width, 800px); margin: 0 auto; padding: 0 var(--container-padding, 32px); text-align: {{ ss.text_align | default: 'center' }}; }
+  .mk-rich-text-section__subtitle { margin: 0 0 12px 0; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--color-primary, #000); }
+  .mk-rich-text-section__title { margin: 0 0 20px 0; font-size: 28px; font-weight: 700; }
+  @media (min-width: 750px) { .mk-rich-text-section__title { font-size: 36px; } }
+  .mk-rich-text-section__content { font-size: 16px; line-height: 1.7; color: var(--color-text-secondary, #666); }
+  .mk-rich-text-section__content p { margin: 0 0 16px 0; }
+  .mk-rich-text-section__content p:last-child { margin-bottom: 0; }
+  .mk-rich-text-section__button { display: inline-flex; margin-top: 24px; padding: 14px 32px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+  .mk-rich-text-section__button:hover { opacity: 0.85; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Rich Text Section",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "subtitle", "label": "副标题" },
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "richtext", "id": "text", "label": "内容" },
+    { "type": "text", "id": "button_text", "label": "按钮文字" },
+    { "type": "url", "id": "button_link", "label": "按钮链接" },
+    { "type": "select", "id": "text_align", "label": "文本对齐", "options": [{ "value": "left", "label": "左" }, { "value": "center", "label": "中" }, { "value": "right", "label": "右" }], "default": "center" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Rich Text Section" }]
+}
+{% endschema %}

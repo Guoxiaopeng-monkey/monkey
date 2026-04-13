@@ -1,0 +1,77 @@
+{%- comment -%}
+  MK Countdown Strip板块
+
+  简约倒计时条
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<div id="{{ section.id }}" class="mk-countdown-strip color-{{ ss.color_scheme | default: 'background-1' }}" data-countdown-strip data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+  <div class="mk-countdown-strip__container">
+    {%- if ss.text != blank -%}
+      <span class="mk-countdown-strip__text">{{ ss.text }}</span>
+    {%- endif -%}
+
+    <div class="mk-countdown-strip__countdown">
+      <span data-days>00</span>天
+      <span data-hours>00</span>时
+      <span data-minutes>00</span>分
+      <span data-seconds>00</span>秒
+    </div>
+
+    {%- if ss.button_text != blank -%}
+      <a href="{{ ss.button_link | default: '#' }}" class="mk-countdown-strip__btn">{{ ss.button_text }}</a>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-countdown-strip { padding: 12px 0; background: var(--color-primary, #000); color: #fff; }
+  .mk-countdown-strip__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+  .mk-countdown-strip__text { font-size: 14px; font-weight: 600; }
+  .mk-countdown-strip__countdown { display: flex; align-items: center; gap: 4px; font-size: 14px; }
+  .mk-countdown-strip__countdown span { font-weight: 700; }
+  .mk-countdown-strip__btn { padding: 8px 20px; font-size: 13px; font-weight: 600; color: var(--color-on-primary, #fff); background: rgba(255,255,255,0.2); border-radius: 6px; text-decoration: none; }
+  .mk-countdown-strip__btn:hover { background: rgba(255,255,255,0.3); }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const strip = document.querySelector('[data-countdown-strip]');
+    if (!strip) return;
+    const endDate = new Date(strip.dataset.end).getTime();
+    function update() {
+      const now = Date.now();
+      const diff = Math.max(0, endDate - now);
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+      strip.querySelector('[data-days]').textContent = String(days).padStart(2, '0');
+      strip.querySelector('[data-hours]').textContent = String(hours).padStart(2, '0');
+      strip.querySelector('[data-minutes]').textContent = String(minutes).padStart(2, '0');
+      strip.querySelector('[data-seconds]').textContent = String(seconds).padStart(2, '0');
+    }
+    update();
+    setInterval(update, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown Strip",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "text", "label": "文字" },
+    { "type": "text", "id": "end_date", "label": "结束日期", "info": "格式: YYYY-MM-DD HH:MM" },
+    { "type": "text", "id": "button_text", "label": "按钮文字" },
+    { "type": "url", "id": "button_link", "label": "按钮链接" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Countdown Strip" }]
+}
+{% endschema %}

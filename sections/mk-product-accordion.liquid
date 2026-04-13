@@ -1,0 +1,82 @@
+{%- comment -%}
+  MK Product Accordion Section板块
+
+  产品手风琴区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-product-accordion color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-product-accordion__container">
+    <div class="mk-product-accordion__item" data-accordion>
+      <button type="button" class="mk-product-accordion__trigger" data-trigger>
+        <span>{{ ss.trigger_1 | default: '产品描述' }}</span>
+        <span class="mk-product-accordion__icon">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+      </button>
+      <div class="mk-product-accordion__body" data-body>
+        <div class="mk-product-accordion__content">{{ ss.content_1 }}</div>
+      </div>
+    </div>
+
+    <div class="mk-product-accordion__item" data-accordion>
+      <button type="button" class="mk-product-accordion__trigger" data-trigger>
+        <span>{{ ss.trigger_2 | default: '配送信息' }}</span>
+        <span class="mk-product-accordion__icon">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+      </button>
+      <div class="mk-product-accordion__body" data-body>
+        <div class="mk-product-accordion__content">{{ ss.content_2 }}</div>
+      </div>
+    </div>
+
+    <div class="mk-product-accordion__item" data-accordion>
+      <button type="button" class="mk-product-accordion__trigger" data-trigger>
+        <span>{{ ss.trigger_3 | default: '退换政策' }}</span>
+        <span class="mk-product-accordion__icon">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+      </button>
+      <div class="mk-product-accordion__body" data-body>
+        <div class="mk-product-accordion__content">{{ ss.content_3 }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-product-accordion { padding: {{ ss.padding_top_mobile | default: 32 }}px 0 {{ ss.padding_bottom_mobile | default: 32 }}px; }
+  @media (min-width: 750px) { .mk-product-accordion { padding: {{ ss.padding_top_desktop | default: 48 }}px 0 {{ ss.padding_bottom_desktop | default: 48 }}px; } }
+  .mk-product-accordion__container { max-width: var(--container-max-width, 800px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-product-accordion__item { border-bottom: 1px solid var(--color-border); }
+  .mk-product-accordion__trigger { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 20px 0; font-size: 16px; font-weight: 600; text-align: left; background: transparent; border: none; cursor: pointer; }
+  .mk-product-accordion__icon { display: flex; flex-shrink: 0; width: 24px; height: 24px; transition: transform 0.2s ease; }
+  .mk-product-accordion__item.active .mk-product-accordion__icon { transform: rotate(45deg); }
+  .mk-product-accordion__body { display: none; padding: 0 0 20px 0; font-size: 15px; color: var(--color-text-secondary, #666); line-height: 1.6; }
+  .mk-product-accordion__item.active .mk-product-accordion__body { display: block; }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelectorAll('.mk-product-accordion__trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      trigger.closest('[data-accordion]').classList.toggle('active');
+    });
+  });
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Product Accordion",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "trigger_1", "label": "标题 1", "default": "产品描述" },
+    { "type": "richtext", "id": "content_1", "label": "内容 1" },
+    { "type": "text", "id": "trigger_2", "label": "标题 2", "default": "配送信息" },
+    { "type": "richtext", "id": "content_2", "label": "内容 2" },
+    { "type": "text", "id": "trigger_3", "label": "标题 3", "default": "退换政策" },
+    { "type": "richtext", "id": "content_3", "label": "内容 3" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 80, "default": 32, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 80, "default": 32, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)",

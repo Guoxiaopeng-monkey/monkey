@@ -1,0 +1,55 @@
+{%- comment -%}
+  MK Marquee滚动字幕板块
+
+  无限滚动字幕
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-marquee color-{{ ss.color_scheme | default: 'background-1' }}" data-marquee>
+  <div class="mk-marquee__track" style="--duration: {{ ss.duration | default: 20 }}s; --direction: {{ ss.direction | default: 'left' }};">
+    <div class="mk-marquee__content">
+      {%- assign items = ss.text | split: ',' -%}
+      {%- for item in items -%}
+        <span class="mk-marquee__item">{{ item | strip }}</span>
+      {%- endfor -%}
+    </div>
+    <div class="mk-marquee__content" aria-hidden="true">
+      {%- for item in items -%}
+        <span class="mk-marquee__item">{{ item | strip }}</span>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-marquee { overflow: hidden; padding: {{ ss.padding_mobile | default: 16 }}px 0; }
+  @media (min-width: 750px) { .mk-marquee { padding: {{ ss.padding_desktop | default: 24 }}px 0; } }
+  .mk-marquee__track { display: flex; width: max-content; animation: marquee-scroll var(--duration, 20s) linear infinite; animation-direction: var(--direction, left); }
+  .mk-marquee__content { display: flex; align-items: center; gap: 48px; padding-right: 48px; }
+  .mk-marquee__item { font-size: {{ ss.font_size_mobile | default: 16 }}px; font-weight: 700; white-space: nowrap; text-transform: uppercase; letter-spacing: 2px; }
+  @media (min-width: 750px) { .mk-marquee__item { font-size: {{ ss.font_size_desktop | default: 24 }}px; } }
+  @keyframes marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(calc(-100% - 48px)); } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Marquee",
+  "tag": "section",
+  "settings": [
+    { "type": "textarea", "id": "text", "label": "滚动内容 (逗号分隔)", "default": "免费配送,新品上市,限时折扣" },
+    { "type": "select", "id": "direction", "label": "滚动方向", "options": [{ "value": "left", "label": "向左" }, { "value": "right", "label": "向右" }], "default": "left" },
+    { "type": "range", "id": "duration", "label": "滚动时长 (秒)", "min": 10, "max": 60, "default": 20 },
+    { "type": "range", "id": "font_size_mobile", "label": "字体大小 (移动端)", "min": 12, "max": 32, "default": 16, "unit": "px" },
+    { "type": "range", "id": "font_size_desktop", "label": "字体大小 (PC端)", "min": 16, "max": 48, "default": 24, "unit": "px" },
+    { "type": "range", "id": "padding_mobile", "label": "内边距 (移动端)", "min": 8, "max": 48, "default": 16, "unit": "px" },
+    { "type": "range", "id": "padding_desktop", "label": "内边距 (PC端)", "min": 8, "max": 64, "default": 24, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Marquee" }]
+}
+{% endschema %}

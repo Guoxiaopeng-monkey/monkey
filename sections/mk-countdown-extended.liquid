@@ -1,0 +1,76 @@
+{%- comment -%}
+  MK Countdown Extended板块
+
+  扩展倒计时
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-countdown-extended color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-countdown-extended__container">
+    {%- if ss.subtitle != blank -%}
+      <p class="mk-countdown-extended__subtitle">{{ ss.subtitle }}</p>
+    {%- endif -%}
+    {%- if ss.title != blank -%}
+      <h2 class="mk-countdown-extended__title">{{ ss.title }}</h2>
+    {%- endif -%}
+    <div class="mk-countdown-extended__countdown" data-countdown-extended data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+      <div class="mk-countdown-extended__item"><span class="mk-countdown-extended__num" data-days>00</span><span class="mk-countdown-extended__label">Days</span></div>
+      <div class="mk-countdown-extended__item"><span class="mk-countdown-extended__num" data-hours>00</span><span class="mk-countdown-extended__label">Hours</span></div>
+      <div class="mk-countdown-extended__item"><span class="mk-countdown-extended__num" data-minutes>00</span><span class="mk-countdown-extended__label">Minutes</span></div>
+      <div class="mk-countdown-extended__item"><span class="mk-countdown-extended__num" data-seconds>00</span><span class="mk-countdown-extended__label">Seconds</span></div>
+    </div>
+    {%- if ss.button_text != blank -%}
+      <a href="{{ ss.button_link | default: '#' }}" class="mk-countdown-extended__btn">{{ ss.button_text }}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-countdown-extended { padding: 100px 0; background: var(--color-background-secondary, #f5f5f5); text-align: center; }
+  .mk-countdown-extended__container { max-width: 800px; margin: 0 auto; padding: 0 32px; }
+  .mk-countdown-extended__subtitle { margin: 0 0 12px 0; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--color-primary, #000); }
+  .mk-countdown-extended__title { margin: 0 0 40px 0; font-size: 42px; font-weight: 700; }
+  .mk-countdown-extended__countdown { display: flex; justify-content: center; gap: 24px; margin-bottom: 40px; }
+  .mk-countdown-extended__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .mk-countdown-extended__num { min-width: 100px; padding: 24px 16px; background: var(--color-background); border-radius: 16px; font-size: 44px; font-weight: 700; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .mk-countdown-extended__label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-secondary, #666); }
+  .mk-countdown-extended__btn { display: inline-flex; padding: 16px 40px; font-size: 14px; font-weight: 600; color: #fff; background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const c = document.querySelector('[data-countdown-extended]');
+    if (!c) return;
+    const end = new Date(c.dataset.end).getTime();
+    function u() {
+      const now = Date.now(), diff = Math.max(0, end - now);
+      const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+      c.querySelector('[data-days]').textContent = String(d).padStart(2,'0');
+      c.querySelector('[data-hours]').textContent = String(h).padStart(2,'0');
+      c.querySelector('[data-minutes]').textContent = String(m).padStart(2,'0');
+      c.querySelector('[data-seconds]').textContent = String(s).padStart(2,'0');
+    }
+    u(); setInterval(u, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown Extended",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "subtitle", "label": "副标题" },
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "end_date", "label": "结束日期" },
+    { "type": "text", "id": "button_text", "label": "按钮文字" },
+    { "type": "url", "id": "button_link", "label": "按钮链接" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Countdown Extended" }]
+}
+{% endschema %}

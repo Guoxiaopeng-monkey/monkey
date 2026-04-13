@@ -1,0 +1,73 @@
+{%- comment -%}
+  MK Countdown Inline Inline板块
+
+  内联倒计时第二版
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<div id="{{ section.id }}" class="mk-countdown-inline-inline" data-countdown-inline-inline data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+  <div class="mk-countdown-inline-inline__container">
+    {%- if ss.title != blank -%}
+      <span class="mk-countdown-inline-inline__title">{{ ss.title }}</span>
+    {%- endif -%}
+
+    <div class="mk-countdown-inline-inline__time">
+      <span class="mk-countdown-inline-inline__num" data-days>00</span>
+      <span class="mk-countdown-inline-inline__sep">天</span>
+      <span class="mk-countdown-inline-inline__num" data-hours>00</span>
+      <span class="mk-countdown-inline-inline__sep">时</span>
+      <span class="mk-countdown-inline-inline__num" data-minutes>00</span>
+      <span class="mk-countdown-inline-inline__sep">分</span>
+      <span class="mk-countdown-inline-inline__num" data-seconds>00</span>
+      <span class="mk-countdown-inline-inline__sep">秒</span>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-countdown-inline-inline { padding: 16px 0; }
+  .mk-countdown-inline-inline__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .mk-countdown-inline-inline__title { font-size: 14px; font-weight: 600; }
+  .mk-countdown-inline-inline__time { display: flex; align-items: center; gap: 4px; }
+  .mk-countdown-inline-inline__num { font-size: 18px; font-weight: 700; min-width: 28px; text-align: center; }
+  .mk-countdown-inline-inline__sep { font-size: 12px; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const countdown = document.querySelector('[data-countdown-inline-inline]');
+    if (!countdown) return;
+    const endDate = new Date(countdown.dataset.end).getTime();
+    function update() {
+      const now = Date.now();
+      const diff = Math.max(0, endDate - now);
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+      countdown.querySelector('[data-days]').textContent = String(days).padStart(2, '0');
+      countdown.querySelector('[data-hours]').textContent = String(hours).padStart(2, '0');
+      countdown.querySelector('[data-minutes]').textContent = String(minutes).padStart(2, '0');
+      countdown.querySelector('[data-seconds]').textContent = String(seconds).padStart(2, '0');
+    }
+    update();
+    setInterval(update, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown Inline Inline",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "end_date", "label": "结束日期", "info": "格式: YYYY-MM-DD HH:MM" }
+  ],
+  "presets": [{ "name": "MK Countdown Inline Inline" }]
+}
+{% endschema %}

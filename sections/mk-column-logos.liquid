@@ -1,0 +1,80 @@
+{%- comment -%}
+  MK Column Logos板块
+
+  列Logo展示
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-column-logos color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-column-logos__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-column-logos__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-column-logos__grid">
+      {%- for i in (1..6) -%}
+        {%- assign image_setting = 'image_' | append: i -%}
+        {%- assign title_setting = 'title_' | append: i -%}
+        {%- assign link_setting = 'link_' | append: i -%}
+
+        {%- if ss[title_setting] != blank -%}
+          <div class="mk-column-logos__item">
+            {%- if ss[image_setting] != blank -%}
+              {%- if ss[link_setting] != blank -%}
+                <a href="{{ ss[link_setting] }}" class="mk-column-logos__image-link">
+              {%- endif -%}
+              {{ ss[image_setting] | image_url: width: 200 | image_tag: loading: 'lazy', class: 'mk-column-logos__image' }}
+              {%- if ss[link_setting] != blank -%}
+                </a>
+              {%- endif -%}
+            {%- endif -%}
+            <h3 class="mk-column-logos__item-title">{{ ss[title_setting] }}</h3>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-column-logos { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-column-logos { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-column-logos__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-column-logos__title { margin: 0 0 40px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-column-logos__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+  @media (min-width: 750px) { .mk-column-logos__grid { grid-template-columns: repeat(3, 1fr); gap: 48px; } }
+  @media (min-width: 1024px) { .mk-column-logos__grid { grid-template-columns: repeat(6, 1fr); } }
+  .mk-column-logos__item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; }
+  .mk-column-logos__image-link { display: block; }
+  .mk-column-logos__image { max-width: 100px; height: auto; opacity: 0.7; transition: opacity 0.2s ease; }
+  .mk-column-logos__item:hover .mk-column-logos__image { opacity: 1; }
+  .mk-column-logos__item-title { margin: 0; font-size: 14px; font-weight: 600; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Column Logos",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "header", "content": "项 1" }, { "type": "image_picker", "id": "image_1", "label": "图片 1" }, { "type": "text", "id": "title_1", "label": "标题 1" }, { "type": "url", "id": "link_1", "label": "链接 1" },
+    { "type": "header", "content": "项 2" }, { "type": "image_picker", "id": "image_2", "label": "图片 2" }, { "type": "text", "id": "title_2", "label": "标题 2" }, { "type": "url", "id": "link_2", "label": "链接 2" },
+    { "type": "header", "content": "项 3" }, { "type": "image_picker", "id": "image_3", "label": "图片 3" }, { "type": "text", "id": "title_3", "label": "标题 3" }, { "type": "url", "id": "link_3", "label": "链接 3" },
+    { "type": "header", "content": "项 4" }, { "type": "image_picker", "id": "image_4", "label": "图片 4" }, { "type": "text", "id": "title_4", "label": "标题 4" }, { "type": "url", "id": "link_4", "label": "链接 4" },
+    { "type": "header", "content": "项 5" }, { "type": "image_picker", "id": "image_5", "label": "图片 5" }, { "type": "text", "id": "title_5", "label": "标题 5" }, { "type": "url", "id": "link_5", "label": "链接 5" },
+    { "type": "header", "content": "项 6" }, { "type": "image_picker", "id": "image_6", "label": "图片 6" }, { "type": "text", "id": "title_6", "label": "标题 6" }, { "type": "url", "id": "link_6", "label": "链接 6" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Column Logos" }]
+}
+{% endschema %}

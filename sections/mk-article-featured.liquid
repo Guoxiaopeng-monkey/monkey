@@ -1,0 +1,89 @@
+{%- comment -%}
+  MK Article Featured板块
+
+  展示精选文章
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+  assign articles = articles | default: ( blogs[ss.blog].articles | default: empty )
+-%}
+
+<section id="{{ section.id }}" class="mk-article-featured color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-article-featured__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-article-featured__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-article-featured__grid">
+      {%- for article in articles limit: ss.limit -%}
+        {%- if forloop.index0 < 3 -%}
+          <article class="mk-article-featured__item">
+            {%- if article.image -%}
+              <a href="{{ article.url }}" class="mk-article-featured__image">
+                {{ article.image | image_url: width: 600 | image_tag: loading: 'lazy', class: 'mk-article-featured__img' }}
+              </a>
+            {%- endif -%}
+            <div class="mk-article-featured__content">
+              <div class="mk-article-featured__meta">
+                {%- if ss.show_date -%}
+                  <span class="mk-article-featured__date">{{ article.published_at | date: '%Y/%m/%d' }}</span>
+                {%- endif -%}
+                {%- if article.tags.first and ss.show_tags -%}
+                  <span class="mk-article-featured__tag">{{ article.tags.first }}</span>
+                {%- endif -%}
+              </div>
+              <h3 class="mk-article-featured__heading">
+                <a href="{{ article.url }}">{{ article.title }}</a>
+              </h3>
+              {%- if ss.show_excerpt -%}
+                <p class="mk-article-featured__excerpt">{{ article.excerpt | truncate: 100 }}</p>
+              {%- endif -%}
+            </div>
+          </article>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-article-featured { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-article-featured { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-article-featured__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-article-featured__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-article-featured__grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
+  @media (min-width: 750px) { .mk-article-featured__grid { grid-template-columns: repeat(3, 1fr); gap: 32px; } }
+  .mk-article-featured__item { display: flex; flex-direction: column; }
+  .mk-article-featured__image { aspect-ratio: 16/10; overflow: hidden; border-radius: 12px; margin-bottom: 16px; }
+  .mk-article-featured__img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+  .mk-article-featured__item:hover .mk-article-featured__img { transform: scale(1.03); }
+  .mk-article-featured__meta { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; font-size: 12px; }
+  .mk-article-featured__tag { padding: 2px 8px; background: var(--color-background-secondary); border-radius: 4px; }
+  .mk-article-featured__heading { margin: 0 0 8px 0; font-size: 18px; font-weight: 600; line-height: 1.4; }
+  .mk-article-featured__heading a { text-decoration: none; color: inherit; }
+  .mk-article-featured__heading a:hover { text-decoration: underline; }
+  .mk-article-featured__excerpt { margin: 0; font-size: 14px; color: var(--color-text-secondary, #666); line-height: 1.6; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Article Featured",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "blog", "id": "blog", "label": "选择博客" },
+    { "type": "range", "id": "limit", "label": "显示数量", "min": 1, "max": 6, "default": 3 },
+    { "type": "checkbox", "id": "show_date", "label": "显示日期", "default": true },
+    { "type": "checkbox", "id": "show_tags", "label": "显示标签", "default": true },
+    { "type": "checkbox", "id": "show_excerpt", "label": "显示摘要", "default": true },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Article Featured" }]

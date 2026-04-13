@@ -1,0 +1,57 @@
+{%- comment -%}
+  MK Newsletter Bar板块
+
+  展示简短的订阅栏
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-newsletter-bar color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-newsletter-bar__container">
+    <div class="mk-newsletter-bar__content">
+      {%- if ss.title != blank -%}
+        <h3 class="mk-newsletter-bar__title">{{ ss.title }}</h3>
+      {%- endif -%}
+      {%- if ss.text != blank -%}
+        <p class="mk-newsletter-bar__text">{{ ss.text }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- form 'customer', class: 'mk-newsletter-bar__form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <input type="email" name="contact[email]" required class="mk-newsletter-bar__input" placeholder="{{ ss.placeholder | default: '输入邮箱地址' }}">
+      <button type="submit" class="mk-newsletter-bar__button">{{ ss.button_text | default: '订阅' }}</button>
+    {%- endform -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-newsletter-bar { padding: 24px 0; }
+  .mk-newsletter-bar__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center; }
+  @media (min-width: 750px) { .mk-newsletter-bar__container { flex-direction: row; justify-content: space-between; text-align: left; } }
+  .mk-newsletter-bar__title { margin: 0; font-size: 18px; font-weight: 600; }
+  .mk-newsletter-bar__text { margin: 4px 0 0 0; font-size: 14px; color: var(--color-text-secondary, #666); }
+  .mk-newsletter-bar__form { display: flex; gap: 8px; flex-shrink: 0; }
+  .mk-newsletter-bar__input { width: 240px; padding: 12px 16px; font-size: 14px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); }
+  .mk-newsletter-bar__button { padding: 12px 24px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border: none; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+  .mk-newsletter-bar__button:hover { opacity: 0.85; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Newsletter Bar",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "text", "label": "描述文字" },
+    { "type": "text", "id": "placeholder", "label": "输入框占位符" },
+    { "type": "text", "id": "button_text", "label": "按钮文字", "default": "订阅" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Newsletter Bar" }]
+}
+{% endschema %}

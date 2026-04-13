@@ -1,0 +1,31 @@
+{%- comment -%}
+  MK Liquid Custom Section板块
+
+  自定义Liquid区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-liquid-custom-section color-{{ ss.color_scheme | default: 'background-1' }}">
+  {{ ss.custom_liquid }}
+</section>
+
+{% stylesheet %}
+  .mk-liquid-custom-section { }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Liquid Custom Section",
+  "tag": "section",
+  "settings": [
+    { "type": "liquid", "id": "custom_liquid", "label": "自定义Liquid代码" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Liquid Custom Section" }]
+}
+{% endschema %}

@@ -1,0 +1,137 @@
+{%- comment -%}
+  MK Hero Slider板块
+
+  全屏轮播图
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-hero-slider" data-hero-slider>
+  <div class="mk-hero-slider__track">
+    {%- for i in (1..5) -%}
+      {%- assign image_setting = 'image_' | append: i -%}
+      {%- assign title_setting = 'title_' | append: i -%}
+      {%- assign text_setting = 'text_' | append: i -%}
+      {%- assign button_text_setting = 'button_text_' | append: i -%}
+      {%- assign button_link_setting = 'button_link_' | append: i -%}
+
+      {%- if ss[image_setting] != blank -%}
+        <div class="mk-hero-slider__slide {% if forloop.first %}active{% endif %}" data-slide="{{ forloop.index0 }}">
+          {{ ss[image_setting] | image_url: width: 1920 | image_tag: loading: 'lazy', class: 'mk-hero-slider__image' }}
+          <div class="mk-hero-slider__overlay"></div>
+          <div class="mk-hero-slider__content">
+            {%- if ss[title_setting] != blank -%}
+              <h2 class="mk-hero-slider__title">{{ ss[title_setting] }}</h2>
+            {%- endif -%}
+            {%- if ss[text_setting] != blank -%}
+              <p class="mk-hero-slider__text">{{ ss[text_setting] }}</p>
+            {%- endif -%}
+            {%- if ss[button_text_setting] != blank -%}
+              <a href="{{ ss[button_link_setting] | default: '#' }}" class="mk-hero-slider__button">{{ ss[button_text_setting] }}</a>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  {%- if ss.show_arrows and forloop.index > 1 -%}
+    <div class="mk-hero-slider__arrows">
+      <button type="button" class="mk-hero-slider__arrow mk-hero-slider__arrow--prev" data-arrow="prev">{{- 'icon-arrow-left.svg' | inline_asset_content -}}</button>
+      <button type="button" class="mk-hero-slider__arrow mk-hero-slider__arrow--next" data-arrow="next">{{- 'icon-arrow-right.svg' | inline_asset_content -}}</button>
+    </div>
+  {%- endif -%}
+
+  {%- if ss.show_dots -%}
+    <div class="mk-hero-slider__dots">
+      {%- for i in (1..5) -%}
+        {%- assign image_setting = 'image_' | append: i -%}
+        {%- if ss[image_setting] != blank -%}
+          <button type="button" class="mk-hero-slider__dot {% if forloop.first %}active{% endif %}" data-dot="{{ forloop.index0 }}"></button>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</section>
+
+{% stylesheet %}
+  .mk-hero-slider { position: relative; overflow: hidden; }
+  .mk-hero-slider__track { position: relative; }
+  .mk-hero-slider__slide { display: none; }
+  .mk-hero-slider__slide.active { display: block; }
+  .mk-hero-slider__image { width: 100%; height: 100vh; object-fit: cover; }
+  .mk-hero-slider__overlay { position: absolute; inset: 0; background: rgba(0,0,0,{{ ss.overlay_opacity | default: 0.3 }}); }
+  .mk-hero-slider__content { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; }
+  .mk-hero-slider__title { margin: 0 0 16px 0; font-size: 32px; font-weight: 700; color: #fff; max-width: 600px; }
+  @media (min-width: 750px) { .mk-hero-slider__title { font-size: 48px; } }
+  .mk-hero-slider__text { margin: 0 0 24px 0; font-size: 16px; color: rgba(255,255,255,0.9); max-width: 500px; }
+  .mk-hero-slider__button { display: inline-flex; padding: 16px 40px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+  .mk-hero-slider__button:hover { opacity: 0.85; }
+  .mk-hero-slider__arrows { position: absolute; bottom: 50%; left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 24px; pointer-events: none; }
+  .mk-hero-slider__arrow { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; cursor: pointer; pointer-events: auto; }
+  .mk-hero-slider__arrow svg { width: 20px; height: 20px; }
+  .mk-hero-slider__dots { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; }
+  .mk-hero-slider__dot { width: 8px; height: 8px; padding: 0; background: rgba(255,255,255,0.5); border: none; border-radius: 50%; cursor: pointer; }
+  .mk-hero-slider__dot.active { background: #fff; }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const slider = document.querySelector('[data-hero-slider]');
+    if (!slider) return;
+    const slides = slider.querySelectorAll('[data-slide]');
+    const dots = slider.querySelectorAll('[data-dot]');
+    let current = 0;
+    let interval;
+
+    function goTo(idx) {
+      slides[current].classList.remove('active');
+      dots[current]?.classList.remove('active');
+      current = (idx + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      dots[current]?.classList.add('active');
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    slider.querySelectorAll('[data-arrow]').forEach(btn => {
+      btn.addEventListener('click', () => btn.dataset.arrow === 'next' ? next() : prev());
+    });
+    dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+
+    function startInterval() { interval = setInterval(next, 5000); }
+    startInterval();
+    slider.addEventListener('mouseenter', () => clearInterval(interval));
+    slider.addEventListener('mouseleave', startInterval);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Hero Slider",
+  "tag": "section",
+  "settings": [
+    { "type": "range", "id": "overlay_opacity", "label": "遮罩透明度", "min": 0, "max": 1, "step": 0.1, "default": 0.3 },
+    { "type": "checkbox", "id": "show_arrows", "label": "显示箭头", "default": true },
+    { "type": "checkbox", "id": "show_dots", "label": "显示指示点", "default": true },
+    { "type": "header", "content": "幻灯片 1" },
+    { "type": "image_picker", "id": "image_1", "label": "图片 1" },
+    { "type": "text", "id": "title_1", "label": "标题 1" },
+    { "type": "textarea", "id": "text_1", "label": "描述 1" },
+    { "type": "text", "id": "button_text_1", "label": "按钮文字 1" },
+    { "type": "url", "id": "button_link_1", "label": "按钮链接 1" },
+    { "type": "header", "content": "幻灯片 2" },
+    { "type": "image_picker", "id": "image_2", "label": "图片 2" },
+    { "type": "text", "id": "title_2", "label": "标题 2" },
+    { "type": "textarea", "id": "text_2", "label": "描述 2" },
+    { "type": "text", "id": "button_text_2", "label": "按钮文字 2" },
+    { "type": "url", "id": "button_link_2", "label": "按钮链接 2" },
+    { "type": "header", "content": "幻灯片 3" },
+    { "type": "image_picker", "id": "image_3", "label": "图片 3" },
+    { "type": "text", "id": "title_3", "label": "标题 3" },
+    { "type": "textarea", "id": "text

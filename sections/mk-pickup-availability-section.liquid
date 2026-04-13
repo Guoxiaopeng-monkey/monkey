@@ -1,0 +1,73 @@
+{%- comment -%}
+  MK Pickup Availability Section板块
+
+  到店取货可用性
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-pickup-availability-section color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-pickup-availability-section__container">
+    {%- if ss.title != blank -%}
+      <h3 class="mk-pickup-availability-section__title">{{ ss.title }}</h3>
+    {%- endif -%}
+
+    <div class="mk-pickup-availability-section__list">
+      {%- for i in (1..3) -%}
+        {%- assign store_setting = 'store_' | append: i -%}
+        {%- assign address_setting = 'address_' | append: i -%}
+        {%- assign available_setting = 'available_' | append: i -%}
+
+        {%- if ss[store_setting] != blank -%}
+          <div class="mk-pickup-availability-section__store">
+            <div class="mk-pickup-availability-section__icon">
+              {%- if ss[available_setting] -%}
+                {{- 'icon-check.svg' | inline_asset_content -}}
+              {%- else -%}
+                {{- 'icon-close.svg' | inline_asset_content -}}
+              {%- endif -%}
+            </div>
+            <div class="mk-pickup-availability-section__info">
+              <span class="mk-pickup-availability-section__name">{{ ss[store_setting] }}</span>
+              <span class="mk-pickup-availability-section__address">{{ ss[address_setting] }}</span>
+            </div>
+            <span class="mk-pickup-availability-section__status {% if ss[available_setting] %}available{% else %}unavailable{% endif %}">
+              {{ ss[available_setting] | default: false | bool }}
+            </span>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-pickup-availability-section { padding: 20px 0; }
+  .mk-pickup-availability-section__container { max-width: var(--container-max-width, 500px); margin: 0 auto; }
+  .mk-pickup-availability-section__title { margin: 0 0 16px 0; font-size: 15px; font-weight: 600; }
+  .mk-pickup-availability-section__list { display: flex; flex-direction: column; gap: 12px; }
+  .mk-pickup-availability-section__store { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--color-background-secondary, #f5f5f5); border-radius: 8px; }
+  .mk-pickup-availability-section__icon { display: flex; flex-shrink: 0; width: 24px; height: 24px; }
+  .mk-pickup-availability-section__icon svg { width: 100%; height: 100%; }
+  .mk-pickup-availability-section__info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .mk-pickup-availability-section__name { font-size: 14px; font-weight: 600; }
+  .mk-pickup-availability-section__address { font-size: 12px; color: var(--color-text-secondary, #666); }
+  .mk-pickup-availability-section__status { font-size: 12px; font-weight: 600; }
+  .mk-pickup-availability-section__status.available { color: #4caf50; }
+  .mk-pickup-availability-section__status.unavailable { color: #d00; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Pickup Availability Section",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题", "default": "到店取货" },
+    { "type": "header", "content": "门店 1" }, { "type": "text", "id": "store_1", "label": "门店名称 1" }, { "type": "text", "id": "address_1", "label": "地址 1" }, { "type": "checkbox", "id": "available_1", "label": "可用 1" },
+    { "type": "header", "content": "门店 2" }, { "type": "text", "id": "store_2", "label": "门店名称 2" }, { "type": "text", "id": "address_2", "label": "地址 2" }, { "type": "checkbox", "id": "available_2", "label": "可用 2" },
+    { "type": "header", "content": "门店 3" }, { "type": "text", "id": "store_3", "label": "门店名称 3" }, { "type": "text", "id": "address_3", "label": "地址 3" }, { "type": "checkbox", "id": "available_3", "label": "可用 3" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案",

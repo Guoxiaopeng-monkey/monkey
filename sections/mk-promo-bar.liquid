@@ -1,0 +1,70 @@
+{%- comment -%}
+  MK Promo Bar板块
+
+  促销条
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<div id="{{ section.id }}" class="mk-promo-bar color-{{ ss.color_scheme | default: 'background-1' }}" data-promo-bar>
+  <div class="mk-promo-bar__container">
+    {%- if ss.icon != blank -%}
+      <span class="mk-promo-bar__icon">{{ ss.icon | default: 'icon-star.svg' | inline_asset_content }}</span>
+    {%- endif -%}
+
+    <p class="mk-promo-bar__text">{{ ss.text }}</p>
+
+    {%- if ss.link_text != blank and ss.link != blank -%}
+      <a href="{{ ss.link }}" class="mk-promo-bar__link">{{ ss.link_text }}</a>
+    {%- endif -%}
+
+    {%- if ss.show_close -%}
+      <button type="button" class="mk-promo-bar__close" data-close-promo aria-label="关闭">
+        {{- 'icon-close.svg' | inline_asset_content -}}
+      </button>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-promo-bar { padding: 10px 0; background: var(--color-primary, #000); color: #fff; }
+  .mk-promo-bar__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; }
+  .mk-promo-bar__icon { display: flex; flex-shrink: 0; }
+  .mk-promo-bar__icon svg { width: 16px; height: 16px; }
+  .mk-promo-bar__text { margin: 0; font-size: 13px; text-align: center; }
+  .mk-promo-bar__link { font-size: 13px; font-weight: 600; color: #fff; text-decoration: underline; }
+  .mk-promo-bar__close { position: absolute; right: 0; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; background: transparent; border: none; cursor: pointer; color: #fff; }
+  .mk-promo-bar__close svg { width: 14px; height: 14px; }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const bar = document.querySelector('[data-promo-bar]');
+    if (!bar) return;
+    bar.querySelector('[data-close-promo]')?.addEventListener('click', () => {
+      bar.style.display = 'none';
+      sessionStorage.setItem('promo_closed', 'true');
+    });
+    if (sessionStorage.getItem('promo_closed')) bar.style.display = 'none';
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Promo Bar",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "icon", "label": "图标" },
+    { "type": "textarea", "id": "text", "label": "促销文字", "default": "新品上架，全场8折优惠" },
+    { "type": "text", "id": "link_text", "label": "链接文字" },
+    { "type": "url", "id": "link", "label": "链接" },
+    { "type": "checkbox", "id": "show_close", "label": "显示关闭按钮", "default": true },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Promo Bar" }]
+}
+{% endschema %}

@@ -1,0 +1,82 @@
+{%- comment -%}
+  MK Cookie Banner Section板块
+
+  Cookie通知条
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-cookie-banner-section" data-cookie-banner data-days="{{ ss.days | default: 30 }}">
+  <div class="mk-cookie-banner-section__container">
+    <div class="mk-cookie-banner-section__content">
+      {%- if ss.title != blank -%}
+        <h3 class="mk-cookie-banner-section__title">{{ ss.title }}</h3>
+      {%- endif -%}
+      {%- if ss.text != blank -%}
+        <p class="mk-cookie-banner-section__text">{{ ss.text }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="mk-cookie-banner-section__actions">
+      {%- if ss.show_customize -%}
+        <button type="button" class="mk-cookie-banner-section__btn mk-cookie-banner-section__btn--secondary" data-cookie-customize>
+          {{ ss.customize_text | default: '自定义设置' }}
+        </button>
+      {%- endif -%}
+      <button type="button" class="mk-cookie-banner-section__btn mk-cookie-banner-section__btn--primary" data-cookie-accept>
+        {{ ss.accept_text | default: '接受全部' }}
+      </button>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-cookie-banner-section { position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; padding: 16px 24px; background: var(--color-background); border-top: 1px solid var(--color-border); box-shadow: 0 -4px 16px rgba(0,0,0,0.08); display: none; }
+  .mk-cookie-banner-section.active { display: block; }
+  .mk-cookie-banner-section__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+  @media (min-width: 750px) { .mk-cookie-banner-section__container { flex-direction: row; align-items: center; justify-content: space-between; } }
+  .mk-cookie-banner-section__title { margin: 0 0 4px 0; font-size: 15px; font-weight: 600; }
+  .mk-cookie-banner-section__text { margin: 0; font-size: 13px; color: var(--color-text-secondary, #666); }
+  .mk-cookie-banner-section__actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .mk-cookie-banner-section__btn { padding: 10px 20px; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; }
+  .mk-cookie-banner-section__btn--primary { color: #fff; background: var(--color-primary, #000); border: none; }
+  .mk-cookie-banner-section__btn--secondary { color: var(--color-foreground); background: transparent; border: 1px solid var(--color-border); }
+  .mk-cookie-banner-section__btn:hover { opacity: 0.85; }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const banner = document.querySelector('[data-cookie-banner]');
+    if (!banner) return;
+    const days = parseInt(banner.dataset.days) || 30;
+    if (localStorage.getItem('mk_cookie_consent')) return;
+    banner.classList.add('active');
+    banner.querySelector('[data-cookie-accept]')?.addEventListener('click', () => {
+      localStorage.setItem('mk_cookie_consent', 'accepted');
+      banner.classList.remove('active');
+    });
+    banner.querySelector('[data-cookie-customize]')?.addEventListener('click', () => {
+      // Customization logic can be added
+    });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Cookie Banner Section",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题", "default": "Cookie使用通知" },
+    { "type": "textarea", "id": "text", "label": "描述文字", "default": "我们使用Cookie来提升您的购物体验。接受即表示您同意我们的Cookie政策。" },
+    { "type": "text", "id": "accept_text", "label": "接受按钮文字", "default": "接受全部" },
+    { "type": "text", "id": "customize_text", "label": "自定义按钮文字", "default": "自定义设置" },
+    { "type": "checkbox", "id": "show_customize", "label": "显示自定义按钮", "default": true },
+    { "type": "range", "id": "days", "label": "重复显示间隔 (天)", "min": 7, "max": 90, "default": 30 }
+  ],
+  "presets": [{ "name": "MK Cookie Banner Section" }]
+}
+{% endschema %}

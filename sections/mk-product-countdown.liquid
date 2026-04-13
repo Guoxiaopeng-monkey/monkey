@@ -1,0 +1,87 @@
+{%- comment -%}
+  MK Product Countdown Section板块
+
+  产品页倒计时
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-product-countdown color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-product-countdown__container">
+    {%- if ss.title != blank -%}
+      <h3 class="mk-product-countdown__title">{{ ss.title }}</h3>
+    {%- endif -%}
+
+    <div class="mk-product-countdown__countdown" data-product-countdown data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+      <div class="mk-product-countdown__item">
+        <span class="mk-product-countdown__num" data-days>00</span>
+        <span class="mk-product-countdown__label">天</span>
+      </div>
+      <span class="mk-product-countdown__sep">:</span>
+      <div class="mk-product-countdown__item">
+        <span class="mk-product-countdown__num" data-hours>00</span>
+        <span class="mk-product-countdown__label">时</span>
+      </div>
+      <span class="mk-product-countdown__sep">:</span>
+      <div class="mk-product-countdown__item">
+        <span class="mk-product-countdown__num" data-minutes>00</span>
+        <span class="mk-product-countdown__label">分</span>
+      </div>
+      <span class="mk-product-countdown__sep">:</span>
+      <div class="mk-product-countdown__item">
+        <span class="mk-product-countdown__num" data-seconds>00</span>
+        <span class="mk-product-countdown__label">秒</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-product-countdown { padding: 20px 0; }
+  .mk-product-countdown__container { text-align: center; }
+  .mk-product-countdown__title { margin: 0 0 12px 0; font-size: 14px; font-weight: 600; }
+  .mk-product-countdown__countdown { display: flex; justify-content: center; align-items: center; gap: 8px; }
+  .mk-product-countdown__item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .mk-product-countdown__num { min-width: 44px; padding: 8px; background: var(--color-background-secondary, #f5f5f5); border-radius: 8px; font-size: 18px; font-weight: 700; text-align: center; }
+  .mk-product-countdown__label { font-size: 10px; color: var(--color-text-secondary, #666); text-transform: uppercase; }
+  .mk-product-countdown__sep { font-size: 18px; font-weight: 700; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const countdown = document.querySelector('[data-product-countdown]');
+    if (!countdown) return;
+    const endDate = new Date(countdown.dataset.end).getTime();
+    function update() {
+      const now = Date.now();
+      const diff = Math.max(0, endDate - now);
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+      countdown.querySelector('[data-days]').textContent = String(days).padStart(2, '0');
+      countdown.querySelector('[data-hours]').textContent = String(hours).padStart(2, '0');
+      countdown.querySelector('[data-minutes]').textContent = String(minutes).padStart(2, '0');
+      countdown.querySelector('[data-seconds]').textContent = String(seconds).padStart(2, '0');
+    }
+    update();
+    setInterval(update, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Product Countdown",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "end_date", "label": "结束日期", "info": "格式: YYYY-MM-DD HH:MM" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Product Countdown" }]
+}
+{% endschema %}

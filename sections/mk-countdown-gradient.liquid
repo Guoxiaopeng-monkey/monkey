@@ -1,0 +1,90 @@
+{%- comment -%}
+  MK Countdown Gradient板块
+
+  渐变倒计时
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-countdown-gradient color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-countdown-gradient__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-countdown-gradient__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-countdown-gradient__countdown" data-countdown-gradient data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+      <div class="mk-countdown-gradient__item">
+        <span class="mk-countdown-gradient__num" data-days>00</span>
+        <span class="mk-countdown-gradient__label">Days</span>
+      </div>
+      <div class="mk-countdown-gradient__item">
+        <span class="mk-countdown-gradient__num" data-hours>00</span>
+        <span class="mk-countdown-gradient__label">Hours</span>
+      </div>
+      <div class="mk-countdown-gradient__item">
+        <span class="mk-countdown-gradient__num" data-minutes>00</span>
+        <span class="mk-countdown-gradient__label">Minutes</span>
+      </div>
+      <div class="mk-countdown-gradient__item">
+        <span class="mk-countdown-gradient__num" data-seconds>00</span>
+        <span class="mk-countdown-gradient__label">Seconds</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-countdown-gradient { padding: {{ ss.padding_top_mobile | default: 64 }}px 0 {{ ss.padding_bottom_mobile | default: 64 }}px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+  @media (min-width: 750px) { .mk-countdown-gradient { padding: {{ ss.padding_top_desktop | default: 96 }}px 0 {{ ss.padding_bottom_desktop | default: 96 }}px; } }
+  .mk-countdown-gradient__container { max-width: var(--container-max-width, 800px); margin: 0 auto; padding: 0 var(--container-padding, 32px); text-align: center; }
+  .mk-countdown-gradient__title { margin: 0 0 40px 0; font-size: 28px; font-weight: 700; color: #fff; }
+  .mk-countdown-gradient__countdown { display: flex; justify-content: center; gap: 16px; }
+  .mk-countdown-gradient__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .mk-countdown-gradient__num { min-width: 80px; padding: 20px 16px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 16px; font-size: 36px; font-weight: 700; color: #fff; text-align: center; }
+  @media (min-width: 750px) { .mk-countdown-gradient__num { min-width: 100px; font-size: 48px; } }
+  .mk-countdown-gradient__label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.8); }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const countdown = document.querySelector('[data-countdown-gradient]');
+    if (!countdown) return;
+    const endDate = new Date(countdown.dataset.end).getTime();
+    function update() {
+      const now = Date.now();
+      const diff = Math.max(0, endDate - now);
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+      countdown.querySelector('[data-days]').textContent = String(days).padStart(2, '0');
+      countdown.querySelector('[data-hours]').textContent = String(hours).padStart(2, '0');
+      countdown.querySelector('[data-minutes]').textContent = String(minutes).padStart(2, '0');
+      countdown.querySelector('[data-seconds]').textContent = String(seconds).padStart(2, '0');
+    }
+    update();
+    setInterval(update, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown Gradient",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "end_date", "label": "结束日期", "info": "格式: YYYY-MM-DD HH:MM" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 64, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 64, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 96, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 96, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Countdown Gradient" }]
+}
+{% endschema %}

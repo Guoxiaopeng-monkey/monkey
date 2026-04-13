@@ -1,0 +1,81 @@
+{%- comment -%}
+  MK Account Section板块
+
+  账户区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-account-section color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-account-section__container">
+    <div class="mk-account-section__header">
+      <h2 class="mk-account-section__title">{{ ss.title | default: '我的账户' }}</h2>
+    </div>
+
+    <div class="mk-account-section__tabs">
+      {%- if customer -%}
+        <div class="mk-account-section__logged-in">
+          <p>{{ 'account.welcome' | t | default: '欢迎回来' }}, {{ customer.first_name }}!</p>
+
+          <div class="mk-account-section__links">
+            <a href="{{ routes.account_url }}" class="mk-account-section__link">{{ 'account.dashboard' | t | default: '账户主页' }}</a>
+            <a href="{{ routes.account_addresses_url }}" class="mk-account-section__link">{{ 'account.addresses' | t | default: '收货地址' }}</a>
+            <a href="{{ routes.account_logout_url }}" class="mk-account-section__link mk-account-section__link--logout">{{ 'account.logout' | t | default: '退出登录' }}</a>
+          </div>
+        </div>
+      {%- else -%}
+        <div class="mk-account-section__login">
+          <h3 class="mk-account-section__subtitle">{{ 'account.login_title' | t | default: '登录' }}</h3>
+          {%- form 'customer_login', class: 'mk-account-section__form' -%}
+            <input type="email" name="customer[email]" required class="mk-account-section__input" placeholder="{{ 'account.email' | t | default: '邮箱' }}">
+            <input type="password" name="customer[password]" required class="mk-account-section__input" placeholder="{{ 'account.password' | t | default: '密码' }}">
+            <button type="submit" class="mk-account-section__btn">{{ 'account.login' | t | default: '登录' }}</button>
+          {%- endform -%}
+
+          <p class="mk-account-section__signup-link">
+            {{ 'account.no_account' | t | default: '还没有账户?' }} <a href="{{ routes.account_register_url }}">{{ 'account.signup' | t | default: '立即注册' }}</a>
+          </p>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-account-section { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-account-section { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-account-section__container { max-width: var(--container-max-width, 600px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-account-section__header { margin-bottom: 32px; text-align: center; }
+  .mk-account-section__title { margin: 0; font-size: 28px; font-weight: 700; }
+  .mk-account-section__subtitle { margin: 0 0 24px 0; font-size: 20px; font-weight: 600; }
+  .mk-account-section__form { display: flex; flex-direction: column; gap: 12px; }
+  .mk-account-section__input { padding: 14px 16px; font-size: 14px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); }
+  .mk-account-section__btn { padding: 14px; font-size: 14px; font-weight: 600; color: #fff; background: var(--color-primary, #000); border: none; border-radius: 8px; cursor: pointer; }
+  .mk-account-section__btn:hover { opacity: 0.85; }
+  .mk-account-section__signup-link { margin-top: 16px; font-size: 14px; text-align: center; }
+  .mk-account-section__links { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+  .mk-account-section__link { font-size: 14px; font-weight: 500; color: var(--color-primary, #000); text-decoration: none; }
+  .mk-account-section__link:hover { text-decoration: underline; }
+  .mk-account-section__link--logout { color: #d00; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Account Section",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Account Section" }]
+}
+{% endschema %}

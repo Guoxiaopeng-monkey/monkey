@@ -1,0 +1,66 @@
+{%- comment -%}
+  MK Countdown Text板块
+
+  文字倒计时
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-countdown-text color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-countdown-text__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-countdown-text__title">{{ ss.title }}</h2>
+    {%- endif -%}
+    <div class="mk-countdown-text__countdown" data-countdown-text data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+      <span class="mk-countdown-text__num" data-days>00</span>
+      <span class="mk-countdown-text__sep">:</span>
+      <span class="mk-countdown-text__num" data-hours>00</span>
+      <span class="mk-countdown-text__sep">:</span>
+      <span class="mk-countdown-text__num" data-minutes>00</span>
+      <span class="mk-countdown-text__sep">:</span>
+      <span class="mk-countdown-text__num" data-seconds>00</span>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-countdown-text { padding: 60px 0; text-align: center; }
+  .mk-countdown-text__container { max-width: 600px; margin: 0 auto; padding: 0 32px; }
+  .mk-countdown-text__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; }
+  .mk-countdown-text__countdown { display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 48px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .mk-countdown-text__sep { color: var(--color-border); }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const c = document.querySelector('[data-countdown-text]');
+    if (!c) return;
+    const end = new Date(c.dataset.end).getTime();
+    function u() {
+      const now = Date.now(), diff = Math.max(0, end - now);
+      const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+      c.querySelector('[data-days]').textContent = String(d).padStart(2,'0');
+      c.querySelector('[data-hours]').textContent = String(h).padStart(2,'0');
+      c.querySelector('[data-minutes]').textContent = String(m).padStart(2,'0');
+      c.querySelector('[data-seconds]').textContent = String(s).padStart(2,'0');
+    }
+    u(); setInterval(u, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown Text",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "end_date", "label": "结束日期" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Countdown Text" }]
+}
+{% endschema %}

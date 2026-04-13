@@ -1,0 +1,54 @@
+{%- comment -%}
+  MK Product Badges Section板块
+
+  产品徽章区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-product-badges-section color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-product-badges-section__container">
+    {%- if ss.title != blank -%}
+      <h3 class="mk-product-badges-section__title">{{ ss.title }}</h3>
+    {%- endif -%}
+
+    <div class="mk-product-badges-section__badges">
+      {%- if ss.badge_1 != blank -%}
+        <span class="mk-product-badges-section__badge">{{ ss.badge_1 }}</span>
+      {%- endif -%}
+      {%- if ss.badge_2 != blank -%}
+        <span class="mk-product-badges-section__badge">{{ ss.badge_2 }}</span>
+      {%- endif -%}
+      {%- if ss.badge_3 != blank -%}
+        <span class="mk-product-badges-section__badge">{{ ss.badge_3 }}</span>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-product-badges-section { padding: 20px 0; }
+  .mk-product-badges-section__container { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .mk-product-badges-section__title { margin: 0; font-size: 14px; font-weight: 600; }
+  .mk-product-badges-section__badges { display: flex; gap: 8px; flex-wrap: wrap; }
+  .mk-product-badges-section__badge { padding: 6px 12px; font-size: 12px; font-weight: 600; color: #fff; background: var(--color-primary, #000); border-radius: 100px; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Product Badges Section",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "badge_1", "label": "徽章 1" },
+    { "type": "text", "id": "badge_2", "label": "徽章 2" },
+    { "type": "text", "id": "badge_3", "label": "徽章 3" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Product Badges Section" }]
+}
+{% endschema %}

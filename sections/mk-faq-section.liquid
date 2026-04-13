@@ -1,0 +1,87 @@
+{%- comment -%}
+  MK FAQ手风琴板块
+
+  展示常见问题手风琴
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-faq-section color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-faq-section__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-faq-section__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-faq-section__list">
+      {%- for i in (1..8) -%}
+        {%- assign question_setting = 'question_' | append: i -%}
+        {%- assign answer_setting = 'answer_' | append: i -%}
+
+        {%- if ss[question_setting] != blank -%}
+          <div class="mk-faq-section__item" data-faq-item>
+            <button type="button" class="mk-faq-section__question" data-faq-toggle>
+              <span>{{ ss[question_setting] }}</span>
+              <span class="mk-faq-section__icon">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+            </button>
+            <div class="mk-faq-section__answer" data-faq-answer>
+              <p>{{ ss[answer_setting] }}</p>
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-faq-section { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-faq-section { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-faq-section__container { max-width: var(--container-max-width, 800px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-faq-section__title { margin: 0 0 40px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-faq-section__list { display: flex; flex-direction: column; }
+  .mk-faq-section__item { border-bottom: 1px solid var(--color-border); }
+  .mk-faq-section__question { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 20px 0; font-size: 16px; font-weight: 600; text-align: left; background: transparent; border: none; cursor: pointer; }
+  .mk-faq-section__icon { display: flex; flex-shrink: 0; width: 24px; height: 24px; transition: transform 0.2s ease; }
+  .mk-faq-section__item.active .mk-faq-section__icon { transform: rotate(45deg); }
+  .mk-faq-section__answer { display: none; padding: 0 0 20px 0; font-size: 15px; color: var(--color-text-secondary, #666); line-height: 1.6; }
+  .mk-faq-section__item.active .mk-faq-section__answer { display: block; }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelectorAll('.mk-faq-section__question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('[data-faq-item]');
+      item.classList.toggle('active');
+    });
+  });
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK FAQ Section",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题", "default": "常见问题" },
+    { "type": "header", "content": "问题与回答" },
+    { "type": "text", "id": "question_1", "label": "问题 1" }, { "type": "textarea", "id": "answer_1", "label": "回答 1" },
+    { "type": "text", "id": "question_2", "label": "问题 2" }, { "type": "textarea", "id": "answer_2", "label": "回答 2" },
+    { "type": "text", "id": "question_3", "label": "问题 3" }, { "type": "textarea", "id": "answer_3", "label": "回答 3" },
+    { "type": "text", "id": "question_4", "label": "问题 4" }, { "type": "textarea", "id": "answer_4", "label": "回答 4" },
+    { "type": "text", "id": "question_5", "label": "问题 5" }, { "type": "textarea", "id": "answer_5", "label": "回答 5" },
+    { "type": "text", "id": "question_6", "label": "问题 6" }, { "type": "textarea", "id": "answer_6", "label": "回答 6" },
+    { "type": "text", "id": "question_7", "label": "问题 7" }, { "type": "textarea", "id": "answer_7", "label": "回答 7" },
+    { "type": "text", "id": "question_8", "label": "问题 8" }, { "type": "textarea", "id": "answer_8", "label": "回答 8" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK FAQ Section" }]
+}
+{% endschema %}

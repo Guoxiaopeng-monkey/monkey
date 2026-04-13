@@ -1,0 +1,31 @@
+{%- comment -%}
+  MK Liquid Block板块
+
+  Liquid自定义块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-liquid-block color-{{ ss.color_scheme | default: 'background-1' }}">
+  {{ ss.liquid }}
+</section>
+
+{% stylesheet %}
+  .mk-liquid-block { }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Liquid Block",
+  "tag": "section",
+  "settings": [
+    { "type": "liquid", "id": "liquid", "label": "Liquid代码" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Liquid Block" }]
+}
+{% endschema %}

@@ -1,0 +1,65 @@
+{%- comment -%}
+  MK Countdown Classic板块
+
+  经典倒计时
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-countdown-classic color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-countdown-classic__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-countdown-classic__title">{{ ss.title }}</h2>
+    {%- endif -%}
+    <div class="mk-countdown-classic__countdown" data-countdown-classic data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+      <div class="mk-countdown-classic__item"><span class="mk-countdown-classic__num" data-days>00</span><span class="mk-countdown-classic__label">Days</span></div>
+      <div class="mk-countdown-classic__item"><span class="mk-countdown-classic__num" data-hours>00</span><span class="mk-countdown-classic__label">Hours</span></div>
+      <div class="mk-countdown-classic__item"><span class="mk-countdown-classic__num" data-minutes>00</span><span class="mk-countdown-classic__label">Minutes</span></div>
+      <div class="mk-countdown-classic__item"><span class="mk-countdown-classic__num" data-seconds>00</span><span class="mk-countdown-classic__label">Seconds</span></div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-countdown-classic { padding: 80px 0; background: #f8f8f8; text-align: center; }
+  .mk-countdown-classic__container { max-width: 900px; margin: 0 auto; padding: 0 32px; }
+  .mk-countdown-classic__title { margin: 0 0 40px 0; font-size: 32px; font-weight: 700; }
+  .mk-countdown-classic__countdown { display: flex; justify-content: center; gap: 24px; }
+  .mk-countdown-classic__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .mk-countdown-classic__num { min-width: 90px; padding: 24px 16px; background: #fff; border: 1px solid var(--color-border); border-radius: 8px; font-size: 40px; font-weight: 700; }
+  .mk-countdown-classic__label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const c = document.querySelector('[data-countdown-classic]');
+    if (!c) return;
+    const end = new Date(c.dataset.end).getTime();
+    function u() {
+      const now = Date.now(), diff = Math.max(0, end - now);
+      const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+      c.querySelector('[data-days]').textContent = String(d).padStart(2,'0');
+      c.querySelector('[data-hours]').textContent = String(h).padStart(2,'0');
+      c.querySelector('[data-minutes]').textContent = String(m).padStart(2,'0');
+      c.querySelector('[data-seconds]').textContent = String(s).padStart(2,'0');
+    }
+    u(); setInterval(u, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown Classic",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "end_date", "label": "结束日期" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Countdown Classic" }]
+}
+{% endschema %}

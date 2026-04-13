@@ -1,0 +1,71 @@
+{%- comment -%}
+  MK Product Sample板块
+
+  产品样品展示
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-product-sample color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-product-sample__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-product-sample__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-product-sample__grid">
+      {%- for i in (1..6) -%}
+        {%- assign image_setting = 'image_' | append: i -%}
+        {%- assign label_setting = 'label_' | append: i -%}
+
+        {%- if ss[image_setting] != blank -%}
+          <div class="mk-product-sample__item">
+            {{ ss[image_setting] | image_url: width: 300 | image_tag: loading: 'lazy', class: 'mk-product-sample__image' }}
+            {%- if ss[label_setting] != blank -%}
+              <span class="mk-product-sample__label">{{ ss[label_setting] }}</span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-product-sample { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-product-sample { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-product-sample__container { max-width: var(--container-max-width, 800px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-product-sample__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-product-sample__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (min-width: 750px) { .mk-product-sample__grid { gap: 24px; } }
+  .mk-product-sample__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .mk-product-sample__image { width: 100%; height: auto; border-radius: 12px; }
+  .mk-product-sample__label { font-size: 13px; font-weight: 500; text-align: center; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Product Sample",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "header", "content": "样品" },
+    { "type": "image_picker", "id": "image_1", "label": "图片 1" }, { "type": "text", "id": "label_1", "label": "标签 1" },
+    { "type": "image_picker", "id": "image_2", "label": "图片 2" }, { "type": "text", "id": "label_2", "label": "标签 2" },
+    { "type": "image_picker", "id": "image_3", "label": "图片 3" }, { "type": "text", "id": "label_3", "label": "标签 3" },
+    { "type": "image_picker", "id": "image_4", "label": "图片 4" }, { "type": "text", "id": "label_4", "label": "标签 4" },
+    { "type": "image_picker", "id": "image_5", "label": "图片 5" }, { "type": "text", "id": "label_5", "label": "标签 5" },
+    { "type": "image_picker", "id": "image_6", "label": "图片 6" }, { "type": "text", "id": "label_6", "label": "标签 6" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Product Sample" }]
+}
+{% endschema %}

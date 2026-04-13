@@ -1,0 +1,69 @@
+{%- comment -%}
+  MK Product Grid Section板块
+
+  产品网格区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+  assign products = collections[ss.collection].products | default: empty
+-%}
+
+<section id="{{ section.id }}" class="mk-product-grid-section color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-product-grid-section__container">
+    {%- if ss.title != blank -%}
+      <div class="mk-product-grid-section__header">
+        <h2 class="mk-product-grid-section__title">{{ ss.title }}</h2>
+        {%- if ss.show_view_all and ss.view_all_link != blank -%}
+          <a href="{{ ss.view_all_link }}" class="mk-product-grid-section__view-all">{{ ss.view_all_text | default: '查看全部' }}</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="mk-product-grid-section__grid" style="--columns: {{ ss.columns | default: 4 }};">
+      {%- for product in products limit: ss.limit -%}
+        <div class="mk-product-grid-section__item">
+          {% render 'mk-product-card', product: product %}
+        </div>
+      {%- else -%}
+        {%- for i in (1..8) -%}
+          <div class="mk-product-grid-section__item">
+            {% render 'mk-product-card-placeholder' %}
+          </div>
+        {%- endfor -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-product-grid-section { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-product-grid-section { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-product-grid-section__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-product-grid-section__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+  .mk-product-grid-section__title { margin: 0; font-size: 28px; font-weight: 700; }
+  .mk-product-grid-section__view-all { font-size: 14px; font-weight: 600; color: var(--color-primary, #000); text-decoration: none; }
+  .mk-product-grid-section__view-all:hover { text-decoration: underline; }
+  .mk-product-grid-section__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  @media (min-width: 750px) { .mk-product-grid-section__grid { grid-template-columns: repeat(var(--columns), 1fr); gap: 24px; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Product Grid Section",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "collection", "id": "collection", "label": "选择专辑" },
+    { "type": "range", "id": "limit", "label": "显示数量", "min": 4, "max": 24, "default": 8 },
+    { "type": "range", "id": "columns", "label": "列数", "min": 2, "max": 6, "default": 4 },
+    { "type": "checkbox", "id": "show_view_all", "label": "显示查看全部链接", "default": true },
+    { "type": "text", "id": "view_all_text", "label": "查看全部文字" },
+    { "type": "url", "id": "view_all_link", "label": "查看全部链接" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default":

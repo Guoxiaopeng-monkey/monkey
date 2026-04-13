@@ -1,0 +1,75 @@
+{%- comment -%}
+  MK Store Features板块
+
+  店铺功能展示
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-store-features color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-store-features__container">
+    <div class="mk-store-features__grid">
+      {%- for i in (1..6) -%}
+        {%- assign icon_setting = 'icon_' | append: i -%}
+        {%- assign title_setting = 'title_' | append: i -%}
+        {%- assign text_setting = 'text_' | append: i -%}
+
+        {%- if ss[title_setting] != blank -%}
+          <div class="mk-store-features__item">
+            {%- if ss[icon_setting] != blank -%}
+              <div class="mk-store-features__icon">
+                {{ ss[icon_setting] | default: 'icon-check.svg' | inline_asset_content }}
+              </div>
+            {%- endif -%}
+            <div class="mk-store-features__content">
+              <h3 class="mk-store-features__title">{{ ss[title_setting] }}</h3>
+              {%- if ss[text_setting] != blank -%}
+                <p class="mk-store-features__text">{{ ss[text_setting] }}</p>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-store-features { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-store-features { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-store-features__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-store-features__grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+  @media (min-width: 750px) { .mk-store-features__grid { grid-template-columns: repeat(2, 1fr); gap: 32px; } }
+  @media (min-width: 1024px) { .mk-store-features__grid { grid-template-columns: repeat(3, 1fr); } }
+  .mk-store-features__item { display: flex; align-items: flex-start; gap: 16px; }
+  .mk-store-features__icon { display: flex; flex-shrink: 0; width: 48px; height: 48px; align-items: center; justify-content: center; background: var(--color-background-secondary, #f5f5f5); border-radius: 12px; }
+  .mk-store-features__icon svg { width: 24px; height: 24px; color: var(--color-primary, #000); }
+  .mk-store-features__title { margin: 0 0 4px 0; font-size: 16px; font-weight: 600; }
+  .mk-store-features__text { margin: 0; font-size: 13px; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Store Features",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "功能 1" }, { "type": "text", "id": "icon_1", "label": "图标 1" }, { "type": "text", "id": "title_1", "label": "标题 1" }, { "type": "textarea", "id": "text_1", "label": "描述 1" },
+    { "type": "header", "content": "功能 2" }, { "type": "text", "id": "icon_2", "label": "图标 2" }, { "type": "text", "id": "title_2", "label": "标题 2" }, { "type": "textarea", "id": "text_2", "label": "描述 2" },
+    { "type": "header", "content": "功能 3" }, { "type": "text", "id": "icon_3", "label": "图标 3" }, { "type": "text", "id": "title_3", "label": "标题 3" }, { "type": "textarea", "id": "text_3", "label": "描述 3" },
+    { "type": "header", "content": "功能 4" }, { "type": "text", "id": "icon_4", "label": "图标 4" }, { "type": "text", "id": "title_4", "label": "标题 4" }, { "type": "textarea", "id": "text_4", "label": "描述 4" },
+    { "type": "header", "content": "功能 5" }, { "type": "text", "id": "icon_5", "label": "图标 5" }, { "type": "text", "id": "title_5", "label": "标题 5" }, { "type": "textarea", "id": "text_5", "label": "描述 5" },
+    { "type": "header", "content": "功能 6" }, { "type": "text", "id": "icon_6", "label": "图标 6" }, { "type": "text", "id": "title_6", "label": "标题 6" }, { "type": "textarea", "id": "text_6", "label": "描述 6" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Store Features" }]
+}
+{% endschema %}

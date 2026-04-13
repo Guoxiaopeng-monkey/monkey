@@ -1,0 +1,110 @@
+{%- comment -%}
+  MK Countdown Split板块
+
+  分屏倒计时
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-countdown-split color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-countdown-split__grid">
+    <div class="mk-countdown-split__media">
+      {%- if ss.image != blank -%}
+        {{ ss.image | image_url: width: 800 | image_tag: loading: 'lazy', class: 'mk-countdown-split__image' }}
+      {%- endif -%}
+    </div>
+
+    <div class="mk-countdown-split__content">
+      {%- if ss.subtitle != blank -%}
+        <p class="mk-countdown-split__subtitle">{{ ss.subtitle }}</p>
+      {%- endif -%}
+
+      {%- if ss.title != blank -%}
+        <h2 class="mk-countdown-split__title">{{ ss.title }}</h2>
+      {%- endif -%}
+
+      <div class="mk-countdown-split__countdown" data-countdown-split data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+        <div class="mk-countdown-split__item">
+          <span class="mk-countdown-split__num" data-days>00</span>
+          <span class="mk-countdown-split__label">天</span>
+        </div>
+        <div class="mk-countdown-split__item">
+          <span class="mk-countdown-split__num" data-hours>00</span>
+          <span class="mk-countdown-split__label">时</span>
+        </div>
+        <div class="mk-countdown-split__item">
+          <span class="mk-countdown-split__num" data-minutes>00</span>
+          <span class="mk-countdown-split__label">分</span>
+        </div>
+        <div class="mk-countdown-split__item">
+          <span class="mk-countdown-split__num" data-seconds>00</span>
+          <span class="mk-countdown-split__label">秒</span>
+        </div>
+      </div>
+
+      {%- if ss.button_text != blank -%}
+        <a href="{{ ss.button_link | default: '#' }}" class="mk-countdown-split__button">{{ ss.button_text }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-countdown-split__grid { display: grid; grid-template-columns: 1fr; }
+  @media (min-width: 750px) { .mk-countdown-split__grid { grid-template-columns: 1fr 1fr; min-height: 500px; } }
+  .mk-countdown-split__media { display: none; }
+  @media (min-width: 750px) { .mk-countdown-split__media { display: block; } .mk-countdown-split__media .mk-countdown-split__image { width: 100%; height: 100%; object-fit: cover; } }
+  .mk-countdown-split__content { display: flex; flex-direction: column; justify-content: center; padding: 48px 32px; background: var(--color-background-secondary, #f5f5f5); }
+  @media (min-width: 750px) { .mk-countdown-split__content { padding: 64px; } }
+  .mk-countdown-split__subtitle { margin: 0 0 12px 0; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--color-primary, #000); }
+  .mk-countdown-split__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; }
+  .mk-countdown-split__countdown { display: flex; gap: 16px; margin-bottom: 32px; }
+  .mk-countdown-split__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .mk-countdown-split__num { min-width: 56px; padding: 12px; background: var(--color-background); border-radius: 8px; font-size: 24px; font-weight: 700; text-align: center; }
+  .mk-countdown-split__label { font-size: 11px; text-transform: uppercase; color: var(--color-text-secondary, #666); }
+  .mk-countdown-split__button { display: inline-flex; padding: 14px 32px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+  .mk-countdown-split__button:hover { opacity: 0.85; }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const countdown = document.querySelector('[data-countdown-split]');
+    if (!countdown) return;
+    const endDate = new Date(countdown.dataset.end).getTime();
+    function update() {
+      const now = Date.now();
+      const diff = Math.max(0, endDate - now);
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+      countdown.querySelector('[data-days]').textContent = String(days).padStart(2, '0');
+      countdown.querySelector('[data-hours]').textContent = String(hours).padStart(2, '0');
+      countdown.querySelector('[data-minutes]').textContent = String(minutes).padStart(2, '0');
+      countdown.querySelector('[data-seconds]').textContent = String(seconds).padStart(2, '0');
+    }
+    update();
+    setInterval(update, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown Split",
+  "tag": "section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "图片" },
+    { "type": "text", "id": "subtitle", "label": "副标题" },
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "end_date", "label": "结束日期", "info": "格式: YYYY-MM-DD HH:MM" },
+    { "type": "text", "id": "button_text", "label": "按钮文字" },
+    { "type": "url", "id": "button_link", "label": "按钮链接" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Countdown Split" }]
+}
+{% endschema %}

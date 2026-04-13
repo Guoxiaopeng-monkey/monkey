@@ -1,0 +1,60 @@
+{%- comment -%}
+  MK Product Stock Lifecycle Section板块
+
+  库存生命周期指示器
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-product-stock-lifecycle color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-product-stock-lifecycle__container">
+    {%- if ss.title != blank -%}
+      <h3 class="mk-product-stock-lifecycle__title">{{ ss.title }}</h3>
+    {%- endif -%}
+
+    <div class="mk-product-stock-lifecycle__track">
+      <div class="mk-product-stock-lifecycle__bar">
+        <div class="mk-product-stock-lifecycle__fill" style="width: {{ ss.percentage | default: 50 }}%;"></div>
+      </div>
+      <div class="mk-product-stock-lifecycle__labels">
+        <span>缺货</span>
+        <span>库存紧张</span>
+        <span>充足</span>
+      </div>
+    </div>
+
+    {%- if ss.show_count -%}
+      <p class="mk-product-stock-lifecycle__count">{{ ss.remaining | default: 5 }} {{ ss.remaining_text | default: '件剩余' }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-product-stock-lifecycle { padding: 20px 0; }
+  .mk-product-stock-lifecycle__container { max-width: var(--container-max-width, 500px); margin: 0 auto; }
+  .mk-product-stock-lifecycle__title { margin: 0 0 12px 0; font-size: 14px; font-weight: 600; }
+  .mk-product-stock-lifecycle__track { }
+  .mk-product-stock-lifecycle__bar { height: 8px; background: linear-gradient(to right, #d00 0%, #f5a623 30%, #4caf50 100%); border-radius: 100px; overflow: hidden; }
+  .mk-product-stock-lifecycle__labels { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; color: var(--color-text-secondary, #666); }
+  .mk-product-stock-lifecycle__count { margin: 12px 0 0 0; font-size: 13px; font-weight: 600; color: var(--color-primary, #000); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Product Stock Lifecycle",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "range", "id": "percentage", "label": "库存百分比", "min": 0, "max": 100, "default": 50 },
+    { "type": "checkbox", "id": "show_count", "label": "显示剩余数量", "default": true },
+    { "type": "text", "id": "remaining", "label": "剩余数量" },
+    { "type": "text", "id": "remaining_text", "label": "剩余文字" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Product Stock Lifecycle" }]
+}
+{% endschema %}

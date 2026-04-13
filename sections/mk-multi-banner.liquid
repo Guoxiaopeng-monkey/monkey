@@ -1,0 +1,74 @@
+{%- comment -%}
+  MK Multi Banner板块
+
+  多图横幅
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-multi-banner color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-multi-banner__container">
+    <div class="mk-multi-banner__grid">
+      {%- for i in (1..4) -%}
+        {%- assign image_setting = 'image_' | append: i -%}
+        {%- assign title_setting = 'title_' | append: i -%}
+        {%- assign text_setting = 'text_' | append: i -%}
+        {%- assign link_setting = 'link_' | append: i -%}
+
+        {%- if ss[image_setting] != blank -%}
+          <a href="{{ ss[link_setting] | default: '#' }}" class="mk-multi-banner__item mk-multi-banner__item--{{ forloop.index }}">
+            {{ ss[image_setting] | image_url: width: 800 | image_tag: loading: 'lazy', class: 'mk-multi-banner__image' }}
+            <div class="mk-multi-banner__overlay"></div>
+            <div class="mk-multi-banner__content">
+              {%- if ss[title_setting] != blank -%}
+                <h3 class="mk-multi-banner__title">{{ ss[title_setting] }}</h3>
+              {%- endif -%}
+              {%- if ss[text_setting] != blank -%}
+                <p class="mk-multi-banner__text">{{ ss[text_setting] }}</p>
+              {%- endif -%}
+            </div>
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-multi-banner { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-multi-banner { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-multi-banner__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-multi-banner__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (min-width: 750px) { .mk-multi-banner__grid { grid-template-columns: repeat(4, 1fr); gap: 24px; } }
+  .mk-multi-banner__item { position: relative; aspect-ratio: 3/4; overflow: hidden; border-radius: 16px; }
+  .mk-multi-banner__image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+  .mk-multi-banner__item:hover .mk-multi-banner__image { transform: scale(1.05); }
+  .mk-multi-banner__overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 50%); }
+  .mk-multi-banner__content { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; }
+  .mk-multi-banner__title { margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #fff; }
+  .mk-multi-banner__text { margin: 0; font-size: 13px; color: rgba(255,255,255,0.8); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Multi Banner",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Banner 1" }, { "type": "image_picker", "id": "image_1", "label": "图片 1" }, { "type": "text", "id": "title_1", "label": "标题 1" }, { "type": "text", "id": "text_1", "label": "描述 1" }, { "type": "url", "id": "link_1", "label": "链接 1" },
+    { "type": "header", "content": "Banner 2" }, { "type": "image_picker", "id": "image_2", "label": "图片 2" }, { "type": "text", "id": "title_2", "label": "标题 2" }, { "type": "text", "id": "text_2", "label": "描述 2" }, { "type": "url", "id": "link_2", "label": "链接 2" },
+    { "type": "header", "content": "Banner 3" }, { "type": "image_picker", "id": "image_3", "label": "图片 3" }, { "type": "text", "id": "title_3", "label": "标题 3" }, { "type": "text", "id": "text_3", "label": "描述 3" }, { "type": "url", "id": "link_3", "label": "链接 3" },
+    { "type": "header", "content": "Banner 4" }, { "type": "image_picker", "id": "image_4", "label": "图片 4" }, { "type": "text", "id": "title_4", "label": "标题 4" }, { "type": "text", "id": "text_4", "label": "描述 4" }, { "type": "url", "id": "link_4", "label": "链接 4" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Multi Banner" }]
+}
+{% endschema %}

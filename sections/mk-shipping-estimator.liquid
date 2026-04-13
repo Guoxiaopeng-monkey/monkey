@@ -1,0 +1,71 @@
+{%- comment -%}
+  MK Shipping Estimator Section板块
+
+  运费估算区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-shipping-estimator color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-shipping-estimator__container">
+    {%- if ss.title != blank -%}
+      <h3 class="mk-shipping-estimator__title">{{ ss.title }}</h3>
+    {%- endif -%}
+
+    <div class="mk-shipping-estimator__form">
+      <div class="mk-shipping-estimator__field">
+        <label for="shipping-country" class="mk-shipping-estimator__label">{{ ss.country_label | default: '国家' }}</label>
+        <select id="shipping-country" class="mk-shipping-estimator__select">
+          <option value="">--</option>
+          {%- for country in all_country_option_tags -%}
+            {{ country }}
+          {%- endfor -%}
+        </select>
+      </div>
+
+      <div class="mk-shipping-estimator__field">
+        <label for="shipping-zip" class="mk-shipping-estimator__label">{{ ss.zip_label | default: '邮编' }}</label>
+        <input type="text" id="shipping-zip" class="mk-shipping-estimator__input" placeholder="{{ ss.zip_placeholder | default: '输入邮编' }}">
+      </div>
+
+      <button type="button" class="mk-shipping-estimator__btn" data-shipping-calc>
+        {{ ss.button_text | default: '计算运费' }}
+      </button>
+    </div>
+
+    <div class="mk-shipping-estimator__result" data-shipping-result></div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-shipping-estimator { padding: 24px 0; }
+  .mk-shipping-estimator__container { max-width: var(--container-max-width, 600px); margin: 0 auto; padding: 24px; background: var(--color-background-secondary, #f5f5f5); border-radius: 12px; }
+  .mk-shipping-estimator__title { margin: 0 0 20px 0; font-size: 18px; font-weight: 600; }
+  .mk-shipping-estimator__form { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 480px) { .mk-shipping-estimator__form { grid-template-columns: 1fr 1fr; } }
+  .mk-shipping-estimator__field { display: flex; flex-direction: column; gap: 6px; }
+  .mk-shipping-estimator__label { font-size: 13px; font-weight: 500; }
+  .mk-shipping-estimator__select, .mk-shipping-estimator__input { padding: 10px 12px; font-size: 14px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); }
+  .mk-shipping-estimator__btn { padding: 12px 20px; font-size: 14px; font-weight: 600; color: #fff; background: var(--color-primary, #000); border: none; border-radius: 8px; cursor: pointer; }
+  .mk-shipping-estimator__result { margin-top: 16px; font-size: 14px; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Shipping Estimator",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题", "default": "运费估算" },
+    { "type": "text", "id": "country_label", "label": "国家标签" },
+    { "type": "text", "id": "zip_label", "label": "邮编标签" },
+    { "type": "text", "id": "zip_placeholder", "label": "邮编占位符" },
+    { "type": "text", "id": "button_text", "label": "按钮文字", "default": "计算运费" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Shipping Estimator" }]
+}
+{% endschema %}

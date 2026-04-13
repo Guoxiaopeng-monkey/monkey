@@ -1,0 +1,73 @@
+{%- comment -%}
+  MK Breadcrumbs Section板块
+
+  面包屑区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-breadcrumbs-section color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-breadcrumbs-section__container">
+    <nav class="mk-breadcrumbs-section__nav" aria-label="{{ 'breadcrumbs.aria_label' | t | default: '面包屑导航' }}">
+      <ol class="mk-breadcrumbs-section__list">
+        <li class="mk-breadcrumbs-section__item">
+          <a href="{{ routes.root_url }}" class="mk-breadcrumbs-section__link">{{ 'breadcrumbs.home' | t | default: '首页' }}</a>
+        </li>
+        {%- if current_tags -%}
+          <li class="mk-breadcrumbs-section__item">
+            <a href="{{ collection.url }}" class="mk-breadcrumbs-section__link">{{ collection.title }}</a>
+          </li>
+          <li class="mk-breadcrumbs-section__item">{{ current_tags | join: ' + ' }}</li>
+        {%- else -%}
+          {%- if template contains 'product' -%}
+            {%- if collection -%}
+              <li class="mk-breadcrumbs-section__item">
+                <a href="{{ collection.url }}" class="mk-breadcrumbs-section__link">{{ collection.title }}</a>
+              </li>
+            {%- endif -%}
+            <li class="mk-breadcrumbs-section__item">{{ product.title }}</li>
+          {%- elsif template contains 'collection' -%}
+            <li class="mk-breadcrumbs-section__item">{{ collection.title }}</li>
+          {%- elsif template contains 'blog' -%}
+            <li class="mk-breadcrumbs-section__item">{{ blog.title }}</li>
+          {%- elsif template contains 'article' -%}
+            <li class="mk-breadcrumbs-section__item">
+              <a href="{{ blog.url }}" class="mk-breadcrumbs-section__link">{{ blog.title }}</a>
+            </li>
+            <li class="mk-breadcrumbs-section__item">{{ article.title }}</li>
+          {%- elsif template contains 'page' -%}
+            <li class="mk-breadcrumbs-section__item">{{ page.title }}</li>
+          {%- else -%}
+            <li class="mk-breadcrumbs-section__item">{{ page_title }}</li>
+          {%- endif -%}
+        {%- endif -%}
+      </ol>
+    </nav>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-breadcrumbs-section { padding: 16px 0; }
+  .mk-breadcrumbs-section__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-breadcrumbs-section__list { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .mk-breadcrumbs-section__item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--color-text-secondary, #666); }
+  .mk-breadcrumbs-section__item:not(:last-child)::after { content: '/'; color: var(--color-border); }
+  .mk-breadcrumbs-section__link { color: var(--color-text-secondary, #666); text-decoration: none; }
+  .mk-breadcrumbs-section__link:hover { color: var(--color-foreground); }
+  .mk-breadcrumbs-section__item:last-child { color: var(--color-foreground); font-weight: 500; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Breadcrumbs Section",
+  "tag": "section",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Breadcrumbs Section" }]
+}
+{% endschema %}

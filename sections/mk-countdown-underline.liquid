@@ -1,0 +1,65 @@
+{%- comment -%}
+  MK Countdown Underline板块
+
+  下划线倒计时
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-countdown-underline color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-countdown-underline__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-countdown-underline__title">{{ ss.title }}</h2>
+    {%- endif -%}
+    <div class="mk-countdown-underline__countdown" data-countdown-underline data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+      <div class="mk-countdown-underline__item"><span class="mk-countdown-underline__num" data-days>00</span><span class="mk-countdown-underline__label">Days</span></div>
+      <div class="mk-countdown-underline__item"><span class="mk-countdown-underline__num" data-hours>00</span><span class="mk-countdown-underline__label">Hours</span></div>
+      <div class="mk-countdown-underline__item"><span class="mk-countdown-underline__num" data-minutes>00</span><span class="mk-countdown-underline__label">Minutes</span></div>
+      <div class="mk-countdown-underline__item"><span class="mk-countdown-underline__num" data-seconds>00</span><span class="mk-countdown-underline__label">Seconds</span></div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-countdown-underline { padding: 80px 0; }
+  .mk-countdown-underline__container { max-width: 800px; margin: 0 auto; padding: 0 32px; text-align: center; }
+  .mk-countdown-underline__title { margin: 0 0 40px 0; font-size: 36px; font-weight: 700; }
+  .mk-countdown-underline__countdown { display: flex; justify-content: center; gap: 32px; }
+  .mk-countdown-underline__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .mk-countdown-underline__num { min-width: 80px; padding: 20px 16px; font-size: 40px; font-weight: 700; border-bottom: 3px solid var(--color-primary, #000); }
+  .mk-countdown-underline__label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const c = document.querySelector('[data-countdown-underline]');
+    if (!c) return;
+    const end = new Date(c.dataset.end).getTime();
+    function u() {
+      const now = Date.now(), diff = Math.max(0, end - now);
+      const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+      c.querySelector('[data-days]').textContent = String(d).padStart(2,'0');
+      c.querySelector('[data-hours]').textContent = String(h).padStart(2,'0');
+      c.querySelector('[data-minutes]').textContent = String(m).padStart(2,'0');
+      c.querySelector('[data-seconds]').textContent = String(s).padStart(2,'0');
+    }
+    u(); setInterval(u, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown Underline",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "end_date", "label": "结束日期" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Countdown Underline" }]
+}
+{% endschema %}

@@ -1,0 +1,108 @@
+{%- comment -%}
+  MK Promo Popup板块
+
+  促销弹窗
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-promo-popup" data-promo-popup data-delay="{{ ss.delay | default: 3000 }}" data-days="{{ ss.days | default: 7 }}">
+  <div class="mk-promo-popup__overlay" data-close></div>
+  <div class="mk-promo-popup__content">
+    <button type="button" class="mk-promo-popup__close" data-close>{{- 'icon-close.svg' | inline_asset_content -}}</button>
+
+    {%- if ss.image != blank -%}
+      <div class="mk-promo-popup__image">{{ ss.image | image_url: width: 500 | image_tag }}</div>
+    {%- endif -%}
+
+    <div class="mk-promo-popup__body">
+      {%- if ss.badge != blank -%}
+        <span class="mk-promo-popup__badge">{{ ss.badge }}</span>
+      {%- endif -%}
+
+      {%- if ss.title != blank -%}
+        <h2 class="mk-promo-popup__title">{{ ss.title }}</h2>
+      {%- endif -%}
+
+      {%- if ss.text != blank -%}
+        <p class="mk-promo-popup__text">{{ ss.text }}</p>
+      {%- endif -%}
+
+      {%- if ss.coupon_code != blank -%}
+        <div class="mk-promo-popup__code">
+          <span>{{ ss.coupon_code }}</span>
+          <button type="button" class="mk-promo-popup__copy" data-copy="{{ ss.coupon_code }}">复制</button>
+        </div>
+      {%- endif -%}
+
+      {%- form 'customer', class: 'mk-promo-popup__form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <input type="email" name="contact[email]" required class="mk-promo-popup__input" placeholder="输入邮箱">
+        <button type="submit" class="mk-promo-popup__btn">{{ ss.button_text | default: '获取优惠' }}</button>
+      {%- endform -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-promo-popup { position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center; }
+  .mk-promo-popup.active { display: flex; }
+  .mk-promo-popup__overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); }
+  .mk-promo-popup__content { position: relative; max-width: 440px; width: calc(100% - 48px); background: var(--color-background); border-radius: 16px; overflow: hidden; }
+  .mk-promo-popup__close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: var(--color-background-secondary); border: none; border-radius: 50%; cursor: pointer; z-index: 1; }
+  .mk-promo-popup__close svg { width: 16px; height: 16px; }
+  .mk-promo-popup__image img { width: 100%; height: auto; display: block; }
+  .mk-promo-popup__body { padding: 24px; text-align: center; }
+  .mk-promo-popup__badge { display: inline-block; padding: 4px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #fff; background: var(--color-primary, #000); border-radius: 100px; margin-bottom: 12px; }
+  .mk-promo-popup__title { margin: 0 0 8px 0; font-size: 22px; font-weight: 700; }
+  .mk-promo-popup__text { margin: 0 0 16px 0; font-size: 14px; color: var(--color-text-secondary, #666); }
+  .mk-promo-popup__code { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: var(--color-background-secondary); border-radius: 8px; margin-bottom: 16px; }
+  .mk-promo-popup__code span { font-size: 18px; font-weight: 700; letter-spacing: 2px; }
+  .mk-promo-popup__copy { padding: 6px 12px; font-size: 12px; font-weight: 600; background: var(--color-primary, #000); color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+  .mk-promo-popup__form { display: flex; flex-direction: column; gap: 8px; }
+  .mk-promo-popup__input { padding: 12px 16px; font-size: 14px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); }
+  .mk-promo-popup__btn { padding: 14px; font-size: 14px; font-weight: 600; color: #fff; background: var(--color-primary, #000); border: none; border-radius: 8px; cursor: pointer; }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const popup = document.querySelector('[data-promo-popup]');
+    if (!popup) return;
+    const delay = parseInt(popup.dataset.delay) || 3000;
+    const days = parseInt(popup.dataset.days) || 7;
+    const key = 'mk_promo_shown';
+    if (localStorage.getItem(key)) return;
+    setTimeout(() => popup.classList.add('active'), delay);
+    popup.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', () => {
+      popup.classList.remove('active');
+      localStorage.setItem(key, Date.now().toString());
+    }));
+    popup.querySelector('[data-copy]')?.addEventListener('click', function() {
+      navigator.clipboard.writeText(this.dataset.copy);
+      this.textContent = '已复制';
+      setTimeout(() => this.textContent = '复制', 2000);
+    });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Promo Popup",
+  "tag": "section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "图片" },
+    { "type": "text", "id": "badge", "label": "徽章" },
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "textarea", "id": "text", "label": "描述" },
+    { "type": "text", "id": "coupon_code", "label": "优惠码" },
+    { "type": "text", "id": "button_text", "label": "按钮文字" },
+    { "type": "range", "id": "delay", "label": "显示延迟 (毫秒)", "min": 1000, "max": 30000, "default": 3000, "step": 1000 },
+    { "type": "range", "id": "days", "label": "重复显示间隔 (天)", "min": 1, "max": 30, "default": 7 }
+  ],
+  "presets": [{ "name": "MK Promo Popup" }]
+}
+{% endschema %}

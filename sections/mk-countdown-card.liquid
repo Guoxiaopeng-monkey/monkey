@@ -1,0 +1,68 @@
+{%- comment -%}
+  MK Countdown Card板块
+
+  卡片倒计时
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-countdown-card color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-countdown-card__container">
+    <div class="mk-countdown-card__card">
+      {%- if ss.title != blank -%}
+        <h3 class="mk-countdown-card__title">{{ ss.title }}</h3>
+      {%- endif -%}
+      <div class="mk-countdown-card__countdown" data-countdown-card data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+        <div class="mk-countdown-card__item"><span class="mk-countdown-card__num" data-days>00</span><span class="mk-countdown-card__label">Days</span></div>
+        <div class="mk-countdown-card__item"><span class="mk-countdown-card__num" data-hours>00</span><span class="mk-countdown-card__label">Hours</span></div>
+        <div class="mk-countdown-card__item"><span class="mk-countdown-card__num" data-minutes>00</span><span class="mk-countdown-card__label">Minutes</span></div>
+        <div class="mk-countdown-card__item"><span class="mk-countdown-card__num" data-seconds>00</span><span class="mk-countdown-card__label">Seconds</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-countdown-card { padding: 60px 0; }
+  .mk-countdown-card__container { max-width: 600px; margin: 0 auto; padding: 0 32px; }
+  .mk-countdown-card__card { padding: 40px; background: var(--color-background-secondary, #f5f5f5); border-radius: 24px; text-align: center; }
+  .mk-countdown-card__title { margin: 0 0 24px 0; font-size: 24px; font-weight: 700; }
+  .mk-countdown-card__countdown { display: flex; justify-content: center; gap: 16px; }
+  .mk-countdown-card__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .mk-countdown-card__num { min-width: 64px; padding: 16px 8px; background: var(--color-background); border-radius: 12px; font-size: 28px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .mk-countdown-card__label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const c = document.querySelector('[data-countdown-card]');
+    if (!c) return;
+    const end = new Date(c.dataset.end).getTime();
+    function u() {
+      const now = Date.now(), diff = Math.max(0, end - now);
+      const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+      c.querySelector('[data-days]').textContent = String(d).padStart(2,'0');
+      c.querySelector('[data-hours]').textContent = String(h).padStart(2,'0');
+      c.querySelector('[data-minutes]').textContent = String(m).padStart(2,'0');
+      c.querySelector('[data-seconds]').textContent = String(s).padStart(2,'0');
+    }
+    u(); setInterval(u, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown Card",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "end_date", "label": "结束日期" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Countdown Card" }]
+}
+{% endschema %}

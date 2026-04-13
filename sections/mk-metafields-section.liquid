@@ -1,0 +1,70 @@
+{%- comment -%}
+  MK Metafields Section板块
+
+  元字段展示区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-metafields-section color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-metafields-section__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-metafields-section__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-metafields-section__grid">
+      {%- for i in (1..6) -%}
+        {%- assign label_setting = 'label_' | append: i -%}
+        {%- assign value_setting = 'value_' | append: i -%}
+
+        {%- if ss[label_setting] != blank -%}
+          <div class="mk-metafields-section__item">
+            <span class="mk-metafields-section__label">{{ ss[label_setting] }}</span>
+            <span class="mk-metafields-section__value">{{ ss[value_setting] }}</span>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-metafields-section { padding: {{ ss.padding_top_mobile | default: 32 }}px 0 {{ ss.padding_bottom_mobile | default: 32 }}px; }
+  @media (min-width: 750px) { .mk-metafields-section { padding: {{ ss.padding_top_desktop | default: 48 }}px 0 {{ ss.padding_bottom_desktop | default: 48 }}px; } }
+  .mk-metafields-section__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-metafields-section__title { margin: 0 0 24px 0; font-size: 20px; font-weight: 700; }
+  .mk-metafields-section__grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 750px) { .mk-metafields-section__grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .mk-metafields-section__grid { grid-template-columns: repeat(3, 1fr); } }
+  .mk-metafields-section__item { display: flex; flex-direction: column; gap: 4px; padding: 16px; background: var(--color-background-secondary, #f5f5f5); border-radius: 8px; }
+  .mk-metafields-section__label { font-size: 12px; color: var(--color-text-secondary, #666); }
+  .mk-metafields-section__value { font-size: 15px; font-weight: 500; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Metafields Section",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "header", "content": "字段" },
+    { "type": "text", "id": "label_1", "label": "标签 1" }, { "type": "text", "id": "value_1", "label": "值 1" },
+    { "type": "text", "id": "label_2", "label": "标签 2" }, { "type": "text", "id": "value_2", "label": "值 2" },
+    { "type": "text", "id": "label_3", "label": "标签 3" }, { "type": "text", "id": "value_3", "label": "值 3" },
+    { "type": "text", "id": "label_4", "label": "标签 4" }, { "type": "text", "id": "value_4", "label": "值 4" },
+    { "type": "text", "id": "label_5", "label": "标签 5" }, { "type": "text", "id": "value_5", "label": "值 5" },
+    { "type": "text", "id": "label_6", "label": "标签 6" }, { "type": "text", "id": "value_6", "label": "值 6" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 80, "default": 32, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 80, "default": 32, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Metafields Section" }]
+}
+{% endschema %}

@@ -1,0 +1,95 @@
+{%- comment -%}
+  MK Age Verification板块
+
+  年龄验证
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-age-verification" data-age-verification data-min-age="{{ ss.min_age | default: 21 }}" data-days="{{ ss.days | default: 30 }}">
+  <div class="mk-age-verification__overlay"></div>
+  <div class="mk-age-verification__content">
+    {%- if ss.logo != blank -%}
+      <div class="mk-age-verification__logo">{{ ss.logo | image_url: width: 200 | image_tag }}</div>
+    {%- endif -%}
+
+    {%- if ss.title != blank -%}
+      <h2 class="mk-age-verification__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    {%- if ss.text != blank -%}
+      <p class="mk-age-verification__text">{{ ss.text }}</p>
+    {%- endif -%}
+
+    <div class="mk-age-verification__actions">
+      <button type="button" class="mk-age-verification__btn mk-age-verification__btn--yes" data-age-confirm>
+        {{ ss.confirm_text | default: '是的，我已满法定年龄' }}
+      </button>
+      <button type="button" class="mk-age-verification__btn mk-age-verification__btn--no" data-age-deny>
+        {{ ss.deny_text | default: '未满法定年龄' }}
+      </button>
+    </div>
+
+    {%- if ss.privacy_text != blank -%}
+      <p class="mk-age-verification__privacy">{{ ss.privacy_text }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-age-verification { position: fixed; inset: 0; z-index: 99999; display: none; align-items: center; justify-content: center; }
+  .mk-age-verification.active { display: flex; }
+  .mk-age-verification__overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.9); }
+  .mk-age-verification__content { position: relative; max-width: 480px; width: calc(100% - 48px); padding: 48px 32px; background: var(--color-background); border-radius: 16px; text-align: center; }
+  .mk-age-verification__logo { margin-bottom: 24px; }
+  .mk-age-verification__logo img { max-width: 160px; height: auto; margin: 0 auto; }
+  .mk-age-verification__title { margin: 0 0 12px 0; font-size: 28px; font-weight: 700; }
+  .mk-age-verification__text { margin: 0 0 32px 0; font-size: 15px; color: var(--color-text-secondary, #666); line-height: 1.6; }
+  .mk-age-verification__actions { display: flex; flex-direction: column; gap: 12px; }
+  .mk-age-verification__btn { padding: 16px 24px; font-size: 15px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; }
+  .mk-age-verification__btn--yes { color: #fff; background: var(--color-primary, #000); border: none; }
+  .mk-age-verification__btn--no { color: var(--color-foreground); background: transparent; border: 1px solid var(--color-border); }
+  .mk-age-verification__btn:hover { opacity: 0.85; }
+  .mk-age-verification__privacy { margin: 24px 0 0 0; font-size: 12px; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const modal = document.querySelector('[data-age-verification]');
+    if (!modal) return;
+    const minAge = parseInt(modal.dataset.minAge) || 21;
+    const days = parseInt(modal.dataset.days) || 30;
+    const key = 'mk_age_verified';
+    if (sessionStorage.getItem(key) || localStorage.getItem(key)) return;
+    modal.classList.add('active');
+    modal.querySelector('[data-age-confirm]')?.addEventListener('click', () => {
+      localStorage.setItem(key, 'true');
+      modal.classList.remove('active');
+    });
+    modal.querySelector('[data-age-deny]')?.addEventListener('click', () => {
+      window.location.href = '/';
+    });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Age Verification",
+  "tag": "section",
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Logo" },
+    { "type": "text", "id": "title", "label": "标题", "default": "年龄验证" },
+    { "type": "textarea", "id": "text", "label": "描述文字", "default": "请确认您是否达到当地法定购买年龄。" },
+    { "type": "text", "id": "confirm_text", "label": "确认按钮文字", "default": "是的，我已满法定年龄" },
+    { "type": "text", "id": "deny_text", "label": "拒绝按钮文字", "default": "未满法定年龄" },
+    { "type": "text", "id": "privacy_text", "label": "隐私说明" },
+    { "type": "range", "id": "min_age", "label": "最低年龄", "min": 18, "max": 25, "default": 21 },
+    { "type": "range", "id": "days", "label": "重复验证间隔 (天)", "min": 1, "max": 90, "default": 30 }
+  ],
+  "presets": [{ "name": "MK Age Verification" }]
+}
+{% endschema %}

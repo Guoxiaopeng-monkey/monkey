@@ -1,0 +1,80 @@
+{%- comment -%}
+  MK Newsletter Split板块
+
+  分屏订阅区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-newsletter-split color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-newsletter-split__grid">
+    <div class="mk-newsletter-split__media">
+      {%- if ss.image != blank -%}
+        {{ ss.image | image_url: width: 800 | image_tag: loading: 'lazy', class: 'mk-newsletter-split__image' }}
+      {%- endif -%}
+    </div>
+
+    <div class="mk-newsletter-split__content">
+      {%- if ss.subtitle != blank -%}
+        <p class="mk-newsletter-split__subtitle">{{ ss.subtitle }}</p>
+      {%- endif -%}
+      {%- if ss.title != blank -%}
+        <h2 class="mk-newsletter-split__title">{{ ss.title }}</h2>
+      {%- endif -%}
+      {%- if ss.text != blank -%}
+        <p class="mk-newsletter-split__text">{{ ss.text }}</p>
+      {%- endif -%}
+
+      {%- form 'customer', class: 'mk-newsletter-split__form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <input type="email" name="contact[email]" required class="mk-newsletter-split__input" placeholder="{{ ss.placeholder | default: '输入您的邮箱' }}">
+        <button type="submit" class="mk-newsletter-split__button">{{ ss.button_text | default: '订阅' }}</button>
+      {%- endform -%}
+
+      {%- if ss.privacy_text != blank -%}
+        <p class="mk-newsletter-split__privacy">{{ ss.privacy_text }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-newsletter-split__grid { display: grid; grid-template-columns: 1fr; }
+  @media (min-width: 750px) { .mk-newsletter-split__grid { grid-template-columns: 1fr 1fr; min-height: 480px; } }
+  .mk-newsletter-split__media { display: none; }
+  @media (min-width: 750px) { .mk-newsletter-split__media { display: block; } .mk-newsletter-split__media .mk-newsletter-split__image { width: 100%; height: 100%; object-fit: cover; } }
+  .mk-newsletter-split__content { display: flex; flex-direction: column; justify-content: center; padding: 48px 32px; }
+  @media (min-width: 750px) { .mk-newsletter-split__content { padding: 64px; } }
+  .mk-newsletter-split__subtitle { margin: 0 0 12px 0; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--color-primary, #000); }
+  .mk-newsletter-split__title { margin: 0 0 16px 0; font-size: 28px; font-weight: 700; }
+  @media (min-width: 750px) { .mk-newsletter-split__title { font-size: 36px; } }
+  .mk-newsletter-split__text { margin: 0 0 24px 0; font-size: 15px; color: var(--color-text-secondary, #666); line-height: 1.6; }
+  .mk-newsletter-split__form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  @media (min-width: 480px) { .mk-newsletter-split__form { flex-direction: row; } }
+  .mk-newsletter-split__input { flex: 1; padding: 14px 16px; font-size: 14px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); }
+  .mk-newsletter-split__button { padding: 14px 28px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border: none; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+  .mk-newsletter-split__button:hover { opacity: 0.85; }
+  .mk-newsletter-split__privacy { margin: 0; font-size: 12px; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Newsletter Split",
+  "tag": "section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "图片" },
+    { "type": "text", "id": "subtitle", "label": "副标题" },
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "textarea", "id": "text", "label": "描述文字" },
+    { "type": "text", "id": "placeholder", "label": "输入框占位符" },
+    { "type": "text", "id": "button_text", "label": "按钮文字", "default": "订阅" },
+    { "type": "text", "id": "privacy_text", "label": "隐私说明文字" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Newsletter Split" }]
+}
+{% endschema %}

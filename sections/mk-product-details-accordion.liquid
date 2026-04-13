@@ -1,0 +1,87 @@
+{%- comment -%}
+  MK Product Details Accordion板块
+
+  产品详情手风琴
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-product-details-accordion color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-product-details-accordion__container">
+    <div class="mk-product-details-accordion__item" data-accordion-item>
+      <button type="button" class="mk-product-details-accordion__trigger" data-accordion-trigger>
+        <span>{{ ss.trigger_1 | default: '产品描述' }}</span>
+        <span class="mk-product-details-accordion__icon">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+      </button>
+      <div class="mk-product-details-accordion__body" data-accordion-body>
+        <div class="mk-product-details-accordion__content">{{ ss.content_1 }}</div>
+      </div>
+    </div>
+
+    <div class="mk-product-details-accordion__item" data-accordion-item>
+      <button type="button" class="mk-product-details-accordion__trigger" data-accordion-trigger>
+        <span>{{ ss.trigger_2 | default: '配送信息' }}</span>
+        <span class="mk-product-details-accordion__icon">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+      </button>
+      <div class="mk-product-details-accordion__body" data-accordion-body>
+        <div class="mk-product-details-accordion__content">{{ ss.content_2 }}</div>
+      </div>
+    </div>
+
+    <div class="mk-product-details-accordion__item" data-accordion-item>
+      <button type="button" class="mk-product-details-accordion__trigger" data-accordion-trigger>
+        <span>{{ ss.trigger_3 | default: '退换政策' }}</span>
+        <span class="mk-product-details-accordion__icon">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+      </button>
+      <div class="mk-product-details-accordion__body" data-accordion-body>
+        <div class="mk-product-details-accordion__content">{{ ss.content_3 }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-product-details-accordion { padding: {{ ss.padding_top_mobile | default: 32 }}px 0 {{ ss.padding_bottom_mobile | default: 32 }}px; }
+  @media (min-width: 750px) { .mk-product-details-accordion { padding: {{ ss.padding_top_desktop | default: 48 }}px 0 {{ ss.padding_bottom_desktop | default: 48 }}px; } }
+  .mk-product-details-accordion__container { max-width: var(--container-max-width, 800px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-product-details-accordion__item { border-bottom: 1px solid var(--color-border); }
+  .mk-product-details-accordion__trigger { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 20px 0; font-size: 16px; font-weight: 600; text-align: left; background: transparent; border: none; cursor: pointer; }
+  .mk-product-details-accordion__icon { display: flex; flex-shrink: 0; width: 24px; height: 24px; transition: transform 0.2s ease; }
+  .mk-product-details-accordion__item.active .mk-product-details-accordion__icon { transform: rotate(45deg); }
+  .mk-product-details-accordion__body { display: none; padding: 0 0 20px 0; font-size: 15px; color: var(--color-text-secondary, #666); line-height: 1.6; }
+  .mk-product-details-accordion__item.active .mk-product-details-accordion__body { display: block; }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelectorAll('[data-accordion-trigger]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('[data-accordion-item]').classList.toggle('active');
+    });
+  });
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Product Details Accordion",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "trigger_1", "label": "标题 1", "default": "产品描述" },
+    { "type": "richtext", "id": "content_1", "label": "内容 1" },
+    { "type": "text", "id": "trigger_2", "label": "标题 2", "default": "配送信息" },
+    { "type": "richtext", "id": "content_2", "label": "内容 2" },
+    { "type": "text", "id": "trigger_3", "label": "标题 3", "default": "退换政策" },
+    { "type": "richtext", "id": "content_3", "label": "内容 3" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 80, "default": 32, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 80, "default": 32, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Product Details Accordion" }]
+}
+{% endschema %}

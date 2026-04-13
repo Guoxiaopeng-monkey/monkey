@@ -1,0 +1,75 @@
+{%- comment -%}
+  MK Image Masonry板块
+
+  瀑布流图片展示
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-image-masonry color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-image-masonry__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-image-masonry__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-image-masonry__grid">
+      {%- for i in (1..8) -%}
+        {%- assign image_setting = 'image_' | append: i -%}
+        {%- assign link_setting = 'link_' | append: i -%}
+
+        {%- if ss[image_setting] != blank -%}
+          <div class="mk-image-masonry__item">
+            {%- if ss[link_setting] != blank -%}
+              <a href="{{ ss[link_setting] }}" class="mk-image-masonry__link">
+            {%- endif -%}
+            {{ ss[image_setting] | image_url: width: 600 | image_tag: loading: 'lazy', class: 'mk-image-masonry__image' }}
+            {%- if ss[link_setting] != blank -%}
+              </a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-image-masonry { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-image-masonry { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-image-masonry__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-image-masonry__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-image-masonry__grid { columns: 2; gap: 12px; }
+  @media (min-width: 750px) { .mk-image-masonry__grid { columns: 3; gap: 16px; } }
+  @media (min-width: 1024px) { .mk-image-masonry__grid { columns: 4; } }
+  .mk-image-masonry__item { break-inside: avoid; margin-bottom: 12px; border-radius: 12px; overflow: hidden; }
+  @media (min-width: 750px) { .mk-image-masonry__item { margin-bottom: 16px; } }
+  .mk-image-masonry__link { display: block; }
+  .mk-image-masonry__image { width: 100%; height: auto; display: block; transition: transform 0.3s ease; }
+  .mk-image-masonry__item:hover .mk-image-masonry__image { transform: scale(1.03); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Image Masonry",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "header", "content": "图片" },
+    { "type": "image_picker", "id": "image_1", "label": "图片 1" }, { "type": "url", "id": "link_1", "label": "链接 1" },
+    { "type": "image_picker", "id": "image_2", "label": "图片 2" }, { "type": "url", "id": "link_2", "label": "链接 2" },
+    { "type": "image_picker", "id": "image_3", "label": "图片 3" }, { "type": "url", "id": "link_3", "label": "链接 3" },
+    { "type": "image_picker", "id": "image_4", "label": "图片 4" }, { "type": "url", "id": "link_4", "label": "链接 4" },
+    { "type": "image_picker", "id": "image_5", "label": "图片 5" }, { "type": "url", "id": "link_5", "label": "链接 5" },
+    { "type": "image_picker", "id": "image_6", "label": "图片 6" }, { "type": "url", "id": "link_6", "label": "链接 6" },
+    { "type": "image_picker", "id": "image_7", "label": "图片 7" }, { "type": "url", "id": "link_7", "label": "链接 7" },
+    { "type": "image_picker", "id": "image_8", "label": "图片 8" }, { "type": "url", "id": "link_8", "label": "链接 8" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "

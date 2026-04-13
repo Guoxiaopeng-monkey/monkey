@@ -1,0 +1,71 @@
+{%- comment -%}
+  MK 图文混排板块
+
+  展示图片与文字组合
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-image-text color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-image-text__container">
+    <div class="mk-image-text__row {% if ss.reverse %}mk-image-text__row--reverse{% endif %}">
+      <div class="mk-image-text__media">
+        {%- if ss.image != blank -%}
+          {{ ss.image | image_url: width: 800 | image_tag: loading: 'lazy', class: 'mk-image-text__image' }}
+        {%- endif -%}
+      </div>
+      <div class="mk-image-text__content">
+        {%- if ss.subtitle != blank -%}
+          <p class="mk-image-text__subtitle">{{ ss.subtitle }}</p>
+        {%- endif -%}
+        {%- if ss.title != blank -%}
+          <h2 class="mk-image-text__title">{{ ss.title }}</h2>
+        {%- endif -%}
+        {%- if ss.text != blank -%}
+          <p class="mk-image-text__text">{{ ss.text }}</p>
+        {%- endif -%}
+        {%- if ss.button_text != blank -%}
+          <a href="{{ ss.button_link | default: '#' }}" class="mk-image-text__button">{{ ss.button_text }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-image-text { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-image-text { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-image-text__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-image-text__row { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: center; }
+  @media (min-width: 750px) { .mk-image-text__row { grid-template-columns: 1fr 1fr; gap: 64px; } .mk-image-text__row--reverse { direction: rtl; } .mk-image-text__row--reverse > * { direction: ltr; } }
+  .mk-image-text__image { width: 100%; height: auto; border-radius: 16px; }
+  .mk-image-text__subtitle { margin: 0 0 12px 0; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--color-primary, #000); }
+  .mk-image-text__title { margin: 0 0 16px 0; font-size: 28px; font-weight: 700; }
+  @media (min-width: 750px) { .mk-image-text__title { font-size: 36px; } }
+  .mk-image-text__text { margin: 0 0 24px 0; font-size: 15px; color: var(--color-text-secondary, #666); line-height: 1.6; }
+  .mk-image-text__button { display: inline-flex; padding: 14px 32px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+  .mk-image-text__button:hover { opacity: 0.85; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Image Text",
+  "tag": "section",
+  "settings": [
+    { "type": "checkbox", "id": "reverse", "label": "左右互换" },
+    { "type": "image_picker", "id": "image", "label": "图片" },
+    { "type": "text", "id": "subtitle", "label": "副标题" },
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "textarea", "id": "text", "label": "文字内容" },
+    { "type": "text", "id": "button_text", "label": "按钮文字" },
+    { "type": "url", "id": "button_link", "label": "按钮链接" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color

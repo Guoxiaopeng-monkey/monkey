@@ -1,0 +1,78 @@
+{%- comment -%}
+  MK Related Collections板块
+
+  相关专辑展示
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-related-collections color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-related-collections__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-related-collections__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-related-collections__grid">
+      {%- for i in (1..6) -%}
+        {%- assign collection_setting = 'collection_' | append: i -%}
+        {%- assign collection = collections[ss[collection_setting]] -%}
+
+        {%- if collection != blank -%}
+          <a href="{{ collection.url }}" class="mk-related-collections__item">
+            {%- if collection.image -%}
+              {{ collection.image | image_url: width: 600 | image_tag: loading: 'lazy', class: 'mk-related-collections__image' }}
+            {%- else -%}
+              {{ collection.products.first.featured_image | default: blank | image_url: width: 600 | image_tag: loading: 'lazy', class: 'mk-related-collections__image' }}
+            {%- endif -%}
+            <div class="mk-related-collections__overlay">
+              <h3 class="mk-related-collections__name">{{ collection.title }}</h3>
+              <span class="mk-related-collections__count">{{ collection.products_count }} {{ 'products.items' | t | default: '件商品' }}</span>
+            </div>
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-related-collections { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-related-collections { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-related-collections__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-related-collections__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-related-collections__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  @media (min-width: 750px) { .mk-related-collections__grid { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+  .mk-related-collections__item { position: relative; aspect-ratio: 4/5; overflow: hidden; border-radius: 16px; }
+  .mk-related-collections__image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+  .mk-related-collections__item:hover .mk-related-collections__image { transform: scale(1.05); }
+  .mk-related-collections__overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); text-align: center; padding: 16px; }
+  .mk-related-collections__name { margin: 0 0 8px 0; font-size: 18px; font-weight: 700; color: #fff; }
+  .mk-related-collections__count { font-size: 13px; color: rgba(255,255,255,0.8); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Related Collections",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "collection", "id": "collection_1", "label": "专辑 1" },
+    { "type": "collection", "id": "collection_2", "label": "专辑 2" },
+    { "type": "collection", "id": "collection_3", "label": "专辑 3" },
+    { "type": "collection", "id": "collection_4", "label": "专辑 4" },
+    { "type": "collection", "id": "collection_5", "label": "专辑 5" },
+    { "type": "collection", "id": "collection_6", "label": "专辑 6" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Related Collections" }]
+}
+{% endschema %}

@@ -1,0 +1,58 @@
+{%- comment -%}
+  MK Announcement Bar 2板块
+
+  公告栏第二版
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<div id="{{ section.id }}" class="mk-announcement-bar-2 color-{{ ss.color_scheme | default: 'background-1' }}" data-announcement-bar>
+  <div class="mk-announcement-bar-2__container">
+    {%- if ss.text != blank -%}
+      <p class="mk-announcement-bar-2__text">{{ ss.text }}</p>
+    {%- endif -%}
+
+    {%- if ss.show_close -%}
+      <button type="button" class="mk-announcement-bar-2__close" data-close-announcement aria-label="关闭">
+        {{- 'icon-close.svg' | inline_asset_content -}}
+      </button>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-announcement-bar-2 { padding: 12px 0; background: var(--color-background-secondary, #f5f5f5); }
+  .mk-announcement-bar-2__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); display: flex; align-items: center; justify-content: center; position: relative; }
+  .mk-announcement-bar-2__text { margin: 0; font-size: 13px; text-align: center; }
+  .mk-announcement-bar-2__close { position: absolute; right: 0; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; background: transparent; border: none; cursor: pointer; }
+  .mk-announcement-bar-2__close svg { width: 16px; height: 16px; }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const bar = document.querySelector('[data-announcement-bar]');
+    if (!bar) return;
+    if (sessionStorage.getItem('announcement_closed')) { bar.style.display = 'none'; return; }
+    bar.querySelector('[data-close-announcement]')?.addEventListener('click', () => {
+      bar.style.display = 'none';
+      sessionStorage.setItem('announcement_closed', 'true');
+    });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Announcement Bar 2",
+  "tag": "div",
+  "settings": [
+    { "type": "textarea", "id": "text", "label": "公告文字", "default": "全场满99元包邮，新用户首单9折优惠" },
+    { "type": "checkbox", "id": "show_close", "label": "显示关闭按钮", "default": true },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Announcement Bar 2" }]
+}
+{% endschema %}

@@ -1,0 +1,61 @@
+{%- comment -%}
+  MK Rating Section板块
+
+  评分区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+  assign rating = ss.rating | default: 0 | plus: 0
+  assign max = 5
+-%}
+
+<section id="{{ section.id }}" class="mk-rating-section color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-rating-section__container">
+    {%- if ss.title != blank -%}
+      <h3 class="mk-rating-section__title">{{ ss.title }}</h3>
+    {%- endif -%}
+
+    <div class="mk-rating-section__stars">
+      {%- for i in (1..max) -%}
+        <span class="mk-rating-section__star {% if i <= rating %}mk-rating-section__star--filled{% endif %}">
+          {{- 'icon-star.svg' | inline_asset_content -}}
+        </span>
+      {%- endfor -%}
+    </div>
+
+    {%- if ss.show_count -%}
+      <p class="mk-rating-section__count">{{ ss.count | default: 0 }} {{ ss.reviews_text | default: '条评价' }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-rating-section { padding: 24px 0; }
+  .mk-rating-section__container { max-width: var(--container-max-width, 600px); margin: 0 auto; padding: 0 var(--container-padding, 32px); text-align: center; }
+  .mk-rating-section__title { margin: 0 0 12px 0; font-size: 16px; font-weight: 600; }
+  .mk-rating-section__stars { display: flex; justify-content: center; gap: 4px; }
+  .mk-rating-section__star { display: flex; width: 20px; height: 20px; }
+  .mk-rating-section__star svg { width: 100%; height: 100%; }
+  .mk-rating-section__star--filled svg { fill: #f5a623; stroke: #f5a623; }
+  .mk-rating-section__star:not(.mk-rating-section__star--filled) svg { fill: none; stroke: var(--color-border); }
+  .mk-rating-section__count { margin: 8px 0 0 0; font-size: 13px; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Rating Section",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "range", "id": "rating", "label": "评分", "min": 0, "max": 5, "default": 4 },
+    { "type": "checkbox", "id": "show_count", "label": "显示评价数量", "default": true },
+    { "type": "text", "id": "count", "label": "评价数量" },
+    { "type": "text", "id": "reviews_text", "label": "评价文字", "default": "条评价" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Rating Section" }]
+}
+{% endschema %}

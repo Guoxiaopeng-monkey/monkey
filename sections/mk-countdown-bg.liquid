@@ -1,0 +1,102 @@
+{%- comment -%}
+  MK Countdown BG板块
+
+  背景倒计时
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-countdown-bg color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-countdown-bg__bg">
+    {%- if ss.image != blank -%}
+      {{ ss.image | image_url: width: 1920 | image_tag: loading: 'lazy', class: 'mk-countdown-bg__image' }}
+    {%- endif -%}
+    <div class="mk-countdown-bg__overlay"></div>
+  </div>
+
+  <div class="mk-countdown-bg__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-countdown-bg__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-countdown-bg__countdown" data-countdown-bg data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+      <div class="mk-countdown-bg__item">
+        <span class="mk-countdown-bg__num" data-days>00</span>
+        <span class="mk-countdown-bg__label">天</span>
+      </div>
+      <div class="mk-countdown-bg__item">
+        <span class="mk-countdown-bg__num" data-hours>00</span>
+        <span class="mk-countdown-bg__label">时</span>
+      </div>
+      <div class="mk-countdown-bg__item">
+        <span class="mk-countdown-bg__num" data-minutes>00</span>
+        <span class="mk-countdown-bg__label">分</span>
+      </div>
+      <div class="mk-countdown-bg__item">
+        <span class="mk-countdown-bg__num" data-seconds>00</span>
+        <span class="mk-countdown-bg__label">秒</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-countdown-bg { position: relative; padding: {{ ss.padding_top_mobile | default: 64 }}px 0 {{ ss.padding_bottom_mobile | default: 64 }}px; }
+  @media (min-width: 750px) { .mk-countdown-bg { padding: {{ ss.padding_top_desktop | default: 96 }}px 0 {{ ss.padding_bottom_desktop | default: 96 }}px; } }
+  .mk-countdown-bg__bg { position: absolute; inset: 0; }
+  .mk-countdown-bg__image { width: 100%; height: 100%; object-fit: cover; }
+  .mk-countdown-bg__overlay { position: absolute; inset: 0; background: rgba(0,0,0,{{ ss.overlay_opacity | default: 0.6 }}); }
+  .mk-countdown-bg__container { position: relative; z-index: 1; max-width: var(--container-max-width, 800px); margin: 0 auto; padding: 0 var(--container-padding, 32px); text-align: center; }
+  .mk-countdown-bg__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; color: #fff; }
+  .mk-countdown-bg__countdown { display: flex; justify-content: center; gap: 24px; }
+  .mk-countdown-bg__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .mk-countdown-bg__num { min-width: 72px; padding: 16px; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 12px; font-size: 32px; font-weight: 700; color: #fff; text-align: center; }
+  @media (min-width: 750px) { .mk-countdown-bg__num { font-size: 40px; } }
+  .mk-countdown-bg__label { font-size: 11px; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const countdown = document.querySelector('[data-countdown-bg]');
+    if (!countdown) return;
+    const endDate = new Date(countdown.dataset.end).getTime();
+    function update() {
+      const now = Date.now();
+      const diff = Math.max(0, endDate - now);
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+      countdown.querySelector('[data-days]').textContent = String(days).padStart(2, '0');
+      countdown.querySelector('[data-hours]').textContent = String(hours).padStart(2, '0');
+      countdown.querySelector('[data-minutes]').textContent = String(minutes).padStart(2, '0');
+      countdown.querySelector('[data-seconds]').textContent = String(seconds).padStart(2, '0');
+    }
+    update();
+    setInterval(update, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown BG",
+  "tag": "section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "背景图片" },
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "end_date", "label": "结束日期", "info": "格式: YYYY-MM-DD HH:MM" },
+    { "type": "range", "id": "overlay_opacity", "label": "遮罩透明度", "min": 0, "max": 1, "step": 0.1, "default": 0.6 },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 64, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 64, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 96, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 96, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Countdown BG" }]
+}
+{% endschema %}

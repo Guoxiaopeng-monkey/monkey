@@ -1,0 +1,80 @@
+{%- comment -%}
+  MK Popup Modal板块
+
+  弹窗组件
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-popup-modal" data-popup-modal data-delay="{{ ss.delay | default: 5000 }}" data-show-again="{{ ss.show_again_days | default: 7 }}">
+  <div class="mk-popup-modal__overlay" data-popup-close></div>
+  <div class="mk-popup-modal__content">
+    <button type="button" class="mk-popup-modal__close" data-popup-close>{{- 'icon-close.svg' | inline_asset_content -}}</button>
+    {%- if ss.image != blank -%}
+      <div class="mk-popup-modal__image">{{ ss.image | image_url: width: 600 | image_tag: loading: 'lazy' }}</div>
+    {%- endif -%}
+    <div class="mk-popup-modal__text">
+      {%- if ss.title != blank -%}
+        <h3 class="mk-popup-modal__title">{{ ss.title }}</h3>
+      {%- endif -%}
+      {%- if ss.text != blank -%}
+        <p class="mk-popup-modal__description">{{ ss.text }}</p>
+      {%- endif -%}
+      {%- if ss.button_text != blank -%}
+        <a href="{{ ss.button_link | default: '#' }}" class="mk-popup-modal__button">{{ ss.button_text }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-popup-modal { position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center; }
+  .mk-popup-modal.active { display: flex; }
+  .mk-popup-modal__overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); }
+  .mk-popup-modal__content { position: relative; max-width: 480px; width: calc(100% - 48px); max-height: 90vh; overflow-y: auto; background: var(--color-background); border-radius: 16px; }
+  .mk-popup-modal__close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: var(--color-background-secondary); border: none; border-radius: 50%; cursor: pointer; }
+  .mk-popup-modal__close svg { width: 16px; height: 16px; }
+  .mk-popup-modal__image img { width: 100%; height: auto; border-radius: 16px 16px 0 0; }
+  .mk-popup-modal__text { padding: 24px; text-align: center; }
+  .mk-popup-modal__title { margin: 0 0 12px 0; font-size: 22px; font-weight: 700; }
+  .mk-popup-modal__description { margin: 0 0 20px 0; font-size: 14px; color: var(--color-text-secondary, #666); }
+  .mk-popup-modal__button { display: inline-flex; padding: 14px 32px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const popup = document.querySelector('[data-popup-modal]');
+    if (!popup) return;
+    const delay = parseInt(popup.dataset.delay) || 5000;
+    const showAgainDays = parseInt(popup.dataset.showAgain) || 7;
+    const storageKey = 'mk_popup_shown';
+    const lastShown = localStorage.getItem(storageKey);
+    if (lastShown && Date.now() - parseInt(lastShown) < showAgainDays * 24 * 60 * 60 * 1000) return;
+    setTimeout(() => { popup.classList.add('active'); }, delay);
+    popup.querySelectorAll('[data-popup-close]').forEach(el => el.addEventListener('click', () => {
+      popup.classList.remove('active');
+      localStorage.setItem(storageKey, Date.now().toString());
+    }));
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Popup Modal",
+  "tag": "section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "图片" },
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "textarea", "id": "text", "label": "描述文字" },
+    { "type": "text", "id": "button_text", "label": "按钮文字" },
+    { "type": "url", "id": "button_link", "label": "按钮链接" },
+    { "type": "range", "id": "delay", "label": "延迟显示 (毫秒)", "min": 1000, "max": 30000, "step": 1000, "default": 5000 },
+    { "type": "range", "id": "show_again_days", "label": "重复显示间隔 (天)", "min": 1, "max": 30, "default": 7 }
+  ],
+  "presets": [{ "name": "MK Popup Modal" }]
+}
+{% endschema %}

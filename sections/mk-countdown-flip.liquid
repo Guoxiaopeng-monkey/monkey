@@ -1,0 +1,78 @@
+{%- comment -%}
+  MK Countdown Flip板块
+
+  翻转时钟倒计时
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-countdown-flip color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-countdown-flip__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-countdown-flip__title">{{ ss.title }}</h2>
+    {%- endif -%}
+    <div class="mk-countdown-flip__countdown" data-countdown-flip data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+      <div class="mk-countdown-flip__unit">
+        <div class="mk-countdown-flip__card"><span class="mk-countdown-flip__num" data-days>00</span></div>
+        <span class="mk-countdown-flip__label">Days</span>
+      </div>
+      <div class="mk-countdown-flip__unit">
+        <div class="mk-countdown-flip__card"><span class="mk-countdown-flip__num" data-hours>00</span></div>
+        <span class="mk-countdown-flip__label">Hours</span>
+      </div>
+      <div class="mk-countdown-flip__unit">
+        <div class="mk-countdown-flip__card"><span class="mk-countdown-flip__num" data-minutes>00</span></div>
+        <span class="mk-countdown-flip__label">Minutes</span>
+      </div>
+      <div class="mk-countdown-flip__unit">
+        <div class="mk-countdown-flip__card"><span class="mk-countdown-flip__num" data-seconds>00</span></div>
+        <span class="mk-countdown-flip__label">Seconds</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-countdown-flip { padding: 80px 0; background: #1a1a2e; }
+  .mk-countdown-flip__container { max-width: 900px; margin: 0 auto; padding: 0 32px; text-align: center; }
+  .mk-countdown-flip__title { margin: 0 0 48px 0; font-size: 36px; font-weight: 700; color: #fff; }
+  .mk-countdown-flip__countdown { display: flex; justify-content: center; gap: 24px; }
+  .mk-countdown-flip__unit { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .mk-countdown-flip__card { min-width: 100px; padding: 24px 16px; background: #16213e; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+  .mk-countdown-flip__num { font-size: 48px; font-weight: 700; color: #e94560; font-variant-numeric: tabular-nums; }
+  .mk-countdown-flip__label { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #888; }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const c = document.querySelector('[data-countdown-flip]');
+    if (!c) return;
+    const end = new Date(c.dataset.end).getTime();
+    function u() {
+      const now = Date.now(), diff = Math.max(0, end - now);
+      const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+      c.querySelector('[data-days]').textContent = String(d).padStart(2,'0');
+      c.querySelector('[data-hours]').textContent = String(h).padStart(2,'0');
+      c.querySelector('[data-minutes]').textContent = String(m).padStart(2,'0');
+      c.querySelector('[data-seconds]').textContent = String(s).padStart(2,'0');
+    }
+    u(); setInterval(u, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown Flip",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "end_date", "label": "结束日期" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Countdown Flip" }]
+}
+{% endschema %}

@@ -1,0 +1,66 @@
+{%- comment -%}
+  MK Volume Discount Section板块
+
+  批量折扣展示
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-volume-discount-section color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-volume-discount-section__container">
+    {%- if ss.title != blank -%}
+      <h3 class="mk-volume-discount-section__title">{{ ss.title }}</h3>
+    {%- endif -%}
+
+    <div class="mk-volume-discount-section__tiers">
+      <div class="mk-volume-discount-section__header-row">
+        <span>{{ ss.quantity_label | default: '数量' }}</span>
+        <span>{{ ss.discount_label | default: '折扣' }}</span>
+      </div>
+      {%- for i in (1..4) -%}
+        {%- assign qty_setting = 'qty_' | append: i -%}
+        {%- assign discount_setting = 'discount_' | append: i -%}
+
+        {%- if ss[qty_setting] != blank -%}
+          <div class="mk-volume-discount-section__tier">
+            <span class="mk-volume-discount-section__qty">{{ ss[qty_setting] }}+</span>
+            <span class="mk-volume-discount-section__discount">{{ ss[discount_setting] }}</span>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-volume-discount-section { padding: 20px 0; }
+  .mk-volume-discount-section__container { max-width: var(--container-max-width, 400px); margin: 0 auto; padding: 20px; background: var(--color-background-secondary, #f5f5f5); border-radius: 12px; }
+  .mk-volume-discount-section__title { margin: 0 0 16px 0; font-size: 15px; font-weight: 600; }
+  .mk-volume-discount-section__header-row { display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--color-border); margin-bottom: 8px; font-size: 12px; font-weight: 600; color: var(--color-text-secondary, #666); }
+  .mk-volume-discount-section__tier { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
+  .mk-volume-discount-section__qty { font-weight: 500; }
+  .mk-volume-discount-section__discount { color: var(--color-primary, #000); font-weight: 600; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Volume Discount Section",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题", "default": "批量购买折扣" },
+    { "type": "text", "id": "quantity_label", "label": "数量标签" },
+    { "type": "text", "id": "discount_label", "label": "折扣标签" },
+    { "type": "header", "content": "层级" },
+    { "type": "text", "id": "qty_1", "label": "数量 1" }, { "type": "text", "id": "discount_1", "label": "折扣 1" },
+    { "type": "text", "id": "qty_2", "label": "数量 2" }, { "type": "text", "id": "discount_2", "label": "折扣 2" },
+    { "type": "text", "id": "qty_3", "label": "数量 3" }, { "type": "text", "id": "discount_3", "label": "折扣 3" },
+    { "type": "text", "id": "qty_4", "label": "数量 4" }, { "type": "text", "id": "discount_4", "label": "折扣 4" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Volume Discount Section" }]
+}
+{% endschema %}

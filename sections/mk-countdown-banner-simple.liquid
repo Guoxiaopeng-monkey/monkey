@@ -1,0 +1,61 @@
+{%- comment -%}
+  MK Countdown Banner Simple板块
+
+  简约倒计时横幅
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<div id="{{ section.id }}" class="mk-countdown-banner-simple" data-countdown-banner-simple data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+  <div class="mk-countdown-banner-simple__container">
+    {%- if ss.text != blank -%}
+      <span class="mk-countdown-banner-simple__text">{{ ss.text }}</span>
+    {%- endif -%}
+    <span class="mk-countdown-banner-simple__time">
+      <span data-days>00</span>d
+      <span data-hours>00</span>h
+      <span data-minutes>00</span>m
+      <span data-seconds>00</span>s
+    </span>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-countdown-banner-simple { padding: 12px 0; background: var(--color-primary, #000); color: #fff; }
+  .mk-countdown-banner-simple__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 32px; display: flex; align-items: center; justify-content: center; gap: 16px; }
+  .mk-countdown-banner-simple__text { font-size: 14px; font-weight: 600; }
+  .mk-countdown-banner-simple__time { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const c = document.querySelector('[data-countdown-banner-simple]');
+    if (!c) return;
+    const end = new Date(c.dataset.end).getTime();
+    function u() {
+      const now = Date.now(), diff = Math.max(0, end - now);
+      const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+      c.querySelector('[data-days]').textContent = String(d).padStart(2,'0');
+      c.querySelector('[data-hours]').textContent = String(h).padStart(2,'0');
+      c.querySelector('[data-minutes]').textContent = String(m).padStart(2,'0');
+      c.querySelector('[data-seconds]').textContent = String(s).padStart(2,'0');
+    }
+    u(); setInterval(u, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown Banner Simple",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "text", "label": "文字" },
+    { "type": "text", "id": "end_date", "label": "结束日期" }
+  ],
+  "presets": [{ "name": "MK Countdown Banner Simple" }]
+}
+{% endschema %}

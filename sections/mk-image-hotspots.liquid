@@ -1,0 +1,82 @@
+{%- comment -%}
+  MK Image Hotspots板块
+
+  图片热点标注
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-image-hotspots color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-image-hotspots__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-image-hotspots__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-image-hotspots__wrapper">
+      {%- if ss.image != blank -%}
+        {{ ss.image | image_url: width: 1200 | image_tag: loading: 'lazy', class: 'mk-image-hotspots__image' }}
+      {%- endif -%}
+
+      <div class="mk-image-hotspots__spots">
+        {%- for i in (1..6) -%}
+          {%- assign x_setting = 'spot_x_' | append: i -%}
+          {%- assign y_setting = 'spot_y_' | append: i -%}
+          {%- assign product_setting = 'spot_product_' | append: i -%}
+
+          {%- if ss[product_setting] != blank -%}
+            {%- assign product = all_products[ss[product_setting]] -%}
+            <a
+              href="{{ product.url }}"
+              class="mk-image-hotspots__spot"
+              style="left: {{ ss[x_setting] }}%; top: {{ ss[y_setting] }}%;"
+              data-product-id="{{ product.id }}"
+            >
+              <span class="mk-image-hotspots__pulse"></span>
+              <span class="mk-image-hotspots__dot">+</span>
+            </a>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-image-hotspots { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-image-hotspots { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-image-hotspots__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-image-hotspots__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-image-hotspots__wrapper { position: relative; display: inline-block; width: 100%; }
+  .mk-image-hotspots__image { width: 100%; height: auto; display: block; border-radius: 16px; }
+  .mk-image-hotspots__spots { position: absolute; inset: 0; }
+  .mk-image-hotspots__spot { position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; }
+  .mk-image-hotspots__pulse { position: absolute; width: 100%; height: 100%; background: var(--color-primary, #000); border-radius: 50%; opacity: 0.3; animation: pulse 2s ease-in-out infinite; }
+  .mk-image-hotspots__dot { position: relative; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; background: var(--color-primary, #000); color: #fff; border-radius: 50%; font-size: 16px; font-weight: 700; z-index: 1; cursor: pointer; }
+  @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.5); opacity: 0; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Image Hotspots",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "image_picker", "id": "image", "label": "图片" },
+    { "type": "header", "content": "热点" },
+    { "type": "product", "id": "spot_product_1", "label": "产品 1" }, { "type": "range", "id": "spot_x_1", "label": "X位置 %", "min": 0, "max": 100, "default": 50 }, { "type": "range", "id": "spot_y_1", "label": "Y位置 %", "min": 0, "max": 100, "default": 50 },
+    { "type": "product", "id": "spot_product_2", "label": "产品 2" }, { "type": "range", "id": "spot_x_2", "label": "X位置 %", "min": 0, "max": 100, "default": 50 }, { "type": "range", "id": "spot_y_2", "label": "Y位置 %", "min": 0, "max": 100, "default": 50 },
+    { "type": "product", "id": "spot_product_3", "label": "产品 3" }, { "type": "range", "id": "spot_x_3", "label": "X位置 %", "min": 0, "max": 100, "default": 50 }, { "type": "range", "id": "spot_y_3", "label": "Y位置 %", "min": 0, "max": 100, "default": 50 },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Image Hotspots" }]
+}
+{% endschema %}

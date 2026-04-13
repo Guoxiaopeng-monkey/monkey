@@ -1,0 +1,70 @@
+{%- comment -%}
+  MK Newsletter Multi Input板块
+
+  多输入框订阅
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-newsletter-multi-input color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-newsletter-multi-input__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-newsletter-multi-input__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    {%- form 'customer', class: 'mk-newsletter-multi-input__form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+
+      <div class="mk-newsletter-multi-input__fields">
+        {%- if ss.show_name -%}
+          <input type="text" name="contact[first_name]" class="mk-newsletter-multi-input__input" placeholder="{{ ss.name_placeholder | default: '您的姓名' }}" required>
+        {%- endif -%}
+        <input type="email" name="contact[email]" class="mk-newsletter-multi-input__input" placeholder="{{ ss.email_placeholder | default: '您的邮箱' }}" required>
+        <button type="submit" class="mk-newsletter-multi-input__btn">{{ ss.button_text | default: '订阅' }}</button>
+      </div>
+
+      {%- if ss.privacy_text != blank -%}
+        <p class="mk-newsletter-multi-input__privacy">{{ ss.privacy_text }}</p>
+      {%- endif -%}
+    {%- endform -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-newsletter-multi-input { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-newsletter-multi-input { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-newsletter-multi-input__container { max-width: var(--container-max-width, 600px); margin: 0 auto; padding: 0 var(--container-padding, 32px); text-align: center; }
+  .mk-newsletter-multi-input__title { margin: 0 0 24px 0; font-size: 28px; font-weight: 700; }
+  .mk-newsletter-multi-input__fields { display: flex; flex-direction: column; gap: 8px; }
+  @media (min-width: 480px) { .mk-newsletter-multi-input__fields { flex-direction: row; } }
+  .mk-newsletter-multi-input__input { flex: 1; padding: 14px 16px; font-size: 14px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); }
+  .mk-newsletter-multi-input__btn { padding: 14px 28px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border: none; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+  .mk-newsletter-multi-input__btn:hover { opacity: 0.85; }
+  .mk-newsletter-multi-input__privacy { margin: 12px 0 0 0; font-size: 12px; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Newsletter Multi Input",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "checkbox", "id": "show_name", "label": "显示姓名输入框", "default": false },
+    { "type": "text", "id": "name_placeholder", "label": "姓名占位符" },
+    { "type": "text", "id": "email_placeholder", "label": "邮箱占位符" },
+    { "type": "text", "id": "button_text", "label": "按钮文字", "default": "订阅" },
+    { "type": "text", "id": "privacy_text", "label": "隐私说明" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Newsletter Multi Input" }]
+}
+{% endschema %}

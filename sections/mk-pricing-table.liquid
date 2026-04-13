@@ -1,0 +1,98 @@
+{%- comment -%}
+  MK Pricing Table板块
+
+  展示价格表
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-pricing-table color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-pricing-table__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-pricing-table__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-pricing-table__grid">
+      {%- for i in (1..3) -%}
+        {%- assign plan_setting = 'plan_' | append: i -%}
+        {%- assign price_setting = 'price_' | append: i -%}
+        {%- assign period_setting = 'period_' | append: i -%}
+        {%- assign features_setting = 'features_' | append: i -%}
+        {%- assign button_setting = 'button_' | append: i -%}
+        {%- assign highlighted_setting = 'highlighted_' | append: i -%}
+
+        {%- if ss[plan_setting] != blank -%}
+          <div class="mk-pricing-table__item {% if ss[highlighted_setting] %}mk-pricing-table__item--highlighted{% endif %}">
+            {%- if ss[highlighted_setting] -%}
+              <span class="mk-pricing-table__badge">推荐</span>
+            {%- endif -%}
+            <h3 class="mk-pricing-table__plan">{{ ss[plan_setting] }}</h3>
+            <div class="mk-pricing-table__price">
+              <span class="mk-pricing-table__amount">{{ ss[price_setting] }}</span>
+              {%- if ss[period_setting] != blank -%}
+                <span class="mk-pricing-table__period">/{{ ss[period_setting] }}</span>
+              {%- endif -%}
+            </div>
+            {%- if ss[features_setting] != blank -%}
+              <ul class="mk-pricing-table__features">
+                {%- assign features = ss[features_setting] | split: ',' -%}
+                {%- for feature in features -%}
+                  <li>{{ feature | strip }}</li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+            <a href="{{ ss.button_link_ | default: '#' }}" class="mk-pricing-table__button">{{ ss[button_setting] | default: '选择' }}</a>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-pricing-table { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-pricing-table { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-pricing-table__container { max-width: var(--container-max-width, 1000px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-pricing-table__title { margin: 0 0 40px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-pricing-table__grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+  @media (min-width: 750px) { .mk-pricing-table__grid { grid-template-columns: repeat(3, 1fr); gap: 32px; } }
+  .mk-pricing-table__item { position: relative; display: flex; flex-direction: column; padding: 32px; background: var(--color-background); border: 1px solid var(--color-border); border-radius: 16px; text-align: center; }
+  .mk-pricing-table__item--highlighted { border-color: var(--color-primary, #000); box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+  .mk-pricing-table__badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); padding: 4px 16px; font-size: 12px; font-weight: 600; color: #fff; background: var(--color-primary, #000); border-radius: 100px; }
+  .mk-pricing-table__plan { margin: 0 0 16px 0; font-size: 18px; font-weight: 600; }
+  .mk-pricing-table__price { margin-bottom: 20px; }
+  .mk-pricing-table__amount { font-size: 40px; font-weight: 700; }
+  .mk-pricing-table__period { font-size: 14px; color: var(--color-text-secondary, #666); }
+  .mk-pricing-table__features { margin: 0 0 24px 0; padding: 0; list-style: none; text-align: left; }
+  .mk-pricing-table__features li { padding: 8px 0; font-size: 14px; border-bottom: 1px solid var(--color-border); }
+  .mk-pricing-table__features li:last-child { border-bottom: none; }
+  .mk-pricing-table__button { display: inline-flex; padding: 14px 32px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+  .mk-pricing-table__button:hover { opacity: 0.85; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Pricing Table",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "header", "content": "套餐 1" },
+    { "type": "text", "id": "plan_1", "label": "名称 1" }, { "type": "text", "id": "price_1", "label": "价格 1" }, { "type": "text", "id": "period_1", "label": "周期 1" }, { "type": "textarea", "id": "features_1", "label": "特性 (逗号分隔) 1" }, { "type": "text", "id": "button_1", "label": "按钮文字 1" }, { "type": "checkbox", "id": "highlighted_1", "label": "推荐 1" },
+    { "type": "header", "content": "套餐 2" },
+    { "type": "text", "id": "plan_2", "label": "名称 2" }, { "type": "text", "id": "price_2", "label": "价格 2" }, { "type": "text", "id": "period_2", "label": "周期 2" }, { "type": "textarea", "id": "features_2", "label": "特性 (逗号分隔) 2" }, { "type": "text", "id": "button_2", "label": "按钮文字 2" }, { "type": "checkbox", "id": "highlighted_2", "label": "推荐 2" },
+    { "type": "header", "content": "套餐 3" },
+    { "type": "text", "id": "plan_3", "label": "名称 3" }, { "type": "text", "id": "price_3", "label": "价格 3" }, { "type": "text", "id": "period_3", "label": "周期 3" }, { "type": "textarea", "id": "features_3", "label": "特性 (逗号分隔) 3" }, { "type": "text", "id": "button_3", "label": "按钮文字 3" }, { "type": "checkbox", "id": "highlighted_3", "label": "推荐 3" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Pricing Table" }]
+}
+{% endschema %}

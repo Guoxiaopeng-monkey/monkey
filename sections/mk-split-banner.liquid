@@ -1,0 +1,89 @@
+{%- comment -%}
+  MK Split Banner板块
+
+  分屏横幅
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-split-banner">
+  <div class="mk-split-banner__grid">
+    <div class="mk-split-banner__left">
+      {%- if ss.image_left != blank -%}
+        {{ ss.image_left | image_url: width: 1000 | image_tag: loading: 'lazy', class: 'mk-split-banner__image' }}
+      {%- endif -%}
+      <div class="mk-split-banner__overlay"></div>
+      <div class="mk-split-banner__content">
+        {%- if ss.title_left != blank -%}
+          <h2 class="mk-split-banner__title">{{ ss.title_left }}</h2>
+        {%- endif -%}
+        {%- if ss.text_left != blank -%}
+          <p class="mk-split-banner__text">{{ ss.text_left }}</p>
+        {%- endif -%}
+        {%- if ss.button_text_left != blank -%}
+          <a href="{{ ss.button_link_left | default: '#' }}" class="mk-split-banner__button">{{ ss.button_text_left }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="mk-split-banner__right">
+      {%- if ss.image_right != blank -%}
+        {{ ss.image_right | image_url: width: 1000 | image_tag: loading: 'lazy', class: 'mk-split-banner__image' }}
+      {%- endif -%}
+      <div class="mk-split-banner__overlay"></div>
+      <div class="mk-split-banner__content">
+        {%- if ss.title_right != blank -%}
+          <h2 class="mk-split-banner__title">{{ ss.title_right }}</h2>
+        {%- endif -%}
+        {%- if ss.text_right != blank -%}
+          <p class="mk-split-banner__text">{{ ss.text_right }}</p>
+        {%- endif -%}
+        {%- if ss.button_text_right != blank -%}
+          <a href="{{ ss.button_link_right | default: '#' }}" class="mk-split-banner__button">{{ ss.button_text_right }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-split-banner__grid { display: grid; grid-template-columns: 1fr; }
+  @media (min-width: 750px) { .mk-split-banner__grid { grid-template-columns: repeat(2, 1fr); } }
+  .mk-split-banner__left, .mk-split-banner__right { position: relative; min-height: 400px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  @media (min-width: 750px) { .mk-split-banner__left, .mk-split-banner__right { min-height: 600px; } }
+  .mk-split-banner__image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .mk-split-banner__overlay { position: absolute; inset: 0; background: rgba(0,0,0,{{ ss.overlay_opacity | default: 0.3 }}); }
+  .mk-split-banner__content { position: relative; z-index: 1; text-align: center; padding: 48px 32px; }
+  .mk-split-banner__title { margin: 0 0 12px 0; font-size: 28px; font-weight: 700; color: #fff; }
+  @media (min-width: 750px) { .mk-split-banner__title { font-size: 36px; } }
+  .mk-split-banner__text { margin: 0 0 20px 0; font-size: 15px; color: rgba(255,255,255,0.9); }
+  .mk-split-banner__button { display: inline-flex; padding: 14px 32px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+  .mk-split-banner__button:hover { opacity: 0.85; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Split Banner",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "左侧" },
+    { "type": "image_picker", "id": "image_left", "label": "图片" },
+    { "type": "text", "id": "title_left", "label": "标题" },
+    { "type": "textarea", "id": "text_left", "label": "描述" },
+    { "type": "text", "id": "button_text_left", "label": "按钮文字" },
+    { "type": "url", "id": "button_link_left", "label": "按钮链接" },
+    { "type": "header", "content": "右侧" },
+    { "type": "image_picker", "id": "image_right", "label": "图片" },
+    { "type": "text", "id": "title_right", "label": "标题" },
+    { "type": "textarea", "id": "text_right", "label": "描述" },
+    { "type": "text", "id": "button_text_right", "label": "按钮文字" },
+    { "type": "url", "id": "button_link_right", "label": "按钮链接" },
+    { "type": "range", "id": "overlay_opacity", "label": "遮罩透明度", "min": 0, "max": 1, "step": 0.1, "default": 0.3 }
+  ],
+  "presets": [{ "name": "MK Split Banner" }]
+}
+{% endschema %}

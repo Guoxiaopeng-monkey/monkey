@@ -1,0 +1,118 @@
+{%- comment -%}
+  MK Countdown Full板块
+
+  全屏倒计时
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-countdown-full color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-countdown-full__bg">
+    {%- if ss.image != blank -%}
+      {{ ss.image | image_url: width: 1920 | image_tag: loading: 'lazy', class: 'mk-countdown-full__image' }}
+    {%- endif -%}
+    <div class="mk-countdown-full__overlay"></div>
+  </div>
+
+  <div class="mk-countdown-full__content">
+    {%- if ss.badge != blank -%}
+      <span class="mk-countdown-full__badge">{{ ss.badge }}</span>
+    {%- endif -%}
+
+    {%- if ss.title != blank -%}
+      <h2 class="mk-countdown-full__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-countdown-full__countdown" data-countdown-full data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+      <div class="mk-countdown-full__item">
+        <span class="mk-countdown-full__num" data-days>00</span>
+        <span class="mk-countdown-full__label">天</span>
+      </div>
+      <span class="mk-countdown-full__sep">:</span>
+      <div class="mk-countdown-full__item">
+        <span class="mk-countdown-full__num" data-hours>00</span>
+        <span class="mk-countdown-full__label">时</span>
+      </div>
+      <span class="mk-countdown-full__sep">:</span>
+      <div class="mk-countdown-full__item">
+        <span class="mk-countdown-full__num" data-minutes>00</span>
+        <span class="mk-countdown-full__label">分</span>
+      </div>
+      <span class="mk-countdown-full__sep">:</span>
+      <div class="mk-countdown-full__item">
+        <span class="mk-countdown-full__num" data-seconds>00</span>
+        <span class="mk-countdown-full__label">秒</span>
+      </div>
+    </div>
+
+    {%- if ss.button_text != blank -%}
+      <a href="{{ ss.button_link | default: '#' }}" class="mk-countdown-full__button">{{ ss.button_text }}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-countdown-full { position: relative; min-height: {{ ss.height_mobile | default: 500 }}px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  @media (min-width: 750px) { .mk-countdown-full { min-height: {{ ss.height_desktop | default: 700 }}px; } }
+  .mk-countdown-full__bg { position: absolute; inset: 0; }
+  .mk-countdown-full__image { width: 100%; height: 100%; object-fit: cover; }
+  .mk-countdown-full__overlay { position: absolute; inset: 0; background: rgba(0,0,0,{{ ss.overlay_opacity | default: 0.5 }}); }
+  .mk-countdown-full__content { position: relative; z-index: 1; text-align: center; padding: 48px 24px; }
+  .mk-countdown-full__badge { display: inline-block; padding: 6px 16px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #fff; background: var(--color-primary, #000); border-radius: 100px; margin-bottom: 20px; }
+  .mk-countdown-full__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; color: #fff; max-width: 600px; }
+  @media (min-width: 750px) { .mk-countdown-full__title { font-size: 42px; } }
+  .mk-countdown-full__countdown { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 32px; }
+  .mk-countdown-full__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .mk-countdown-full__num { min-width: 72px; padding: 16px; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 12px; font-size: 32px; font-weight: 700; color: #fff; text-align: center; }
+  @media (min-width: 750px) { .mk-countdown-full__num { min-width: 88px; font-size: 40px; } }
+  .mk-countdown-full__label { font-size: 11px; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+  .mk-countdown-full__sep { font-size: 32px; font-weight: 700; color: rgba(255,255,255,0.5); }
+  .mk-countdown-full__button { display: inline-flex; padding: 16px 40px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+  .mk-countdown-full__button:hover { opacity: 0.85; }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const countdown = document.querySelector('[data-countdown-full]');
+    if (!countdown) return;
+    const endDate = new Date(countdown.dataset.end).getTime();
+    function update() {
+      const now = Date.now();
+      const diff = Math.max(0, endDate - now);
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+      countdown.querySelector('[data-days]').textContent = String(days).padStart(2, '0');
+      countdown.querySelector('[data-hours]').textContent = String(hours).padStart(2, '0');
+      countdown.querySelector('[data-minutes]').textContent = String(minutes).padStart(2, '0');
+      countdown.querySelector('[data-seconds]').textContent = String(seconds).padStart(2, '0');
+    }
+    update();
+    setInterval(update, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown Full",
+  "tag": "section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "背景图片" },
+    { "type": "text", "id": "badge", "label": "徽章" },
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "end_date", "label": "结束日期", "info": "格式: YYYY-MM-DD HH:MM" },
+    { "type": "text", "id": "button_text", "label": "按钮文字" },
+    { "type": "url", "id": "button_link", "label": "按钮链接" },
+    { "type": "range", "id": "overlay_opacity", "label": "遮罩透明度", "min": 0, "max": 1, "step": 0.1, "default": 0.5 },
+    { "type": "range", "id": "height_mobile", "label": "高度 (移动端)", "min": 300, "max": 800, "default": 500, "unit": "px" },
+    { "type": "range", "id": "height_desktop", "label": "高度 (PC端)", "min": 500, "max": 1000, "default": 700, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Countdown Full" }]
+}
+{% endschema %}

@@ -1,0 +1,74 @@
+{%- comment -%}
+  MK Countdown Dark 2板块
+
+  深色倒计时第二版
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-countdown-dark-2">
+  <div class="mk-countdown-dark-2__bg">
+    {%- if ss.image != blank -%}
+      {{ ss.image | image_url: width: 1920 | image_tag: loading: 'lazy', class: 'mk-countdown-dark-2__image' }}
+    {%- endif -%}
+    <div class="mk-countdown-dark-2__overlay"></div>
+  </div>
+  <div class="mk-countdown-dark-2__content">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-countdown-dark-2__title">{{ ss.title }}</h2>
+    {%- endif -%}
+    <div class="mk-countdown-dark-2__countdown" data-countdown-dark-2 data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+      <div class="mk-countdown-dark-2__item"><span class="mk-countdown-dark-2__num" data-days>00</span><span class="mk-countdown-dark-2__label">Days</span></div>
+      <div class="mk-countdown-dark-2__item"><span class="mk-countdown-dark-2__num" data-hours>00</span><span class="mk-countdown-dark-2__label">Hours</span></div>
+      <div class="mk-countdown-dark-2__item"><span class="mk-countdown-dark-2__num" data-minutes>00</span><span class="mk-countdown-dark-2__label">Minutes</span></div>
+      <div class="mk-countdown-dark-2__item"><span class="mk-countdown-dark-2__num" data-seconds>00</span><span class="mk-countdown-dark-2__label">Seconds</span></div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-countdown-dark-2 { position: relative; min-height: 500px; display: flex; align-items: center; }
+  .mk-countdown-dark-2__bg { position: absolute; inset: 0; }
+  .mk-countdown-dark-2__image { width: 100%; height: 100%; object-fit: cover; }
+  .mk-countdown-dark-2__overlay { position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.4)); }
+  .mk-countdown-dark-2__content { position: relative; z-index: 1; width: 100%; max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 64px 32px; }
+  .mk-countdown-dark-2__title { margin: 0 0 40px 0; font-size: 40px; font-weight: 700; color: #fff; }
+  .mk-countdown-dark-2__countdown { display: flex; gap: 24px; }
+  .mk-countdown-dark-2__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .mk-countdown-dark-2__num { min-width: 80px; padding: 20px; background: #e94560; border-radius: 12px; font-size: 40px; font-weight: 700; color: #fff; }
+  .mk-countdown-dark-2__label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.7); }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const c = document.querySelector('[data-countdown-dark-2]');
+    if (!c) return;
+    const end = new Date(c.dataset.end).getTime();
+    function u() {
+      const now = Date.now(), diff = Math.max(0, end - now);
+      const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+      c.querySelector('[data-days]').textContent = String(d).padStart(2,'0');
+      c.querySelector('[data-hours]').textContent = String(h).padStart(2,'0');
+      c.querySelector('[data-minutes]').textContent = String(m).padStart(2,'0');
+      c.querySelector('[data-seconds]').textContent = String(s).padStart(2,'0');
+    }
+    u(); setInterval(u, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown Dark 2",
+  "tag": "section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "背景图片" },
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "end_date", "label": "结束日期" }
+  ],
+  "presets": [{ "name": "MK Countdown Dark 2" }]
+}
+{% endschema %}

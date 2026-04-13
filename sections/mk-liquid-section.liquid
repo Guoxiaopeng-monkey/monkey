@@ -1,0 +1,40 @@
+{%- comment -%}
+  MK Liquid Section板块
+
+  Liquid代码区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-liquid-section color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-liquid-section__container">
+    {{ ss.liquid_code }}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-liquid-section { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-liquid-section { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-liquid-section__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Liquid Section",
+  "tag": "section",
+  "settings": [
+    { "type": "liquid", "id": "liquid_code", "label": "Liquid代码" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Liquid Section" }]
+}
+{% endschema %}

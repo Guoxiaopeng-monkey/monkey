@@ -1,0 +1,72 @@
+{%- comment -%}
+  MK Recently Viewed Section板块
+
+  最近浏览区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-recently-viewed-section color-{{ ss.color_scheme | default: 'background-1' }}" data-recently-viewed-section data-limit="{{ ss.limit | default: 8 }}">
+  <div class="mk-recently-viewed-section__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-recently-viewed-section__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-recently-viewed-section__grid" data-recently-viewed-grid></div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-recently-viewed-section { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-recently-viewed-section { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-recently-viewed-section__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-recently-viewed-section__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-recently-viewed-section__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  @media (min-width: 750px) { .mk-recently-viewed-section__grid { grid-template-columns: repeat(4, 1fr); gap: 24px; } }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const section = document.querySelector('[data-recently-viewed-section]');
+    if (!section) return;
+    const limit = parseInt(section.dataset.limit) || 8;
+    const key = 'mk_recently_viewed';
+    const ids = JSON.parse(localStorage.getItem(key) || '[]').slice(0, limit);
+    if (ids.length === 0) { section.style.display = 'none'; return; }
+    const grid = section.querySelector('[data-recently-viewed-grid]');
+    ids.forEach(id => {
+      fetch(`/products/${id}.json`).then(r => r.json()).then(data => {
+        const p = data.product;
+        const img = p.images[0];
+        const html = `<a href="/products/${p.handle}" class="mk-recently-viewed-section__item">
+          <div class="mk-recently-viewed-section__image"><img src="${img}" alt="${p.title}"></div>
+          <h3 class="mk-recently-viewed-section__product-title">${p.title}</h3>
+          <p class="mk-recently-viewed-section__price">${p.price / 100}</p>
+        </a>`;
+        grid.insertAdjacentHTML('beforeend', html);
+      }).catch(() => {});
+    });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Recently Viewed Section",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题", "default": "最近浏览" },
+    { "type": "range", "id": "limit", "label": "显示数量", "min": 4, "max": 16, "default": 8 },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Recently Viewed Section" }]
+}
+{% endschema %}

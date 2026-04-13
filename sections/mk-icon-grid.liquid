@@ -1,0 +1,79 @@
+{%- comment -%}
+  MK Icon Grid板块
+
+  图标网格展示
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-icon-grid color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-icon-grid__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-icon-grid__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-icon-grid__grid">
+      {%- for i in (1..6) -%}
+        {%- assign icon_setting = 'icon_' | append: i -%}
+        {%- assign title_setting = 'title_' | append: i -%}
+        {%- assign text_setting = 'text_' | append: i -%}
+
+        {%- if ss[title_setting] != blank -%}
+          <div class="mk-icon-grid__item">
+            {%- if ss[icon_setting] != blank -%}
+              <div class="mk-icon-grid__icon">
+                {{ ss[icon_setting] | default: 'icon-check.svg' | inline_asset_content }}
+              </div>
+            {%- endif -%}
+            <h3 class="mk-icon-grid__item-title">{{ ss[title_setting] }}</h3>
+            {%- if ss[text_setting] != blank -%}
+              <p class="mk-icon-grid__text">{{ ss[text_setting] }}</p>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-icon-grid { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-icon-grid { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-icon-grid__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-icon-grid__title { margin: 0 0 40px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-icon-grid__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+  @media (min-width: 750px) { .mk-icon-grid__grid { grid-template-columns: repeat(3, 1fr); gap: 48px; } }
+  @media (min-width: 1024px) { .mk-icon-grid__grid { grid-template-columns: repeat(6, 1fr); } }
+  .mk-icon-grid__item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; }
+  .mk-icon-grid__icon { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: var(--color-background-secondary, #f5f5f5); border-radius: 50%; }
+  .mk-icon-grid__icon svg { width: 28px; height: 28px; color: var(--color-primary, #000); }
+  .mk-icon-grid__item-title { margin: 0; font-size: 14px; font-weight: 600; }
+  .mk-icon-grid__text { margin: 0; font-size: 13px; color: var(--color-text-secondary, #666); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Icon Grid",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "header", "content": "项 1" }, { "type": "text", "id": "icon_1", "label": "图标 1" }, { "type": "text", "id": "title_1", "label": "标题 1" }, { "type": "textarea", "id": "text_1", "label": "描述 1" },
+    { "type": "header", "content": "项 2" }, { "type": "text", "id": "icon_2", "label": "图标 2" }, { "type": "text", "id": "title_2", "label": "标题 2" }, { "type": "textarea", "id": "text_2", "label": "描述 2" },
+    { "type": "header", "content": "项 3" }, { "type": "text", "id": "icon_3", "label": "图标 3" }, { "type": "text", "id": "title_3", "label": "标题 3" }, { "type": "textarea", "id": "text_3", "label": "描述 3" },
+    { "type": "header", "content": "项 4" }, { "type": "text", "id": "icon_4", "label": "图标 4" }, { "type": "text", "id": "title_4", "label": "标题 4" }, { "type": "textarea", "id": "text_4", "label": "描述 4" },
+    { "type": "header", "content": "项 5" }, { "type": "text", "id": "icon_5", "label": "图标 5" }, { "type": "text", "id": "title_5", "label": "标题 5" }, { "type": "textarea", "id": "text_5", "label": "描述 5" },
+    { "type": "header", "content": "项 6" }, { "type": "text", "id": "icon_6", "label": "图标 6" }, { "type": "text", "id": "title_6", "label": "标题 6" }, { "type": "textarea", "id": "text_6", "label": "描述 6" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Icon Grid" }]
+}
+{% endschema %}

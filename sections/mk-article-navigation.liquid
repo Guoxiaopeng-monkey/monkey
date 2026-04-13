@@ -1,0 +1,63 @@
+{%- comment -%}
+  MK Article Navigation Section板块
+
+  文章导航区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-article-navigation color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-article-navigation__container">
+    {%- if article.previous_or_next != blank -%}
+      <div class="mk-article-navigation__prev">
+        {%- if article.previous_or_next.previous_article -%}
+          <a href="{{ article.previous_or_next.previous_article.url }}" class="mk-article-navigation__link">
+            <span class="mk-article-navigation__label">{{ 'article.previous' | t | default: '上一篇' }}</span>
+            <span class="mk-article-navigation__title">{{ article.previous_or_next.previous_article.title }}</span>
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <a href="{{ blog.url }}" class="mk-article-navigation__back">
+      {{ 'article.back_to' | t | default: '返回博客' }}
+    </a>
+
+    {%- if article.previous_or_next != blank -%}
+      <div class="mk-article-navigation__next">
+        {%- if article.previous_or_next.next_article -%}
+          <a href="{{ article.previous_or_next.next_article.url }}" class="mk-article-navigation__link">
+            <span class="mk-article-navigation__label">{{ 'article.next' | t | default: '下一篇' }}</span>
+            <span class="mk-article-navigation__title">{{ article.previous_or_next.next_article.title }}</span>
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-article-navigation { padding: 32px 0; border-top: 1px solid var(--color-border); }
+  .mk-article-navigation__container { max-width: var(--container-max-width, 800px); margin: 0 auto; padding: 0 var(--container-padding, 32px); display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .mk-article-navigation__link { display: flex; flex-direction: column; gap: 4px; text-decoration: none; }
+  .mk-article-navigation__prev { text-align: left; }
+  .mk-article-navigation__next { text-align: right; }
+  .mk-article-navigation__label { font-size: 12px; color: var(--color-text-secondary, #666); }
+  .mk-article-navigation__title { font-size: 14px; font-weight: 600; color: var(--color-foreground); }
+  .mk-article-navigation__back { padding: 10px 20px; font-size: 13px; font-weight: 600; color: var(--color-foreground); border: 1px solid var(--color-border); border-radius: 8px; text-decoration: none; white-space: nowrap; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Article Navigation",
+  "tag": "section",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Article Navigation" }]
+}
+{% endschema %}

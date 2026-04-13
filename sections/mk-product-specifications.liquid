@@ -1,0 +1,72 @@
+{%- comment -%}
+  MK Product Specifications板块
+
+  产品规格表
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-product-specifications color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-product-specifications__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-product-specifications__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <table class="mk-product-specifications__table">
+      <tbody>
+        {%- for i in (1..8) -%}
+          {%- assign label_setting = 'label_' | append: i -%}
+          {%- assign value_setting = 'value_' | append: i -%}
+
+          {%- if ss[label_setting] != blank -%}
+            <tr class="mk-product-specifications__row">
+              <th class="mk-product-specifications__label">{{ ss[label_setting] }}</th>
+              <td class="mk-product-specifications__value">{{ ss[value_setting] }}</td>
+            </tr>
+          {%- endif -%}
+        {%- endfor -%}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-product-specifications { padding: {{ ss.padding_top_mobile | default: 32 }}px 0 {{ ss.padding_bottom_mobile | default: 32 }}px; }
+  @media (min-width: 750px) { .mk-product-specifications { padding: {{ ss.padding_top_desktop | default: 48 }}px 0 {{ ss.padding_bottom_desktop | default: 48 }}px; } }
+  .mk-product-specifications__container { max-width: var(--container-max-width, 800px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-product-specifications__title { margin: 0 0 24px 0; font-size: 20px; font-weight: 700; }
+  .mk-product-specifications__table { width: 100%; border-collapse: collapse; }
+  .mk-product-specifications__row { border-bottom: 1px solid var(--color-border); }
+  .mk-product-specifications__label { padding: 12px 0; font-size: 14px; font-weight: 500; text-align: left; color: var(--color-text-secondary, #666); width: 40%; }
+  .mk-product-specifications__value { padding: 12px 0; font-size: 14px; font-weight: 500; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Product Specifications",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题", "default": "产品规格" },
+    { "type": "header", "content": "规格项" },
+    { "type": "text", "id": "label_1", "label": "标签 1" }, { "type": "text", "id": "value_1", "label": "值 1" },
+    { "type": "text", "id": "label_2", "label": "标签 2" }, { "type": "text", "id": "value_2", "label": "值 2" },
+    { "type": "text", "id": "label_3", "label": "标签 3" }, { "type": "text", "id": "value_3", "label": "值 3" },
+    { "type": "text", "id": "label_4", "label": "标签 4" }, { "type": "text", "id": "value_4", "label": "值 4" },
+    { "type": "text", "id": "label_5", "label": "标签 5" }, { "type": "text", "id": "value_5", "label": "值 5" },
+    { "type": "text", "id": "label_6", "label": "标签 6" }, { "type": "text", "id": "value_6", "label": "值 6" },
+    { "type": "text", "id": "label_7", "label": "标签 7" }, { "type": "text", "id": "value_7", "label": "值 7" },
+    { "type": "text", "id": "label_8", "label": "标签 8" }, { "type": "text", "id": "value_8", "label": "值 8" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 80, "default": 32, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 80, "default": 32, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Product Specifications" }]
+}
+{% endschema %}

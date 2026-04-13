@@ -1,0 +1,75 @@
+{%- comment -%}
+  MK Countdown Image板块
+
+  图片背景倒计时
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-countdown-image color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-countdown-image__bg">
+    {%- if ss.image != blank -%}
+      {{ ss.image | image_url: width: 1920 | image_tag: loading: 'lazy', class: 'mk-countdown-image__image' }}
+    {%- endif -%}
+    <div class="mk-countdown-image__overlay"></div>
+  </div>
+  <div class="mk-countdown-image__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-countdown-image__title">{{ ss.title }}</h2>
+    {%- endif -%}
+    <div class="mk-countdown-image__countdown" data-countdown-image data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+      <div class="mk-countdown-image__item"><span class="mk-countdown-image__num" data-days>00</span><span class="mk-countdown-image__label">天</span></div>
+      <div class="mk-countdown-image__item"><span class="mk-countdown-image__num" data-hours>00</span><span class="mk-countdown-image__label">时</span></div>
+      <div class="mk-countdown-image__item"><span class="mk-countdown-image__num" data-minutes>00</span><span class="mk-countdown-image__label">分</span></div>
+      <div class="mk-countdown-image__item"><span class="mk-countdown-image__num" data-seconds>00</span><span class="mk-countdown-image__label">秒</span></div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-countdown-image { position: relative; min-height: 500px; display: flex; align-items: center; overflow: hidden; }
+  .mk-countdown-image__bg { position: absolute; inset: 0; }
+  .mk-countdown-image__image { width: 100%; height: 100%; object-fit: cover; }
+  .mk-countdown-image__overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
+  .mk-countdown-image__container { position: relative; z-index: 1; width: 100%; max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 64px 32px; text-align: center; }
+  .mk-countdown-image__title { margin: 0 0 32px 0; font-size: 36px; font-weight: 700; color: #fff; }
+  .mk-countdown-image__countdown { display: flex; justify-content: center; gap: 24px; }
+  .mk-countdown-image__item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .mk-countdown-image__num { min-width: 80px; padding: 16px; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 12px; font-size: 36px; font-weight: 700; color: #fff; text-align: center; }
+  .mk-countdown-image__label { font-size: 12px; color: rgba(255,255,255,0.8); }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const c = document.querySelector('[data-countdown-image]');
+    if (!c) return;
+    const end = new Date(c.dataset.end).getTime();
+    function u() {
+      const now = Date.now(), diff = Math.max(0, end - now);
+      const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+      c.querySelector('[data-days]').textContent = String(d).padStart(2,'0');
+      c.querySelector('[data-hours]').textContent = String(h).padStart(2,'0');
+      c.querySelector('[data-minutes]').textContent = String(m).padStart(2,'0');
+      c.querySelector('[data-seconds]').textContent = String(s).padStart(2,'0');
+    }
+    u(); setInterval(u, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown Image",
+  "tag": "section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "背景图片" },
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "end_date", "label": "结束日期" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Countdown Image" }]
+}
+{% endschema %}

@@ -1,0 +1,103 @@
+{%- comment -%}
+  MK Countdown Clock板块
+
+  时钟样式倒计时
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-countdown-clock color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-countdown-clock__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-countdown-clock__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-countdown-clock__display" data-countdown-clock data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+      <div class="mk-countdown-clock__time">
+        <span class="mk-countdown-clock__num" data-days>00</span>
+        <span class="mk-countdown-clock__unit">Days</span>
+      </div>
+      <span class="mk-countdown-clock__colon">:</span>
+      <div class="mk-countdown-clock__time">
+        <span class="mk-countdown-clock__num" data-hours>00</span>
+        <span class="mk-countdown-clock__unit">Hours</span>
+      </div>
+      <span class="mk-countdown-clock__colon">:</span>
+      <div class="mk-countdown-clock__time">
+        <span class="mk-countdown-clock__num" data-minutes>00</span>
+        <span class="mk-countdown-clock__unit">Minutes</span>
+      </div>
+      <span class="mk-countdown-clock__colon">:</span>
+      <div class="mk-countdown-clock__time">
+        <span class="mk-countdown-clock__num" data-seconds>00</span>
+        <span class="mk-countdown-clock__unit">Seconds</span>
+      </div>
+    </div>
+
+    {%- if ss.button_text != blank -%}
+      <a href="{{ ss.button_link | default: '#' }}" class="mk-countdown-clock__button">{{ ss.button_text }}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-countdown-clock { padding: {{ ss.padding_top_mobile | default: 64 }}px 0 {{ ss.padding_bottom_mobile | default: 64 }}px; background: var(--color-background-secondary, #f5f5f5); }
+  @media (min-width: 750px) { .mk-countdown-clock { padding: {{ ss.padding_top_desktop | default: 96 }}px 0 {{ ss.padding_bottom_desktop | default: 96 }}px; } }
+  .mk-countdown-clock__container { max-width: var(--container-max-width, 900px); margin: 0 auto; padding: 0 var(--container-padding, 32px); text-align: center; }
+  .mk-countdown-clock__title { margin: 0 0 40px 0; font-size: 28px; font-weight: 700; }
+  .mk-countdown-clock__display { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 32px; }
+  .mk-countdown-clock__time { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .mk-countdown-clock__num { min-width: 80px; padding: 16px; background: var(--color-background); border-radius: 12px; font-size: 36px; font-weight: 700; }
+  @media (min-width: 750px) { .mk-countdown-clock__num { min-width: 100px; padding: 20px; font-size: 48px; } }
+  .mk-countdown-clock__unit { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-secondary, #666); }
+  .mk-countdown-clock__colon { font-size: 36px; font-weight: 700; color: var(--color-text-secondary, #666); }
+  @media (min-width: 750px) { .mk-countdown-clock__colon { font-size: 48px; } }
+  .mk-countdown-clock__button { display: inline-flex; padding: 16px 40px; font-size: 14px; font-weight: 600; color: var(--color-on-primary, #fff); background: var(--color-primary, #000); border-radius: 8px; text-decoration: none; }
+  .mk-countdown-clock__button:hover { opacity: 0.85; }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const countdown = document.querySelector('[data-countdown-clock]');
+    if (!countdown) return;
+    const endDate = new Date(countdown.dataset.end).getTime();
+    function update() {
+      const now = Date.now();
+      const diff = Math.max(0, endDate - now);
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+      countdown.querySelector('[data-days]').textContent = String(days).padStart(2, '0');
+      countdown.querySelector('[data-hours]').textContent = String(hours).padStart(2, '0');
+      countdown.querySelector('[data-minutes]').textContent = String(minutes).padStart(2, '0');
+      countdown.querySelector('[data-seconds]').textContent = String(seconds).padStart(2, '0');
+    }
+    update();
+    setInterval(update, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown Clock",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "text", "id": "end_date", "label": "结束日期", "info": "格式: YYYY-MM-DD HH:MM" },
+    { "type": "text", "id": "button_text", "label": "按钮文字" },
+    { "type": "url", "id": "button_link", "label": "按钮链接" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 64, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 64, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 96, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 96, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Countdown Clock" }]
+}
+{% endschema %}

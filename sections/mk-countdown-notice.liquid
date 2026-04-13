@@ -1,0 +1,57 @@
+{%- comment -%}
+  MK Countdown Notice板块
+
+  通知倒计时
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<div id="{{ section.id }}" class="mk-countdown-notice" data-countdown-notice data-end="{{ ss.end_date | default: '' | date: '%Y-%m-%dT%H:%M:%S' }}">
+  <div class="mk-countdown-notice__container">
+    <span class="mk-countdown-notice__icon">{{- 'icon-clock.svg' | inline_asset_content -}}</span>
+    <span class="mk-countdown-notice__text">{{ ss.text | default: 'Offer ends in' }}:</span>
+    <span class="mk-countdown-notice__time"><span data-days>00</span>d <span data-hours>00</span>h <span data-minutes>00</span>m <span data-seconds>00</span>s</span>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-countdown-notice { padding: 10px 0; background: var(--color-background-secondary, #f5f5f5); }
+  .mk-countdown-notice__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 32px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .mk-countdown-notice__icon { display: flex; }
+  .mk-countdown-notice__icon svg { width: 18px; height: 18px; }
+  .mk-countdown-notice__text { font-size: 13px; font-weight: 500; }
+  .mk-countdown-notice__time { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const c = document.querySelector('[data-countdown-notice]');
+    if (!c) return;
+    const end = new Date(c.dataset.end).getTime();
+    function u() {
+      const now = Date.now(), diff = Math.max(0, end - now);
+      const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+      c.querySelector('[data-days]').textContent = String(d).padStart(2,'0');
+      c.querySelector('[data-hours]').textContent = String(h).padStart(2,'0');
+      c.querySelector('[data-minutes]').textContent = String(m).padStart(2,'0');
+      c.querySelector('[data-seconds]').textContent = String(s).padStart(2,'0');
+    }
+    u(); setInterval(u, 1000);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Countdown Notice",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "text", "label": "文字" },
+    { "type": "text", "id": "end_date", "label": "结束日期" }
+  ],
+  "presets": [{ "name": "MK Countdown Notice" }]
+}
+{% endschema %}

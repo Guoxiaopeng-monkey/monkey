@@ -1,0 +1,82 @@
+{%- comment -%}
+  MK Image Hotspot Advanced板块
+
+  高级图片热点
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-image-hotspot-advanced color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-image-hotspot-advanced__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-image-hotspot-advanced__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-image-hotspot-advanced__wrapper">
+      {%- if ss.image != blank -%}
+        {{ ss.image | image_url: width: 1200 | image_tag: loading: 'lazy', class: 'mk-image-hotspot-advanced__image' }}
+      {%- endif -%}
+
+      <div class="mk-image-hotspot-advanced__spots">
+        {%- for i in (1..8) -%}
+          {%- assign x_setting = 'spot_x_' | append: i -%}
+          {%- assign y_setting = 'spot_y_' | append: i -%}
+          {%- assign product_setting = 'spot_product_' | append: i -%}
+          {%- assign label_setting = 'spot_label_' | append: i -%}
+
+          {%- if ss[product_setting] != blank -%}
+            {%- assign product = all_products[ss[product_setting]] -%}
+            <a href="{{ product.url }}" class="mk-image-hotspot-advanced__spot" style="left: {{ ss[x_setting] }}%; top: {{ ss[y_setting] }}%;" title="{{ ss[label_setting] }}">
+              <span class="mk-image-hotspot-advanced__dot"></span>
+              <span class="mk-image-hotspot-advanced__pulse"></span>
+              {%- if ss[label_setting] != blank -%}
+                <span class="mk-image-hotspot-advanced__tooltip">{{ ss[label_setting] }}</span>
+              {%- endif -%}
+            </a>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-image-hotspot-advanced { padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px; }
+  @media (min-width: 750px) { .mk-image-hotspot-advanced { padding: {{ ss.padding_top_desktop | default: 80 }}px 0 {{ ss.padding_bottom_desktop | default: 80 }}px; } }
+  .mk-image-hotspot-advanced__container { max-width: var(--container-max-width, 1200px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-image-hotspot-advanced__title { margin: 0 0 32px 0; font-size: 28px; font-weight: 700; text-align: center; }
+  .mk-image-hotspot-advanced__wrapper { position: relative; display: inline-block; width: 100%; }
+  .mk-image-hotspot-advanced__image { width: 100%; height: auto; border-radius: 16px; }
+  .mk-image-hotspot-advanced__spots { position: absolute; inset: 0; }
+  .mk-image-hotspot-advanced__spot { position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; cursor: pointer; }
+  .mk-image-hotspot-advanced__dot { position: relative; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--color-primary, #000); color: #fff; border-radius: 50%; font-size: 14px; font-weight: 700; z-index: 2; }
+  .mk-image-hotspot-advanced__pulse { position: absolute; width: 100%; height: 100%; background: var(--color-primary, #000); border-radius: 50%; opacity: 0.3; z-index: 1; animation: hotspot-pulse 2s ease-in-out infinite; }
+  @keyframes hotspot-pulse { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.8); opacity: 0; } }
+  .mk-image-hotspot-advanced__tooltip { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); padding: 6px 12px; font-size: 12px; font-weight: 600; color: #fff; background: var(--color-primary, #000); border-radius: 6px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+  .mk-image-hotspot-advanced__spot:hover .mk-image-hotspot-advanced__tooltip { opacity: 1; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Image Hotspot Advanced",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "image_picker", "id": "image", "label": "图片" },
+    { "type": "header", "content": "热点" },
+    { "type": "product", "id": "spot_product_1", "label": "产品 1" }, { "type": "range", "id": "spot_x_1", "label": "X %", "min": 0, "max": 100, "default": 50 }, { "type": "range", "id": "spot_y_1", "label": "Y %", "min": 0, "max": 100, "default": 50 }, { "type": "text", "id": "spot_label_1", "label": "标签 1" },
+    { "type": "product", "id": "spot_product_2", "label": "产品 2" }, { "type": "range", "id": "spot_x_2", "label": "X %", "min": 0, "max": 100, "default": 50 }, { "type": "range", "id": "spot_y_2", "label": "Y %", "min": 0, "max": 100, "default": 50 }, { "type": "text", "id": "spot_label_2", "label": "标签 2" },
+    { "type": "header", "content": "间距" },
+    { "type": "range", "id": "padding_top_mobile", "label": "上边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "下边距 (移动端)", "min": 0, "max": 120, "default": 48, "unit": "px" },
+    { "type": "range", "id": "padding_top_desktop", "label": "上边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "下边距 (PC端)", "min": 0, "max": 200, "default": 80, "unit": "px" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Image Hotspot Advanced" }]
+}
+{% endschema %}

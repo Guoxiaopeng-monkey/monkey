@@ -1,0 +1,53 @@
+{%- comment -%}
+  MK Back To Top Section板块
+
+  返回顶部区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<div id="{{ section.id }}" class="mk-back-to-top-section" data-back-to-top-section data-show-after="{{ ss.show_after | default: 300 }}">
+  <button type="button" class="mk-back-to-top-section__btn" aria-label="返回顶部">
+    {{- 'icon-arrow-up.svg' | inline_asset_content -}}
+    {%- if ss.show_text -%}
+      <span>{{ ss.text | default: '返回顶部' }}</span>
+    {%- endif -%}
+  </button>
+</div>
+
+{% stylesheet %}
+  .mk-back-to-top-section { position: fixed; bottom: 24px; right: 24px; z-index: 9996; opacity: 0; visibility: hidden; transition: all 0.3s ease; transform: translateY(10px); }
+  .mk-back-to-top-section.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+  .mk-back-to-top-section__btn { display: flex; align-items: center; gap: 8px; padding: 12px 16px; font-size: 13px; font-weight: 600; color: #fff; background: var(--color-primary, #000); border: none; border-radius: 100px; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+  .mk-back-to-top-section__btn svg { width: 18px; height: 18px; }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    const btn = document.querySelector('[data-back-to-top-section]');
+    if (!btn) return;
+    const showAfter = parseInt(btn.dataset.showAfter) || 300;
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > showAfter) btn.classList.add('visible');
+      else btn.classList.remove('visible');
+    }, { passive: true });
+    btn.querySelector('button')?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK Back To Top Section",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "text", "label": "文字" },
+    { "type": "checkbox", "id": "show_text", "label": "显示文字", "default": false },
+    { "type": "range", "id": "show_after", "label": "滚动多少像素后显示", "min": 100, "max": 1000, "default": 300, "unit": "px" }
+  ],
+  "presets": [{ "name": "MK Back To Top Section" }]
+}
+{% endschema %}

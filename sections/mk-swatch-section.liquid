@@ -1,0 +1,60 @@
+{%- comment -%}
+  MK Swatch Section板块
+
+  色块选择区块
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section id="{{ section.id }}" class="mk-swatch-section color-{{ ss.color_scheme | default: 'background-1' }}">
+  <div class="mk-swatch-section__container">
+    {%- if ss.title != blank -%}
+      <h3 class="mk-swatch-section__title">{{ ss.title }}</h3>
+    {%- endif -%}
+
+    <div class="mk-swatch-section__swatches">
+      {%- assign colors = ss.colors | split: ',' -%}
+      {%- assign names = ss.names | split: ',' -%}
+      {%- for color in colors -%}
+        {%- assign color_name = names[forloop.index0] | default: color | strip -%}
+        {%- assign color_value = color | strip | downcase | replace: ' ', '-' -%}
+        <button
+          type="button"
+          class="mk-swatch-section__swatch {% if forloop.first %}selected{% endif %}"
+          data-color="{{ color_value }}"
+          style="--swatch-color: {{ color_value }};"
+          title="{{ color_name }}"
+        ></button>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-swatch-section { padding: 24px 0; }
+  .mk-swatch-section__container { max-width: var(--container-max-width, 600px); margin: 0 auto; padding: 0 var(--container-padding, 32px); }
+  .mk-swatch-section__title { margin: 0 0 16px 0; font-size: 16px; font-weight: 600; }
+  .mk-swatch-section__swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mk-swatch-section__swatch { width: 36px; height: 36px; padding: 3px; background: transparent; border: 2px solid transparent; border-radius: 50%; cursor: pointer; transition: all 0.2s ease; }
+  .mk-swatch-section__swatch:hover { border-color: var(--color-border); }
+  .mk-swatch-section__swatch.selected { border-color: var(--color-primary, #000); }
+  .mk-swatch-section__swatch::before { content: ''; display: block; width: 100%; height: 100%; background-color: var(--swatch-color); border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Swatch Section",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "标题" },
+    { "type": "textarea", "id": "colors", "label": "颜色值 (逗号分隔)", "info": "如: Red, Blue, Green, #ff0000" },
+    { "type": "textarea", "id": "names", "label": "颜色名称 (逗号分隔)", "info": "对应颜色名称" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "颜色方案", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "MK Swatch Section" }]
+}
+{% endschema %}

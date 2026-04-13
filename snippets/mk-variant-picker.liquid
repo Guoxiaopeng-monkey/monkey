@@ -1,0 +1,252 @@
+{%- doc -%}
+  MK 变体选择器组件
+
+  渲染产品的变体选择选项
+
+  @param {object} product - 产品对象
+  @param {string} [option_style] - 选项样式：'dropdown'、'buttons'、'swatches'
+
+  @example
+  {% render 'mk-variant-picker', product: product, option_style: 'swatches' %}
+{%- enddoc -%}
+
+{% liquid
+  assign option_style = option_style | default: 'buttons'
+-%}
+
+<div class="mk-variant-picker" data-option-style="{{ option_style }}">
+  {%- for option in product.options_with_values -%}
+    <div class="mk-variant-picker__option" data-option-index="{{ forloop.index0 }}">
+      <span class="mk-variant-picker__label">
+        {{ option.name }}:
+        <span class="mk-variant-picker__selected-value">{{ option.selected_value }}</span>
+      </span>
+
+      <div class="mk-variant-picker__values">
+        {%- if option_style == 'dropdown' -%}
+          <select
+            class="mk-variant-picker__select"
+            name="options[{{ option.name }}]"
+            data-option-index="{{ forloop.index0 }}"
+          >
+            {%- for value in option.values -%}
+              {%- assign is_available = true -%}
+              {%- comment -%} 检查该选项值是否可用 {%- endcomment -%}
+              {%- for variant in product.variants -%}
+                {%- if variant.options[forloop.index0] == value and variant.available == false -%}
+                  {%- assign is_available = false -%}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+
+              <option
+                value="{{ value }}"
+                {% if option.selected_value == value %}
+                  selected
+                {% endif %}
+                {% unless is_available %}
+                  disabled
+                {% endunless %}
+              >
+                {{ value }}{% unless is_available %} - {{ 'products.sold_out' | t | default: '缺货' }}{% endunless %}
+              </option>
+            {%- endfor -%}
+          </select>
+
+        {%- elsif option_style == 'swatches' -%}
+          {%- comment -%} 色块/图案样式的选项 {%- endcomment -%}
+          <div class="mk-variant-picker__swatches">
+            {%- for value in option.values -%}
+              {%- assign is_available = true -%}
+              {%- assign is_selected = false -%}
+              {%- if option.selected_value == value -%}
+                {%- assign is_selected = true -%}
+              {%- endif -%}
+
+              {%- comment -%} 检查可用性 {%- endcomment -%}
+              {%- for variant in product.variants -%}
+                {%- if variant.options[forloop.index0] == value and variant.available == false -%}
+                  {%- assign is_available = false -%}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+
+              <button
+                type="button"
+                class="mk-variant-picker__swatch"
+                data-value="{{ value }}"
+                data-option-index="{{ forloop.index0 }}"
+                {% if is_selected %}
+                  selected
+                {% endif %}
+                {% unless is_available %}
+                  disabled
+                {% endunless %}
+                aria-label="{{ value }}{% unless is_available %} - {{ 'products.sold_out' | t | default: '缺货' }}{% endunless %}"
+              >
+                <span class="mk-variant-picker__swatch-inner">{{ value }}</span>
+              </button>
+            {%- endfor -%}
+          </div>
+
+        {%- else -%}
+          {%- comment -%} 按钮样式的选项 {%- endcomment -%}
+          <div class="mk-variant-picker__buttons">
+            {%- for value in option.values -%}
+              {%- assign is_available = true -%}
+              {%- assign is_selected = false -%}
+              {%- if option.selected_value == value -%}
+                {%- assign is_selected = true -%}
+              {%- endif -%}
+
+              {%- for variant in product.variants -%}
+                {%- if variant.options[forloop.index0] == value and variant.available == false -%}
+                  {%- assign is_available = false -%}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+
+              <button
+                type="button"
+                class="mk-variant-picker__button"
+                data-value="{{ value }}"
+                data-option-index="{{ forloop.index0 }}"
+                {% if is_selected %}
+                  selected
+                {% endif %}
+                {% unless is_available %}
+                  disabled
+                {% endunless %}
+              >
+                {{ value }}
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endfor -%}
+</div>
+
+{% stylesheet %}
+  .mk-variant-picker__option {
+    margin-bottom: 16px;
+  }
+
+  .mk-variant-picker__option:last-child {
+    margin-bottom: 0;
+  }
+
+  .mk-variant-picker__label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .mk-variant-picker__selected-value {
+    font-weight: 400;
+    color: var(--color-text-secondary, #666);
+  }
+
+  /* Select (Dropdown) 样式 */
+  .mk-variant-picker__select {
+    width: 100%;
+    max-width: 300px;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+
+  .mk-variant-picker__select:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+  }
+
+  /* Buttons 样式 */
+  .mk-variant-picker__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mk-variant-picker__button {
+    min-width: 44px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-variant-picker__button:hover:not(:disabled) {
+    border-color: var(--color-foreground);
+  }
+
+  .mk-variant-picker__button[selected] {
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-variant-picker__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    text-decoration: line-through;
+  }
+
+  /* Swatches 样式 */
+  .mk-variant-picker__swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mk-variant-picker__swatch {
+    min-width: 44px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-variant-picker__swatch:hover:not(:disabled) {
+    border-color: var(--color-border);
+  }
+
+  .mk-variant-picker__swatch[selected] {
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-variant-picker__swatch:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    position: relative;
+  }
+
+  .mk-variant-picker__swatch:disabled::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--color-text-secondary, #999);
+    transform: rotate(-45deg);
+  }
+{% endstylesheet %}

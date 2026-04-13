@@ -1,0 +1,48 @@
+{%- doc -%}
+  MK 购物车计数气泡组件
+
+  渲染购物车图标旁的计数气泡
+
+  @param {number} [count] - 购物车商品数量
+
+  @example
+  {% render 'mk-cart-bubble', count: cart.item_count %}
+{%- enddoc -%}
+
+{% liquid
+  assign count = count | default: 0
+-%}
+
+{%- if count > 0 -%}
+  <span class="mk-cart-bubble" data-count="{{ count }}">
+    {%- if count > 9 -%}
+      <span class="mk-cart-bubble__text">9+</span>
+    {%- else -%}
+      <span class="mk-cart-bubble__text">{{ count }}</span>
+    {%- endif -%}
+  </span>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-cart-bubble {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    background-color: var(--color-sale, #e53935);
+    border-radius: 9px;
+    z-index: 1;
+  }
+
+  .mk-cart-bubble__text {
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+  }
+{% endstylesheet %}

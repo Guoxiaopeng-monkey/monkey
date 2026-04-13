@@ -1,0 +1,123 @@
+{%- doc -%}
+  MK 本地化选择器组件
+
+  渲染语言/货币选择器
+
+  @param {string} [type] - 类型：language, country
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-localization', type: 'language' %}
+{%- enddoc -%}
+
+{% liquid
+  assign type = type | default: 'language'
+-%}
+
+<div class="mk-localization mk-localization--{{ type }}" {{ block.shopify_attributes }}>
+  {%- case type -%}
+    {%- when 'language' -%}
+      {%- form 'localization', id: 'LanguageForm', class: 'mk-localization__form' -%}
+        <div class="mk-localization__select">
+          <select
+            class="mk-localization__dropdown"
+            name="locale_code"
+            aria-label="{{ 'general.localization.language' | t | default: '语言' }}"
+          >
+            {%- for locale in form.available_locales -%}
+              <option
+                value="{{ locale.iso_code }}"
+                lang="{{ locale.iso_code }}"
+                {% if locale.iso_code == form.current_locale.iso_code %}
+                  selected
+                {% endif %}
+              >
+                {{ locale.endonym_name }}
+              </option>
+            {%- endfor -%}
+          </select>
+          <span class="mk-localization__icon">{{- 'icon-chevron-down.svg' | inline_asset_content -}}</span>
+        </div>
+      {%- endform -%}
+
+    {%- when 'country' -%}
+      {%- form 'localization', id: 'CountryForm', class: 'mk-localization__form' -%}
+        <div class="mk-localization__select">
+          <select
+            class="mk-localization__dropdown"
+            name="country_code"
+            aria-label="{{ 'general.localization.currency' | t | default: '货币/国家' }}"
+          >
+            {%- for country in form.available_countries -%}
+              <option
+                value="{{ country.iso_code }}"
+                {% if country.iso_code == form.current_country.iso_code %}
+                  selected
+                {% endif %}
+              >
+                {{ country.name }} ({{ country.currency.iso_code }})
+              </option>
+            {%- endfor -%}
+          </select>
+          <span class="mk-localization__icon">{{- 'icon-chevron-down.svg' | inline_asset_content -}}</span>
+        </div>
+      {%- endform -%}
+
+  {%- endcase -%}
+</div>
+
+{% stylesheet %}
+  .mk-localization__form {
+    position: relative;
+  }
+
+  .mk-localization__select {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .mk-localization__dropdown {
+    appearance: none;
+    padding: 10px 32px 10px 14px;
+    font-size: 13px;
+    color: var(--color-foreground);
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+
+  .mk-localization__dropdown:hover {
+    border-color: var(--color-foreground);
+  }
+
+  .mk-localization__dropdown:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-localization__icon {
+    position: absolute;
+    right: 10px;
+    display: flex;
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-localization__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  document.querySelectorAll('.mk-localization__dropdown').forEach(select => {
+    select.addEventListener('change', (e) => {
+      e.target.closest('form').submit();
+    });
+  });
+{% endjavascript %}

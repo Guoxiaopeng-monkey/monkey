@@ -1,0 +1,60 @@
+{%- doc -%}
+  MK 分割线组件
+
+  渲染一条分割线
+
+  @param {string} [id] - 唯一ID
+  @param {string} [alignment] - 对齐方式：left, center, right
+  @param {number} [thickness] - 线条粗细（px）
+  @param {string} [width_percent] - 宽度百分比
+  @param {boolean} [full_width] - 是否全宽
+
+  @example
+  {% render 'mk-divider', thickness: 1, width_percent: 80, alignment: 'center' %}
+{%- enddoc -%}
+
+{% liquid
+  assign id = id | default: 'default'
+  assign alignment = alignment | default: 'center'
+  assign thickness = thickness | default: 1
+  assign width_percent = width_percent | default: 100
+  assign full_width = full_width | default: false
+-%}
+
+<div
+  class="mk-divider mk-divider--{{ alignment }}"
+  style="--divider-thickness: {{ thickness }}px; --divider-width: {{ width_percent }}%;"
+>
+  <span class="mk-divider__line"></span>
+</div>
+
+{% stylesheet %}
+  .mk-divider {
+    display: flex;
+    align-items: center;
+    justify-content: {{ alignment }};
+    width: 100%;
+  }
+
+  .mk-divider__line {
+    width: var(--divider-width);
+    border-bottom: var(--divider-thickness) solid var(--color-border);
+  }
+
+  .mk-divider--center {
+    justify-content: center;
+  }
+
+  .mk-divider--left {
+    justify-content: flex-start;
+  }
+
+  .mk-divider--right {
+    justify-content: flex-end;
+  }
+
+  /* 全宽时 */
+  .mk-divider--full {
+    --divider-width: 100%;
+  }
+{% endstylesheet %}

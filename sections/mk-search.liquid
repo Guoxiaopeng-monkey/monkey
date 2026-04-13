@@ -1,0 +1,501 @@
+{%- comment -%}
+  MK 搜索页面组件
+  
+  功能：搜索结果页面
+  
+  作者：崽崽 (AI助手)
+  基于：whale ug-search-results.liquid, spx-search-result.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign pt_mob = ss.padding_top_mobile | default: 32
+  assign pb_mob = ss.padding_bottom_mobile | default: 32
+  assign pt_desk = ss.padding_top_desktop | default: 48
+  assign pb_desk = ss.padding_bottom_desktop | default: 48
+  
+  assign columns_mobile = ss.columns_mobile | default: 1
+  assign columns_tablet = ss.columns_tablet | default: 2
+  assign columns_desktop = ss.columns_desktop | default: 3
+-%}
+
+<style>
+  #{{ section.id }} {
+    --search-pt-mob: {{ pt_mob }}px;
+    --search-pb-mob: {{ pb_mob }}px;
+    --search-pt-desk: {{ pt_desk }}px;
+    --search-pb-desk: {{ pb_desk }}px;
+    --search-cols-mob: {{ columns_mobile }};
+    --search-cols-tablet: {{ columns_tablet }};
+    --search-cols-desk: {{ columns_desktop }};
+    padding: var(--search-pt-mob) 0 var(--search-pb-mob);
+  }
+  
+  @media (min-width: 750px) {
+    #{{ section.id }} {
+      padding: var(--search-pt-desk) 0 var(--search-pb-desk);
+    }
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-search"
+  data-skip-node-update
+>
+  <div class="mk-search__container">
+    
+    {%- comment -%} 搜索标题 {%- endcomment -%}
+    <div class="mk-search__header">
+      <h1 class="mk-search__title">
+        {% if search.performed %}
+          {{ 'search.results_for_html' | t: terms: search.terms, count: search.results_count }}
+        {% else %}
+          {{ 'search.title' | t | default: '搜索' }}
+        {% endif %}
+      </h1>
+    </div>
+    
+    {%- comment -%} 搜索框 {%- endcomment -%}
+    <div class="mk-search__form-wrapper">
+      {%- assign predictive_search = predictive_search | default: false -%}
+      <form
+        action="{{ routes.search_url }}"
+        method="get"
+        role="search"
+        class="mk-search__form"
+        id="SearchForm"
+      >
+        <input
+          type="search"
+          name="q"
+          class="mk-search__input"
+          value="{{ search.terms | escape }}"
+          placeholder="{{ 'search.placeholder' | t | default: '搜索文章、页面或产品...' }}"
+          {% if predictive_search %}aria-label="{{ 'search.title' | t }}"{% endif %}
+        >
+        <button type="submit" class="mk-search__submit">
+          {{- 'icon-search.svg' | inline_asset_content -}}
+          <span class="visually-hidden">{{ 'search.submit' | t | default: '搜索' }}</span>
+        </button>
+      </form>
+    </div>
+    
+    {%- comment -%} 搜索结果 {%- endcomment -%}
+    {% if search.performed %}
+      <div class="mk-search__results">
+        {%- if search.results_count > 0 -%}
+          {%- comment -%} 产品结果 {%- endcomment -%}
+          {%- assign products = search.results | where: 'object_type', 'product' -%}
+          {%- if products.size > 0 -%}
+            <div class="mk-search__section">
+              <h2 class="mk-search__section-title">
+                产品 ({{ products.size }})
+              </h2>
+              <div class="mk-search__grid mk-search__grid--products">
+                {%- for item in products -%}
+                  <div class="mk-search__item">
+                    {% render 'mk-product-card', product: item.product, show_vendor: ss.show_vendor %}
+                  </div>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+          
+          {%- comment -%} 文章结果 {%- endcomment -%}
+          {%- assign articles = search.results | where: 'object_type', 'article' -%}
+          {%- if articles.size > 0 -%}
+            <div class="mk-search__section">
+              <h2 class="mk-search__section-title">
+                文章 ({{ articles.size }})
+              </h2>
+              <div class="mk-search__list mk-search__list--articles">
+                {%- for item in articles -%}
+                  <div class="mk-search__article">
+                    {% if item.image != blank %}
+                      <a href="{{ item.url }}" class="mk-search__article-image">
+                        <img
+                          src="{{ item.image | image_url: width: 200 }}"
+                          alt="{{ item.title }}"
+                          width="200"
+                          height="{{ 200 | divided_by: item.image.aspect_ratio | round }}"
+                          loading="lazy"
+                        >
+                      </a>
+                    {% endif %}
+                    <div class="mk-search__article-info">
+                      <h3 class="mk-search__article-title">
+                        <a href="{{ item.url }}">{{ item.title }}</a>
+                      </h3>
+                      <p class="mk-search__article-excerpt">
+                        {{ item.content | strip_html | truncate: 100 }}
+                      </p>
+                      <time class="mk-search__article-date">
+                        {{ item.published_at | date: "%Y年%m月%d日" }}
+                      </time>
+                    </div>
+                  </div>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+          
+          {%- comment -%} 页面结果 {%- endcomment -%}
+          {%- assign pages = search.results | where: 'object_type', 'page' -%}
+          {%- if pages.size > 0 -%}
+            <div class="mk-search__section">
+              <h2 class="mk-search__section-title">
+                页面 ({{ pages.size }})
+              </h2>
+              <div class="mk-search__list mk-search__list--pages">
+                {%- for item in pages -%}
+                  <div class="mk-search__page">
+                    <h3 class="mk-search__page-title">
+                      <a href="{{ item.url }}">{{ item.title }}</a>
+                    </h3>
+                    <p class="mk-search__page-excerpt">
+                      {{ item.content | strip_html | truncate: 150 }}
+                    </p>
+                  </div>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+        {%- else -%}
+          {%- comment -%} 无结果 {%- endcomment -%}
+          <div class="mk-search__empty">
+            <p class="mk-search__empty-text">
+              {{ 'search.no_results_html' | t: terms: search.terms }}
+            </p>
+            <p class="mk-search__empty-hint">
+              请尝试使用不同的关键词
+            </p>
+          </div>
+        {%- endif -%}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-search__container {
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  /* Header */
+  .mk-search__header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .mk-search__title {
+    margin: 0;
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 700;
+  }
+
+  /* Form */
+  .mk-search__form-wrapper {
+    max-width: 600px;
+    margin: 0 auto 48px auto;
+  }
+
+  .mk-search__form {
+    display: flex;
+    gap: 8px;
+  }
+
+  .mk-search__input {
+    flex: 1;
+    padding: 14px 18px;
+    font-size: 15px;
+    border: 1px solid rgba(var(--color-border), 0.4);
+    border-radius: 4px;
+    background: var(--color-background, #fff);
+  }
+
+  .mk-search__input:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-search__submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    padding: 0;
+    background: var(--color-primary, #000);
+    border: none;
+    border-radius: 4px;
+    color: var(--color-background, #fff);
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .mk-search__submit:hover {
+    opacity: 0.85;
+  }
+
+  .mk-search__submit svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Section */
+  .mk-search__section {
+    margin-bottom: 48px;
+  }
+
+  .mk-search__section-title {
+    margin: 0 0 24px 0;
+    font-size: 20px;
+    font-weight: 600;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(var(--color-border), 0.15);
+  }
+
+  /* Grid */
+  .mk-search__grid--products {
+    display: grid;
+    grid-template-columns: repeat(var(--search-cols-mob, 1), 1fr);
+    gap: 16px;
+  }
+
+  @media (min-width: 480px) {
+    .mk-search__grid--products {
+      gap: 20px;
+    }
+  }
+
+  @media (min-width: 750px) {
+    .mk-search__grid--products {
+      grid-template-columns: repeat(var(--search-cols-tablet, 2), 1fr);
+      gap: 24px;
+    }
+  }
+
+  @media (min-width: 990px) {
+    .mk-search__grid--products {
+      grid-template-columns: repeat(var(--search-cols-desk, 3), 1fr);
+      gap: 32px;
+    }
+  }
+
+  /* List */
+  .mk-search__list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* Article */
+  .mk-search__article {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 20px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(var(--color-border), 0.1);
+  }
+
+  @media (max-width: 480px) {
+    .mk-search__article {
+      grid-template-columns: 80px 1fr;
+      gap: 12px;
+    }
+  }
+
+  .mk-search__article-image {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-search__article-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mk-search__article-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mk-search__article-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .mk-search__article-title a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .mk-search__article-title a:hover {
+    text-decoration: underline;
+  }
+
+  .mk-search__article-excerpt {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-search__article-date {
+    font-size: 12px;
+    color: var(--color-text-secondary, #999);
+  }
+
+  /* Page */
+  .mk-search__page {
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(var(--color-border), 0.1);
+  }
+
+  .mk-search__page-title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .mk-search__page-title a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .mk-search__page-title a:hover {
+    text-decoration: underline;
+  }
+
+  .mk-search__page-excerpt {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-text-secondary, #666);
+  }
+
+  /* Empty */
+  .mk-search__empty {
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .mk-search__empty-text {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .mk-search__empty-hint {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 搜索页面",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "布局设置"
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "列数 (移动端)",
+      "min": 1,
+      "max": 4,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "列数 (平板)",
+      "min": 2,
+      "max": 4,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "列数 (PC端)",
+      "min": 2,
+      "max": 4,
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "显示供应商",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 48,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 搜索页面"
+    }
+  ]
+}
+{% endschema %}

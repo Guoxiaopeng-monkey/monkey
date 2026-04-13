@@ -1,0 +1,50 @@
+{%- doc -%}
+  MK 单位价格组件
+
+  渲染产品单位价格（如每升、每千克）
+
+  @param {object} variant - 变体对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-unit-price', variant: product.selected_or_first_available_variant %}
+{%- enddoc -%}
+
+{% liquid
+  assign variant = variant | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if variant != blank and variant.unit_price_measurement -%}
+  <div class="mk-unit-price {{ class }}">
+    <span class="mk-unit-price__price">
+      {{ variant.unit_price | money }}
+    </span>
+    <span class="mk-unit-price__separator">/</span>
+    <span class="mk-unit-price__unit">
+      {{ variant.unit_price_measurement.unit_value | weight_with_unit: variant.unit_price_measurement }}
+    </span>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-unit-price {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 12px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-unit-price__price {
+    font-weight: 500;
+  }
+
+  .mk-unit-price__separator {
+    opacity: 0.6;
+  }
+
+  .mk-unit-price__unit {
+    opacity: 0.8;
+  }
+{% endstylesheet %}

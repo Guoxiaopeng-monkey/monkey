@@ -1,0 +1,384 @@
+{%- comment -%}
+  MK 产品规格组件
+  
+  功能：展示产品规格参数表格
+  
+  作者：崽崽 (AI助手)
+  基于：whale ug-products-specs.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign bg_color = ss.background_color | default: '#ffffff'
+  
+  assign pt_mob = ss.padding_top_mobile | default: 48
+  assign pb_mob = ss.padding_bottom_mobile | default: 48
+  assign pt_desk = ss.padding_top_desktop | default: 80
+  assign pb_desk = ss.padding_bottom_desktop | default: 80
+-%}
+
+<style>
+  #{{ section.id }} {
+    --ps-bg: {{ bg_color }};
+    --ps-pt-mob: {{ pt_mob }}px;
+    --ps-pb-mob: {{ pb_mob }}px;
+    --ps-pt-desk: {{ pt_desk }}px;
+    --ps-pb-desk: {{ pb_desk }}px;
+    background-color: var(--ps-bg);
+    padding: var(--ps-pt-mob) 0 var(--ps-pb-mob);
+  }
+  
+  @media (min-width: 750px) {
+    #{{ section.id }} {
+      padding: var(--ps-pt-desk) 0 var(--ps-pb-desk);
+    }
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-product-specs"
+  data-skip-node-update
+>
+  <div class="mk-product-specs__container">
+    
+    {%- comment -%} 标题区域 {%- endcomment -%}
+    <div class="mk-product-specs__header">
+      {% if ss.label != blank %}
+        <p class="mk-product-specs__label">{{ ss.label }}</p>
+      {% endif %}
+      {% if ss.heading != blank %}
+        <h2 class="mk-product-specs__heading">{{ ss.heading }}</h2>
+      {% endif %}
+      {% if ss.description != blank %}
+        <p class="mk-product-specs__description">{{ ss.description }}</p>
+      {% endif %}
+    </div>
+    
+    {%- comment -%} 规格表格 {%- endcomment -%}
+    <div class="mk-product-specs__table-wrapper">
+      <table class="mk-product-specs__table">
+        <tbody>
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'spec' -%}
+              <tr class="mk-product-specs__row" {{ block.shopify_attributes }}>
+                {%- if block.settings.label != blank -%}
+                  <th class="mk-product-specs__label" scope="row">
+                    {{ block.settings.label }}
+                  </th>
+                {%- endif -%}
+                <td class="mk-product-specs__value">
+                  {{ block.settings.value }}
+                </td>
+              </tr>
+            {%- endif -%}
+          {%- endfor -%}
+        </tbody>
+      </table>
+    </div>
+    
+    {%- comment -%} 下载资源 {%- endcomment -%}
+    {% if ss.show_downloads %}
+      <div class="mk-product-specs__downloads">
+        <h3 class="mk-product-specs__downloads-title">{{ ss.downloads_title | default: '下载资源' }}</h3>
+        <div class="mk-product-specs__downloads-list">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'download' -%}
+              <a href="{{ block.settings.file_url }}" class="mk-product-specs__download-item" {{ block.shopify_attributes }} download>
+                <span class="mk-product-specs__download-icon">
+                  {{- 'icon-download.svg' | inline_asset_content -}}
+                </span>
+                <span class="mk-product-specs__download-name">{{ block.settings.name }}</span>
+                {% if block.settings.file_size != blank %}
+                  <span class="mk-product-specs__download-size">{{ block.settings.file_size }}</span>
+                {% endif %}
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {% endif %}
+    
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-product-specs__container {
+    max-width: var(--container-max-width, 1440px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  /* Header */
+  .mk-product-specs__header {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 48px auto;
+  }
+
+  .mk-product-specs__label {
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--color-primary, #000);
+  }
+
+  .mk-product-specs__heading {
+    margin: 0 0 16px 0;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .mk-product-specs__description {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    opacity: 0.85;
+  }
+
+  /* Table */
+  .mk-product-specs__table-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .mk-product-specs__table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-background, #fff);
+  }
+
+  .mk-product-specs__row {
+    border-bottom: 1px solid rgba(var(--color-border), 0.1);
+  }
+
+  .mk-product-specs__row:last-child {
+    border-bottom: none;
+  }
+
+  .mk-product-specs__label {
+    padding: 16px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    background: var(--color-background-secondary, #f9f9f9);
+    color: var(--color-text-secondary, #666);
+    vertical-align: top;
+    width: 30%;
+  }
+
+  .mk-product-specs__value {
+    padding: 16px 24px;
+    font-size: 15px;
+    line-height: 1.5;
+    vertical-align: top;
+  }
+
+  .mk-product-specs__value p {
+    margin: 0;
+  }
+
+  /* Downloads */
+  .mk-product-specs__downloads {
+    margin-top: 48px;
+    padding-top: 48px;
+    border-top: 1px solid rgba(var(--color-border), 0.15);
+    text-align: center;
+  }
+
+  .mk-product-specs__downloads-title {
+    margin: 0 0 24px 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .mk-product-specs__downloads-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .mk-product-specs__download-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--color-primary, #000);
+    background: var(--color-background-secondary, #f9f9f9);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-product-specs__download-item:hover {
+    background: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+  }
+
+  .mk-product-specs__download-icon {
+    display: flex;
+    width: 18px;
+    height: 18px;
+  }
+
+  .mk-product-specs__download-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-product-specs__download-size {
+    font-size: 12px;
+    opacity: 0.7;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 产品规格",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "内容设置"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "标签文字"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "标题",
+      "default": "产品规格"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "描述文字"
+    },
+    {
+      "type": "header",
+      "content": "下载资源"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_downloads",
+      "label": "显示下载资源",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "downloads_title",
+      "label": "下载区标题"
+    },
+    {
+      "type": "header",
+      "content": "颜色设置"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "spec",
+      "name": "规格项",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "参数名称",
+          "default": "材质"
+        },
+        {
+          "type": "textarea",
+          "id": "value",
+          "label": "参数值",
+          "default": "铝合金"
+        }
+      ]
+    },
+    {
+      "type": "download",
+      "name": "下载文件",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "文件名称",
+          "default": "产品手册 PDF"
+        },
+        {
+          "type": "url",
+          "id": "file_url",
+          "label": "文件链接"
+        },
+        {
+          "type": "text",
+          "id": "file_size",
+          "label": "文件大小",
+          "info": "例如: 2.5 MB"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 产品规格"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,628 @@
+{%- comment -%}
+  MK 文章详情页组件
+  
+  功能：博客文章详情展示
+  
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign article = article
+  assign pt_mob = ss.padding_top_mobile | default: 32
+  assign pb_mob = ss.padding_bottom_mobile | default: 32
+  assign pt_desk = ss.padding_top_desktop | default: 48
+  assign pb_desk = ss.padding_bottom_desktop | default: 48
+-%}
+
+<style>
+  #{{ section.id }} {
+    --article-pt-mob: {{ pt_mob }}px;
+    --article-pb-mob: {{ pb_mob }}px;
+    --article-pt-desk: {{ pt_desk }}px;
+    --article-pb-desk: {{ pb_desk }}px;
+    padding: var(--article-pt-mob) 0 var(--article-pb-mob);
+  }
+  
+  @media (min-width: 750px) {
+    #{{ section.id }} {
+      padding: var(--article-pt-desk) 0 var(--article-pb-desk);
+    }
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-main-article"
+  data-skip-node-update
+>
+  <div class="mk-main-article__container">
+    
+    {%- comment -%} 文章头部 {%- endcomment -%}
+    <header class="mk-main-article__header">
+      <div class="mk-main-article__meta">
+        <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+          {{ article.published_at | date: "%Y年%m月%d日" }}
+        </time>
+        {% if ss.show_author %}
+          <span class="mk-main-article__author">
+            {{ article.author }}
+          </span>
+        {% endif %}
+      </div>
+      
+      <h1 class="mk-main-article__title">{{ article.title }}</h1>
+      
+      {% if ss.show_share_buttons %}
+        <div class="mk-main-article__share">
+          <span class="mk-main-article__share-label">分享到:</span>
+          <a href="https://twitter.com/intent/tweet?text={{ article.title | url_encode }}&url={{ article.url | url_encode }}" target="_blank" rel="noopener" class="mk-main-article__share-btn" aria-label="分享到 Twitter">
+            {{- 'icon-twitter.svg' | inline_asset_content -}}
+          </a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{ article.url | url_encode }}" target="_blank" rel="noopener" class="mk-main-article__share-btn" aria-label="分享到 Facebook">
+            {{- 'icon-facebook.svg' | inline_asset_content -}}
+          </a>
+        </div>
+      {% endif %}
+    </header>
+    
+    {%- comment -%} 文章图片 {%- endcomment -%}
+    {% if article.image != blank %}
+      <div class="mk-main-article__image">
+        <img
+          src="{{ article.image | image_url: width: 1200 }}"
+          alt="{{ article.title }}"
+          width="1200"
+          height="{{ 1200 | divided_by: article.image.aspect_ratio | round }}"
+          loading="eager"
+        >
+      </div>
+    {% endif %}
+    
+    {%- comment -%} 文章内容 {%- endcomment -%}
+    <div class="mk-main-article__content rte">
+      {{ article.content }}
+    </div>
+    
+    {%- comment -%} 文章底部信息 {%- endcomment -%}
+    <footer class="mk-main-article__footer">
+      {% if ss.show_tags and article.tags.size > 0 %}
+        <div class="mk-main-article__tags">
+          <span class="mk-main-article__tags-label">标签:</span>
+          {% for tag in article.tags %}
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="mk-main-article__tag">
+              {{ tag }}
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
+      
+      {% if ss.show_navigation and blog.articles_count > 1 %}
+        <nav class="mk-main-article__navigation">
+          {% if article.previous %}
+            <a href="{{ article.previous.url }}" class="mk-main-article__nav-btn mk-main-article__nav-btn--prev">
+              {{- 'icon-arrow-left.svg' | inline_asset_content -}}
+              <span>{{ article.previous.title }}</span>
+            </a>
+          {% endif %}
+          
+          {% if article.next %}
+            <a href="{{ article.next.url }}" class="mk-main-article__nav-btn mk-main-article__nav-btn--next">
+              <span>{{ article.next.title }}</span>
+              {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+            </a>
+          {% endif %}
+        </nav>
+      {% endif %}
+    </footer>
+    
+    {%- comment -%} 评论区域占位 {%- endcomment -%}
+    {% if ss.show_comments and article.comments_enabled? %}
+      <div class="mk-main-article__comments">
+        <h2 class="mk-main-article__comments-title">
+          {{ 'blog.article_comments' | t | default: '评论' }} ({{ article.comments_count }})
+        </h2>
+        
+        {%- comment -%} 评论表单 {%- endcomment -%}
+        <div class="mk-main-article__comment-form-wrapper">
+          {% form 'new_comment', article, class: 'mk-main-article__comment-form' %}
+            <h3 class="mk-main-article__comment-form-title">{{ 'blog.comment_form_title' | t | default: '添加评论' }}</h3>
+            
+            {%- if form.posted_successfully? -%}
+              <div class="mk-main-article__comment-success">
+                {{ 'blog.comment_form_success' | t | default: '评论已提交，感谢您的参与！' }}
+              </div>
+            {%- endif -%}
+            
+            <div class="mk-main-article__comment-fields">
+              <div class="mk-main-article__comment-field">
+                <label for="comment-author" class="mk-main-article__comment-label">{{ 'blog.comment_form_name' | t | default: '姓名' }}</label>
+                <input
+                  type="text"
+                  id="comment-author"
+                  name="comment[author]"
+                  class="mk-main-article__comment-input"
+                  required
+                >
+              </div>
+              
+              <div class="mk-main-article__comment-field">
+                <label for="comment-email" class="mk-main-article__comment-label">{{ 'blog.comment_form_email' | t | default: '邮箱' }}</label>
+                <input
+                  type="email"
+                  id="comment-email"
+                  name="comment[email]"
+                  class="mk-main-article__comment-input"
+                  required
+                >
+              </div>
+            </div>
+            
+            <div class="mk-main-article__comment-field mk-main-article__comment-field--full">
+              <label for="comment-body" class="mk-main-article__comment-label">{{ 'blog.comment_form_body' | t | default: '评论内容' }}</label>
+              <textarea
+                id="comment-body"
+                name="comment[body]"
+                class="mk-main-article__comment-textarea"
+                rows="5"
+                required
+              ></textarea>
+            </div>
+            
+            <button type="submit" class="mk-main-article__comment-submit">
+              {{ 'blog.comment_form_submit' | t | default: '发布评论' }}
+            </button>
+          {% endform %}
+        </div>
+        
+        {%- comment -%} 评论列表 {%- endcomment -%}
+        {% if article.comments_count > 0 %}
+          <div class="mk-main-article__comment-list">
+            {% for comment in article.comments %}
+              <div class="mk-main-article__comment">
+                <div class="mk-main-article__comment-header">
+                  <span class="mk-main-article__comment-author">{{ comment.author }}</span>
+                  <time class="mk-main-article__comment-date">{{ comment.created_at | date: "%Y年%m月%d日" }}</time>
+                </div>
+                <div class="mk-main-article__comment-body">
+                  {{ comment.content }}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-main-article__container {
+    max-width: var(--container-max-width, 800px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  /* Header */
+  .mk-main-article__header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .mk-main-article__meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-main-article__author::before {
+    content: "•";
+    margin-right: 16px;
+  }
+
+  .mk-main-article__title {
+    margin: 0 0 24px 0;
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  /* Share */
+  .mk-main-article__share {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .mk-main-article__share-label {
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-main-article__share-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-background-secondary, #f5f5f5);
+    transition: all 0.2s ease;
+  }
+
+  .mk-main-article__share-btn:hover {
+    background: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+  }
+
+  .mk-main-article__share-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Image */
+  .mk-main-article__image {
+    margin-bottom: 40px;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .mk-main-article__image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Content */
+  .mk-main-article__content {
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  .mk-main-article__content p {
+    margin: 0 0 24px 0;
+  }
+
+  .mk-main-article__content h2 {
+    margin: 40px 0 20px 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .mk-main-article__content h3 {
+    margin: 32px 0 16px 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .mk-main-article__content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+
+  .mk-main-article__content blockquote {
+    margin: 32px 0;
+    padding: 20px 24px;
+    border-left: 4px solid var(--color-primary, #000);
+    background: var(--color-background-secondary, #f9f9f9);
+    font-style: italic;
+  }
+
+  .mk-main-article__content ul,
+  .mk-main-article__content ol {
+    margin: 0 0 24px 0;
+    padding-left: 24px;
+  }
+
+  .mk-main-article__content li {
+    margin-bottom: 8px;
+  }
+
+  /* Footer */
+  .mk-main-article__footer {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(var(--color-border), 0.15);
+  }
+
+  /* Tags */
+  .mk-main-article__tags {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  .mk-main-article__tags-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-main-article__tag {
+    padding: 6px 12px;
+    font-size: 13px;
+    background: var(--color-background-secondary, #f5f5f5);
+    border-radius: 4px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s ease;
+  }
+
+  .mk-main-article__tag:hover {
+    background: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+  }
+
+  /* Navigation */
+  .mk-main-article__navigation {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .mk-main-article__nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 45%;
+    padding: 16px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    color: inherit;
+    background: var(--color-background-secondary, #f9f9f9);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-main-article__nav-btn:hover {
+    background: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+  }
+
+  .mk-main-article__nav-btn svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .mk-main-article__nav-btn span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mk-main-article__nav-btn--next {
+    margin-left: auto;
+  }
+
+  /* Comments */
+  .mk-main-article__comments {
+    margin-top: 64px;
+    padding-top: 48px;
+    border-top: 1px solid rgba(var(--color-border), 0.15);
+  }
+
+  .mk-main-article__comments-title {
+    margin: 0 0 32px 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .mk-main-article__comment-form-wrapper {
+    padding: 32px;
+    background: var(--color-background-secondary, #f9f9f9);
+    border-radius: 12px;
+    margin-bottom: 48px;
+  }
+
+  .mk-main-article__comment-form-title {
+    margin: 0 0 24px 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .mk-main-article__comment-success {
+    padding: 16px;
+    margin-bottom: 24px;
+    background: #e8f5e9;
+    border-radius: 8px;
+    color: #2e7d32;
+    font-size: 14px;
+  }
+
+  .mk-main-article__comment-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 640px) {
+    .mk-main-article__comment-fields {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .mk-main-article__comment-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .mk-main-article__comment-field--full {
+    grid-column: 1 / -1;
+  }
+
+  .mk-main-article__comment-label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .mk-main-article__comment-input,
+  .mk-main-article__comment-textarea {
+    padding: 12px 14px;
+    font-size: 14px;
+    border: 1px solid rgba(var(--color-border), 0.3);
+    border-radius: 4px;
+    background: var(--color-background, #fff);
+  }
+
+  .mk-main-article__comment-input:focus,
+  .mk-main-article__comment-textarea:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-main-article__comment-textarea {
+    resize: vertical;
+  }
+
+  .mk-main-article__comment-submit {
+    margin-top: 20px;
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-background, #fff);
+    background: var(--color-primary, #000);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-main-article__comment-submit:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+  }
+
+  /* Comment List */
+  .mk-main-article__comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .mk-main-article__comment {
+    padding: 24px;
+    background: var(--color-background-secondary, #f9f9f9);
+    border-radius: 12px;
+  }
+
+  .mk-main-article__comment-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .mk-main-article__comment-author {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .mk-main-article__comment-date {
+    font-size: 13px;
+    color: var(--color-text-secondary, #999);
+  }
+
+  .mk-main-article__comment-body {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 文章详情",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "显示设置"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "显示作者",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share_buttons",
+      "label": "显示分享按钮",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "显示标签",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_navigation",
+      "label": "显示上一篇/下一篇导航",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_comments",
+      "label": "显示评论",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 48,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 文章详情"
+    }
+  ]
+}
+{% endschema %}

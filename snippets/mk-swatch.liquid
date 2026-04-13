@@ -1,0 +1,160 @@
+{%- doc -%}
+  MK 色样/图案选择器组件
+
+  渲染变体颜色/图案选择器
+
+  @param {object} product - 产品对象
+  @param {string} [option_name] - 选项名称（如 'Color', 'Size'）
+  @param {string} [type] - 类型：swatch, button
+
+  @example
+  {% render 'mk-swatch', product: product, option_name: 'Color', type: 'swatch' %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign option_name = option_name | default: ''
+  assign type = type | default: 'swatch'
+-%}
+
+{%- if product != blank -%}
+  {%- for option in product.options_with_values -%}
+    {%- assign is_color_option = false -%}
+    {%- if option.name == 'Color' or option.name == 'Colour' or option_name == 'Color' -%}
+      {%- assign is_color_option = true -%}
+    {%- endif -%}
+
+    {%- if option.name == option_name or option_name == '' -%}
+      <div class="mk-swatch mk-swatch--{{ type }}" data-option-name="{{ option.name }}">
+        <span class="mk-swatch__label">{{ option.name }}: {{ option.selected_value }}</span>
+        <div class="mk-swatch__options">
+          {%- for value in option.values -%}
+            {%- liquid
+              assign is_available = true
+              assign is_selected = false
+              if option.selected_value == value
+                assign is_selected = true
+              endif
+
+              # 检查该值是否可用
+              for variant in product.variants
+                if variant.options[forloop.index0] == value and variant.available == false
+                  assign is_available = false
+                  break
+                endif
+              endfor
+            -%}
+
+            <button
+              type="button"
+              class="mk-swatch__option {% if is_selected %}mk-swatch__option--selected{% endif %} {% unless is_available %}mk-swatch__option--unavailable{% endunless %}"
+              data-value="{{ value }}"
+              data-option-index="{{ forloop.index0 }}"
+              aria-label="{{ value }}{% unless is_available %} - unavailable{% endunless %}"
+            >
+              <span class="mk-swatch__value">{{ value }}</span>
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-swatch {
+    margin-bottom: 16px;
+  }
+
+  .mk-swatch:last-child {
+    margin-bottom: 0;
+  }
+
+  .mk-swatch__label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .mk-swatch__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Button 类型 */
+  .mk-swatch--button .mk-swatch__option {
+    min-width: 44px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-swatch--button .mk-swatch__option:hover {
+    border-color: var(--color-foreground);
+  }
+
+  .mk-swatch--button .mk-swatch__option--selected {
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-swatch--button .mk-swatch__option--unavailable {
+    opacity: 0.5;
+    cursor: not-allowed;
+    position: relative;
+  }
+
+  .mk-swatch--button .mk-swatch__option--unavailable::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--color-text-secondary, #999);
+    transform: rotate(-45deg);
+  }
+
+  /* Swatch 类型 (色块) */
+  .mk-swatch--swatch .mk-swatch__option {
+    width: 32px;
+    height: 32px;
+    padding: 2px;
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-swatch--swatch .mk-swatch__value {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: var(--swatch-color, #ccc);
+  }
+
+  .mk-swatch--swatch .mk-swatch__option:hover {
+    border-color: var(--color-border);
+  }
+
+  .mk-swatch--swatch .mk-swatch__option--selected {
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-swatch--swatch .mk-swatch__option--unavailable {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+{% endstylesheet %}

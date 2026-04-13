@@ -1,0 +1,130 @@
+{%- doc -%}
+  MK 分页组件
+
+  渲染分页导航
+
+  @param {object} paginate - 分页对象
+
+  @example
+  {% render 'mk-pagination', paginate: paginate %}
+{%- enddoc -%}
+
+{% liquid
+  assign paginate = paginate | default: nil
+-%}
+
+{%- if paginate.pages > 1 -%}
+  <nav class="mk-pagination" aria-label="{{ 'general.pagination' | t | default: '分页' }}">
+    <ol class="mk-pagination__list">
+      {%- if paginate.previous -%}
+        <li class="mk-pagination__item mk-pagination__item--prev">
+          <a href="{{ paginate.previous.url }}" class="mk-pagination__link" aria-label="{{ 'general.previous' | t | default: '上一页' }}">
+            {{- 'icon-arrow-left.svg' | inline_asset_content -}}
+          </a>
+        </li>
+      {%- else -%}
+        <li class="mk-pagination__item mk-pagination__item--disabled">
+          <span class="mk-pagination__link" aria-label="{{ 'general.previous' | t | default: '上一页' }}">
+            {{- 'icon-arrow-left.svg' | inline_asset_content -}}
+          </span>
+        </li>
+      {%- endif -%}
+
+      {%- for part in paginate.parts -%}
+        {%- if part.is_link -%}
+          <li class="mk-pagination__item">
+            <a href="{{ part.url }}" class="mk-pagination__link">{{ part.title }}</a>
+          </li>
+        {%- else -%}
+          {%- if part.title == paginate.current_page -%}
+            <li class="mk-pagination__item mk-pagination__item--current">
+              <span class="mk-pagination__link" aria-current="page">{{ part.title }}</span>
+            </li>
+          {%- else -%}
+            <li class="mk-pagination__item">
+              <span class="mk-pagination__ellipsis">{{ part.title }}</span>
+            </li>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- if paginate.next -%}
+        <li class="mk-pagination__item mk-pagination__item--next">
+          <a href="{{ paginate.next.url }}" class="mk-pagination__link" aria-label="{{ 'general.next' | t | default: '下一页' }}">
+            {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+          </a>
+        </li>
+      {%- else -%}
+        <li class="mk-pagination__item mk-pagination__item--disabled">
+          <span class="mk-pagination__link" aria-label="{{ 'general.next' | t | default: '下一页' }}">
+            {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+          </span>
+        </li>
+      {%- endif -%}
+    </ol>
+  </nav>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-pagination {
+    display: flex;
+    justify-content: center;
+    padding: 32px 0;
+  }
+
+  .mk-pagination__list {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mk-pagination__item {
+    display: flex;
+  }
+
+  .mk-pagination__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  a.mk-pagination__link:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-pagination__link svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .mk-pagination__item--current .mk-pagination__link {
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+  }
+
+  .mk-pagination__item--disabled .mk-pagination__link {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .mk-pagination__ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}

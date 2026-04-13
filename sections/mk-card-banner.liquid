@@ -1,0 +1,562 @@
+{%- comment -%}
+  MK 卡片横幅组件
+  
+  功能：展示横幅式卡片，支持图片、标题、描述和按钮
+  
+  作者：崽崽 (AI助手)
+  基于：spx-card-banner.liquid, spx-card-grid-*.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign bg_color = ss.background_color | default: '#ffffff'
+  
+  assign pt_mob = ss.padding_top_mobile | default: 48
+  assign pb_mob = ss.padding_bottom_mobile | default: 48
+  assign pt_desk = ss.padding_top_desktop | default: 80
+  assign pb_desk = ss.padding_bottom_desktop | default: 80
+  
+  assign layout = ss.layout | default: 'grid'
+  assign columns = ss.columns | default: 3
+  assign gap = ss.gap | default: 24
+  assign card_height = ss.card_height | default: 'auto'
+-%}
+
+<style>
+  #{{ section.id }} {
+    --card-banner-bg: {{ bg_color }};
+    --card-banner-gap: {{ gap }}px;
+    --card-banner-cols: {{ columns }};
+    --card-banner-height: {% case card_height %}
+      {% when 'small' %}300px
+      {% when 'medium' %}400px
+      {% when 'large' %}500px
+      {% else %}auto
+    {% endcase %};
+    --card-banner-pt-mob: {{ pt_mob }}px;
+    --card-banner-pb-mob: {{ pb_mob }}px;
+    --card-banner-pt-desk: {{ pt_desk }}px;
+    --card-banner-pb-desk: {{ pb_desk }}px;
+    background-color: var(--card-banner-bg);
+    padding: var(--card-banner-pt-mob) 0 var(--card-banner-pb-mob);
+  }
+  
+  @media (min-width: 750px) {
+    #{{ section.id }} {
+      padding: var(--card-banner-pt-desk) 0 var(--card-banner-pb-desk);
+    }
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-card-banner"
+  data-skip-node-update
+>
+  <div class="mk-card-banner__container">
+    
+    {%- comment -%} 标题区域 {%- endcomment -%}
+    <div class="mk-card-banner__header">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'title' -%}
+            <h2 class="mk-card-banner__title">{{ block.settings.text }}</h2>
+          {%- when 'description' -%}
+            <p class="mk-card-banner__description">{{ block.settings.text }}</p>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+    
+    {%- comment -%} 卡片网格 {%- endcomment -%}
+    <div class="mk-card-banner__grid mk-card-banner__grid--{{ layout }}">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'card' -%}
+          <div class="mk-card-banner__card" {{ block.shopify_attributes }}>
+            {%- comment -%} 图片 {%- endcomment -%}
+            <div class="mk-card-banner__media">
+              {% if block.settings.image != blank %}
+                <img
+                  src="{{ block.settings.image | image_url: width: 800 }}"
+                  alt="{{ block.settings.image.alt | default: block.settings.title }}"
+                  width="800"
+                  height="{{ 800 | divided_by: block.settings.image.aspect_ratio | round }}"
+                  loading="lazy"
+                  class="mk-card-banner__image"
+                >
+              {% else %}
+                <div class="mk-card-banner__placeholder">
+                  {{ 'image' | placeholder_svg_tag: '' }}
+                </div>
+              {% endif %}
+              
+              {%- comment -%} 叠加层 {%- endcomment -%}
+              {% if block.settings.overlay_enabled %}
+                <div 
+                  class="mk-card-banner__overlay"
+                  style="background-color: {{ block.settings.overlay_color | default: '#000' }}; opacity: {{ block.settings.overlay_opacity | default: 0.3 }};"
+                ></div>
+              {% endif %}
+            </div>
+            
+            {%- comment -%} 内容 {%- endcomment -%}
+            <div class="mk-card-banner__content mk-card-banner__content--{{ block.settings.content_position | default: 'center' }}">
+              {% if block.settings.label != blank %}
+                <span class="mk-card-banner__label">{{ block.settings.label }}</span>
+              {% endif %}
+              {% if block.settings.title != blank %}
+                <h3 class="mk-card-banner__card-title">{{ block.settings.title }}</h3>
+              {% endif %}
+              {% if block.settings.description != blank %}
+                <p class="mk-card-banner__card-desc">{{ block.settings.description }}</p>
+              {% endif %}
+              {% if block.settings.button_text != blank %}
+                <a 
+                  href="{{ block.settings.button_link | default: '#' }}" 
+                  class="mk-card-banner__button mk-card-banner__button--{{ block.settings.button_style | default: 'primary' }}"
+                >
+                  {{ block.settings.button_text }}
+                </a>
+              {% endif %}
+            </div>
+            
+            {%- comment -%} 点击区域 {%- endcomment -%}
+            {% if block.settings.link != blank %}
+              <a href="{{ block.settings.link }}" class="mk-card-banner__link-overlay" aria-label="{{ block.settings.title }}"></a>
+            {% endif %}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-card-banner__container {
+    max-width: var(--container-max-width, 1440px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  /* Header */
+  .mk-card-banner__header {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 48px auto;
+  }
+
+  .mk-card-banner__title {
+    margin: 0 0 16px 0;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .mk-card-banner__description {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    opacity: 0.85;
+  }
+
+  /* Grid */
+  .mk-card-banner__grid {
+    display: grid;
+    gap: var(--card-banner-gap, 24px);
+  }
+
+  .mk-card-banner__grid--grid {
+    grid-template-columns: repeat({{ columns }}, 1fr);
+  }
+
+  @media (max-width: 989px) {
+    .mk-card-banner__grid--grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 749px) {
+    .mk-card-banner__grid--grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .mk-card-banner__grid--carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: var(--card-banner-gap, 24px);
+    padding-bottom: 24px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mk-card-banner__grid--carousel .mk-card-banner__card {
+    flex: 0 0 85%;
+    scroll-snap-align: start;
+  }
+
+  @media (min-width: 750px) {
+    .mk-card-banner__grid--carousel .mk-card-banner__card {
+      flex: 0 0 45%;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .mk-card-banner__grid--carousel .mk-card-banner__card {
+      flex: 0 0 30%;
+    }
+  }
+
+  /* Card */
+  .mk-card-banner__card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    min-height: var(--card-banner-height, auto);
+  }
+
+  /* Media */
+  .mk-card-banner__media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .mk-card-banner__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .mk-card-banner__card:hover .mk-card-banner__image {
+    transform: scale(1.05);
+  }
+
+  .mk-card-banner__placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-card-banner__placeholder svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-card-banner__overlay {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Content */
+  .mk-card-banner__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 32px;
+    min-height: inherit;
+  }
+
+  .mk-card-banner__content--top {
+    justify-content: flex-start;
+    padding-top: 40px;
+  }
+
+  .mk-card-banner__content--center {
+    justify-content: center;
+  }
+
+  .mk-card-banner__content--bottom {
+    justify-content: flex-end;
+    padding-bottom: 40px;
+  }
+
+  .mk-card-banner__label {
+    display: inline-block;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: var(--color-background, #fff);
+    color: var(--color-primary, #000);
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+
+  .mk-card-banner__card-title {
+    margin: 0 0 12px 0;
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 700;
+    line-height: 1.2;
+    color: #fff;
+  }
+
+  .mk-card-banner__card-desc {
+    margin: 0 0 20px 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #fff;
+    opacity: 0.9;
+  }
+
+  /* Button */
+  .mk-card-banner__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-card-banner__button--primary {
+    background: #fff;
+    color: #000;
+  }
+
+  .mk-card-banner__button--primary:hover {
+    opacity: 0.9;
+  }
+
+  .mk-card-banner__button--outline {
+    background: transparent;
+    color: #fff;
+    border: 1.5px solid #fff;
+  }
+
+  .mk-card-banner__button--outline:hover {
+    background: #fff;
+    color: #000;
+  }
+
+  /* Link Overlay */
+  .mk-card-banner__link-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 卡片横幅",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "布局设置"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "布局模式",
+      "options": [
+        { "value": "grid", "label": "网格" },
+        { "value": "carousel", "label": "轮播" }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "列数",
+      "min": 2,
+      "max": 4,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "卡片间距",
+      "min": 8,
+      "max": 48,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "card_height",
+      "label": "卡片高度",
+      "options": [
+        { "value": "auto", "label": "自适应" },
+        { "value": "small", "label": "小 (300px)" },
+        { "value": "medium", "label": "中 (400px)" },
+        { "value": "large", "label": "大 (500px)" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "header",
+      "content": "颜色设置"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "title",
+      "name": "标题",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "标题文字"
+        }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "描述",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "描述文字"
+        }
+      ]
+    },
+    {
+      "type": "card",
+      "name": "卡片",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "链接"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "标签"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "描述"
+        },
+        {
+          "type": "select",
+          "id": "content_position",
+          "label": "内容位置",
+          "options": [
+            { "value": "top", "label": "顶部" },
+            { "value": "center", "label": "居中" },
+            { "value": "bottom", "label": "底部" }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "checkbox",
+          "id": "overlay_enabled",
+          "label": "启用图片叠加层",
+          "default": true
+        },
+        {
+          "type": "color",
+          "id": "overlay_color",
+          "label": "叠加层颜色",
+          "default": "#000000"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "label": "叠加层透明度",
+          "min": 0,
+          "max": 1,
+          "step": 0.1,
+          "default": 0.3
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "按钮文字"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "按钮链接"
+        },
+        {
+          "type": "select",
+          "id": "button_style",
+          "label": "按钮样式",
+          "options": [
+            { "value": "primary", "label": "实心" },
+            { "value": "outline", "label": "描边" }
+          ],
+          "default": "primary"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 卡片横幅"
+    }
+  ]
+}
+{% endschema %}

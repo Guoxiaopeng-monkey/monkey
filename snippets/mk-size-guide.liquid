@@ -1,0 +1,386 @@
+{%- doc -%}
+  MK 尺码指南组件
+
+  渲染尺码指南弹窗，帮助用户选择正确的尺码
+
+  @param {object} guide - 尺码指南数据
+  @param {string} [title] - 指南标题
+  @param {string} [type] - 指南类型：'table'（表格）或 'general'（通用说明）
+
+  @example
+  {% render 'mk-size-guide', guide: block.settings.size_guide, title: block.settings.size_guide_title %}
+{%- enddoc -%}
+
+{% liquid
+  assign title = title | default: 'Size Guide'
+  assign type = type | default: 'table'
+-%}
+
+<div class="mk-size-guide" {{ block.shopify_attributes }}>
+  {%- comment -%} 触发按钮 {%- endcomment -%}
+  <button
+    type="button"
+    class="mk-size-guide__trigger"
+    on:click="mk-size-guide/openSizeGuide"
+    aria-expanded="false"
+    aria-controls="mk-size-guide-modal"
+  >
+    <span class="mk-size-guide__icon">{{- 'icon-size.svg' | inline_asset_content | default: '📏' -}}</span>
+    <span class="mk-size-guide__text">{{ title }}</span>
+  </button>
+
+  {%- comment -%} 尺码指南弹窗 {%- endcomment -%}
+  <dialog
+    id="mk-size-guide-modal"
+    class="mk-size-guide__modal dialog-modal color-{{ settings.size_guide_color_scheme | default: 'background-1' }}"
+    ref="dialog"
+  >
+    <div class="mk-size-guide__content">
+      <div class="mk-size-guide__header">
+        <h2 class="mk-size-guide__title">{{ title }}</h2>
+        <button
+          type="button"
+          class="mk-size-guide__close button button-unstyled"
+          on:click="mk-size-guide/closeSizeGuide"
+          aria-label="{{ 'actions.close' | t }}"
+        >
+          {{- 'icon-close.svg' | inline_asset_content -}}
+        </button>
+      </div>
+
+      {%- if type == 'table' and guide -%}
+        {%- comment -%} 表格形式显示尺码 {%- endcomment -%}
+        <div class="mk-size-guide__table-wrapper">
+          <table class="mk-size-guide__table">
+            <thead>
+              <tr>
+                <th>Size</th>
+                <th>Chest</th>
+                <th>Waist</th>
+                <th>Hips</th>
+                <th>Length</th>
+              </tr>
+            </thead>
+            <tbody>
+              {%- for row in guide -%}
+                <tr>
+                  <td>{{ row.size }}</td>
+                  <td>{{ row.chest }}</td>
+                  <td>{{ row.waist }}</td>
+                  <td>{{ row.hips }}</td>
+                  <td>{{ row.length }}</td>
+                </tr>
+              {%- endfor -%}
+            </tbody>
+          </table>
+        </div>
+
+        {%- comment -%} 如何测量 {%- endcomment -%}
+        <div class="mk-size-guide__measurements">
+          <h3>{{ 'size_guide.how_to_measure' | t | default: '如何测量' }}</h3>
+          <dl class="mk-size-guide__measurement-list">
+            <div class="mk-size-guide__measurement">
+              <dt>{{ 'size_guide.chest' | t | default: '胸围' }}</dt>
+              <dd>{{ 'size_guide.chest_desc' | t | default: '测量胸部最丰满处的周长' }}</dd>
+            </div>
+            <div class="mk-size-guide__measurement">
+              <dt>{{ 'size_guide.waist' | t | default: '腰围' }}</dt>
+              <dd>{{ 'size_guide.waist_desc' | t | default: '测量腰部最窄处的周长' }}</dd>
+            </div>
+            <div class="mk-size-guide__measurement">
+              <dt>{{ 'size_guide.hips' | t | default: '臀围' }}</dt>
+              <dd>{{ 'size_guide.hips_desc' | t | default: '测量臀部最丰满处的周长' }}</dd>
+            </div>
+          </dl>
+        </div>
+      {%- else -%}
+        {%- comment -%} 通用说明形式 {%- endcomment -%}
+        <div class="mk-size-guide__general">
+          <h3>{{ 'size_guide.general_info' | t | default: '尺码信息' }}</h3>
+          <p>{{ 'size_guide.general_desc' | t | default: '请参考以下信息选择合适的尺码。如有疑问，请联系我们的客服团队。' }}</p>
+
+          <div class="mk-size-guide__tips">
+            <h4>{{ 'size_guide.tips' | t | default: '选择提示' }}</h4>
+            <ul>
+              <li>{{ 'size_guide.tip_1' | t | default: '如果介于两个尺码之间，建议选择较大的尺码' }}</li>
+              <li>{{ 'size_guide.tip_2' | t | default: '请参考产品描述中的模特尺码信息' }}</li>
+              <li>{{ 'size_guide.tip_3' | t | default: '不同品牌的尺码可能有所不同' }}</li>
+            </ul>
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} 关闭按钮 {%- endcomment -%}
+      <div class="mk-size-guide__footer">
+        <button
+          type="button"
+          class="mk-size-guide__done-btn button button--primary"
+          on:click="mk-size-guide/closeSizeGuide"
+        >
+          {{ 'actions.done' | t | default: '完成' }}
+        </button>
+      </div>
+    </div>
+  </dialog>
+</div>
+
+{% stylesheet %}
+  .mk-size-guide {
+    display: inline-block;
+  }
+
+  .mk-size-guide__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--color-primary, #000);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: opacity 0.2s ease;
+  }
+
+  .mk-size-guide__trigger:hover {
+    opacity: 0.7;
+  }
+
+  .mk-size-guide__icon {
+    display: flex;
+    width: 16px;
+    height: 16px;
+  }
+
+  .mk-size-guide__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-size-guide__modal {
+    max-width: 600px;
+    width: 90vw;
+    max-height: 80vh;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  @media screen and (max-width: 750px) {
+    .mk-size-guide__modal {
+      width: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      height: 100%;
+      border-radius: 0;
+    }
+  }
+
+  .mk-size-guide__content {
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+  }
+
+  .mk-size-guide__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .mk-size-guide__title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .mk-size-guide__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .mk-size-guide__close:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-size-guide__close svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mk-size-guide__table-wrapper {
+    overflow-x: auto;
+    padding: 20px 24px;
+  }
+
+  .mk-size-guide__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .mk-size-guide__table th,
+  .mk-size-guide__table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .mk-size-guide__table th {
+    font-weight: 600;
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-size-guide__table td {
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-size-guide__table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .mk-size-guide__measurements {
+    padding: 20px 24px;
+    background-color: var(--color-background-secondary, #f9f9f9);
+  }
+
+  .mk-size-guide__measurements h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .mk-size-guide__measurement-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+  }
+
+  .mk-size-guide__measurement {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .mk-size-guide__measurement dt {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .mk-size-guide__measurement dd {
+    margin: 0;
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-size-guide__general {
+    padding: 20px 24px;
+  }
+
+  .mk-size-guide__general h3 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .mk-size-guide__general p {
+    margin: 0 0 20px 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+    line-height: 1.6;
+  }
+
+  .mk-size-guide__tips {
+    padding: 16px;
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border-radius: 8px;
+  }
+
+  .mk-size-guide__tips h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .mk-size-guide__tips ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .mk-size-guide__tips li {
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+    margin-bottom: 8px;
+  }
+
+  .mk-size-guide__tips li:last-child {
+    margin-bottom: 0;
+  }
+
+  .mk-size-guide__footer {
+    padding: 20px 24px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .mk-size-guide__done-btn {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .mk-size-guide__done-btn:hover {
+    opacity: 0.85;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 尺码指南",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "size_guide_title",
+      "label": "标题",
+      "default": "尺码指南"
+    },
+    {
+      "type": "select",
+      "id": "size_guide_color_scheme",
+      "label": "颜色方案",
+      "options": [
+        { "value": "background-1", "label": "背景 1" },
+        { "value": "background-2", "label": "背景 2" }
+      ],
+      "default": "background-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 尺码指南"
+    }
+  ]
+}
+{% endschema %}

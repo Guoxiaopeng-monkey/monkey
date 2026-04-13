@@ -1,0 +1,264 @@
+{%- doc -%}
+  MK 购物车汇总组件
+
+  渲染购物车小计、折扣和结账按钮
+
+  @example
+  {% render 'mk-cart-summary' %}
+{%- enddoc -%}
+
+{%- liquid
+  if settings.currency_code_enabled
+    assign subtotal = cart.original_total_price | money_with_currency
+    assign total_price = cart.total_price | money_with_currency
+  else
+    assign subtotal = cart.original_total_price | money
+    assign total_price = cart.total_price | money
+  endif
+-%}
+
+<div class="mk-cart-summary">
+  {%- comment -%} 原始小计（如果有折扣） {%- endcomment -%}
+  {% if cart.cart_level_discount_applications.size > 0 %}
+    <div class="mk-cart-summary__original-total">
+      <span class="mk-cart-summary__label">{{ 'content.cart_subtotal' | t }}</span>
+      <span class="mk-cart-summary__value">{{ subtotal }}</span>
+    </div>
+
+    {%- comment -%} 折扣列表 {%- endcomment -%}
+    <div class="mk-cart-summary__discounts">
+      <ul class="mk-cart-summary__discount-list list-unstyled">
+        {%- for discount in cart.cart_level_discount_applications -%}
+          <li class="mk-cart-summary__discount">
+            <span class="mk-cart-summary__discount-icon">
+              {{- 'icon-discount.svg' | inline_asset_content -}}
+            </span>
+            <span class="mk-cart-summary__discount-title">{{ discount.title | escape }}</span>
+            <span class="mk-cart-summary__discount-value">-{{ discount.total_allocated_amount | money }}</span>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  {% endif %}
+
+  {%- comment -%} 购物车备注 {%- endcomment -%}
+  {% if settings.show_cart_note %}
+    <div class="mk-cart-summary__note">
+      <label for="CartNote" class="mk-cart-summary__note-label">
+        {{ 'cart.note' | t | default: '添加备注' }}
+      </label>
+      <textarea
+        id="CartNote"
+        name="note"
+        class="mk-cart-summary__note-textarea"
+        placeholder="{{ 'cart.special_instructions' | t | default: '特别说明...' }}"
+      >{{ cart.note }}</textarea>
+    </div>
+  {% endif %}
+
+  {%- comment -%} 最终总价 {%- endcomment -%}
+  <div class="mk-cart-summary__total">
+    <span class="mk-cart-summary__total-label">{{ 'content.cart_estimated_total' | t }}</span>
+    <span class="mk-cart-summary__total-value" data-cart-subtotal>{{ total_price }}</span>
+  </div>
+
+  {%- comment -%} 税费提示 {%- endcomment -%}
+  <p class="mk-cart-summary__tax-note">
+    {{ 'cart.tax_and_shipping' | t | default: '运费和税费在结账时计算' }}
+  </p>
+
+  {%- comment -%} 结账按钮 {%- endcomment -%}
+  <div class="mk-cart-summary__ctas">
+    <button
+      type="submit"
+      id="mk-checkout"
+      class="mk-cart-summary__checkout-btn button button--primary"
+      name="checkout"
+      {% if cart == empty %}
+        disabled
+      {% endif %}
+      form="mk-cart-form"
+    >
+      {{ 'content.checkout' | t }}
+      {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+    </button>
+
+    {%- comment -%} 继续购物 {%- endcomment -%}
+    <a href="{{ routes.all_products_collection_url }}" class="mk-cart-summary__continue-btn">
+      {{ 'cart.continue_shopping' | t | default: '继续购物' }}
+    </a>
+  </div>
+
+  {%- comment -%} 额外结账按钮（如Shop Pay） {%- endcomment -%}
+  {% if additional_checkout_buttons and settings.show_additional_checkout_buttons %}
+    <div class="mk-cart-summary__additional-buttons">
+      {{ content_for_additional_checkout_buttons }}
+    </div>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .mk-cart-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .mk-cart-summary__original-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-cart-summary__discounts {
+    margin-top: -8px;
+  }
+
+  .mk-cart-summary__discount-list {
+    margin: 0;
+    padding: 0;
+  }
+
+  .mk-cart-summary__discount {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--color-sale, #2e7d32);
+  }
+
+  .mk-cart-summary__discount-icon {
+    display: flex;
+    width: 16px;
+    height: 16px;
+  }
+
+  .mk-cart-summary__discount-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-cart-summary__discount-title {
+    flex: 1;
+  }
+
+  .mk-cart-summary__note {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mk-cart-summary__note-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .mk-cart-summary__note-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 12px;
+    font-size: 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    resize: vertical;
+    font-family: inherit;
+  }
+
+  .mk-cart-summary__note-textarea:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-cart-summary__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .mk-cart-summary__total-label {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .mk-cart-summary__total-value {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .mk-cart-summary__tax-note {
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-text-secondary, #666);
+    text-align: center;
+  }
+
+  .mk-cart-summary__ctas {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mk-cart-summary__checkout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-cart-summary__checkout-btn:hover:not(:disabled) {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+
+  .mk-cart-summary__checkout-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .mk-cart-summary__checkout-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .mk-cart-summary__continue-btn {
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    color: var(--color-text-secondary, #666);
+    transition: color 0.2s ease;
+  }
+
+  .mk-cart-summary__continue-btn:hover {
+    color: var(--color-primary, #000);
+  }
+
+  .mk-cart-summary__additional-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mk-cart-summary__additional-buttons > * {
+    width: 100%;
+  }
+{% endstylesheet %}

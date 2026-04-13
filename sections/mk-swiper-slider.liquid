@@ -1,0 +1,456 @@
+{%- comment -%}
+  MK 轮播滑块组件
+  
+  功能：支持多图轮播、自动播放、导航控件
+  
+  作者：崽崽 (AI助手)
+  基于：spx-swiper-home-banner.liquid, whale ug-index-slides.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign bg_color = ss.background_color | default: '#ffffff'
+  
+  # 轮播设置
+  assign slides_per_view_mobile = ss.slides_per_view_mobile | default: 1
+  assign slides_per_view_desktop = ss.slides_per_view_desktop | default: 3
+  assign space_between_mobile = ss.space_between_mobile | default: 16
+  assign space_between_desktop = ss.space_between_desktop | default: 24
+  assign autoplay = ss.autoplay
+  assign loop = ss.loop
+  assign show_arrows = ss.show_arrows
+  assign show_dots = ss.show_dots
+-%}
+
+<div
+  id="{{ section.id }}"
+  class="mk-swiper"
+  style="--swiper-bg: {{ bg_color }};"
+  data-swiper
+  data-swiper-slides-per-view-mobile="{{ slides_per_view_mobile }}"
+  data-swiper-slides-per-view-desktop="{{ slides_per_view_desktop }}"
+  data-swiper-space-between-mobile="{{ space_between_mobile }}"
+  data-swiper-space-between-desktop="{{ space_between_desktop }}"
+  {% if autoplay %} data-swiper-autoplay="{{ ss.autoplay_delay | default: 5000 }}" {% endif %}
+  {% if loop %} data-swiper-loop="true" {% endif %}
+>
+  <div class="mk-swiper__container">
+    <div class="swiper-wrapper">
+      {% content_for 'blocks' %}
+    </div>
+    
+    {%- comment -%} 导航箭头 {%- endcomment -%}
+    {% if show_arrows and section.blocks.size > 1 %}
+      <div class="mk-swiper__arrows">
+        <button
+          type="button"
+          class="mk-swiper__arrow mk-swiper__arrow--prev"
+          aria-label="{{ 'accessibility.previous' | t }}"
+          data-swiper-prev
+        >
+          {{- 'icon-arrow-left.svg' | inline_asset_content -}}
+        </button>
+        <button
+          type="button"
+          class="mk-swiper__arrow mk-swiper__arrow--next"
+          aria-label="{{ 'accessibility.next' | t }}"
+          data-swiper-next
+        >
+          {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+        </button>
+      </div>
+    {% endif %}
+    
+    {%- comment -%} 分页点 {%- endcomment -%}
+    {% if show_dots and section.blocks.size > 1 %}
+      <div class="mk-swiper__dots" data-swiper-dots></div>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-swiper {
+    position: relative;
+    background-color: var(--swiper-bg);
+    overflow: hidden;
+  }
+
+  .mk-swiper__container {
+    position: relative;
+    width: 100%;
+    max-width: var(--container-max-width, 1440px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .swiper-wrapper {
+    display: flex;
+    width: 100%;
+    transition: transform 0.4s ease;
+  }
+
+  .mk-swiper__slide {
+    flex-shrink: 0;
+    width: 100%;
+    padding: 0 calc(var(--space-between, 16px) / 2);
+  }
+
+  @media (min-width: 750px) {
+    .mk-swiper__slide {
+      width: calc(100% / {{ slides_per_view_desktop | default: 3 }});
+    }
+  }
+
+  /* Arrows */
+  .mk-swiper__arrows {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .mk-swiper__arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: var(--color-background, #fff);
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    pointer-events: auto;
+    transition: all 0.2s ease;
+    color: var(--color-text, #1a1a1a);
+  }
+
+  .mk-swiper__arrow:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .mk-swiper__arrow--prev {
+    margin-left: 16px;
+  }
+
+  .mk-swiper__arrow--next {
+    margin-right: 16px;
+  }
+
+  .mk-swiper__arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Dots */
+  .mk-swiper__dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  .mk-swiper__dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    background: var(--color-border, #ddd);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-swiper__dot--active {
+    background: var(--color-primary, #000);
+    transform: scale(1.2);
+  }
+
+  /* Hide on mobile if needed */
+  @media (max-width: 749px) {
+    .mk-swiper__arrow {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class MKSwiper extends HTMLElement {
+    constructor() {
+      super();
+      this.container = this.querySelector('.swiper-wrapper');
+      this.slides = this.querySelectorAll('.mk-swiper__slide');
+      this.prevBtn = this.querySelector('[data-swiper-prev]');
+      this.nextBtn = this.querySelector('[data-swiper-next]');
+      this.dotsContainer = this.querySelector('[data-swiper-dots]');
+      
+      this.currentIndex = 0;
+      this.isAnimating = false;
+      
+      this.init();
+    }
+
+    init() {
+      const slidesPerViewMobile = parseInt(this.dataset.swiperSlidesPerViewMobile) || 1;
+      const slidesPerViewDesktop = parseInt(this.dataset.swiperSlidesPerViewDesktop) || 3;
+      const spaceBetweenMobile = parseInt(this.dataset.swiperSpaceBetweenMobile) || 16;
+      const spaceBetweenDesktop = parseInt(this.dataset.swiperSpaceBetweenDesktop) || 24;
+      const autoplay = this.dataset.swiperAutoplay;
+      const loop = this.dataset.swiperLoop === 'true';
+
+      this.isMobile = window.innerWidth < 750;
+      this.slidesPerView = this.isMobile ? slidesPerViewMobile : slidesPerViewDesktop;
+      this.spaceBetween = this.isMobile ? spaceBetweenMobile : spaceBetweenDesktop;
+
+      this.setupDots();
+      this.bindEvents();
+      
+      if (autoplay) {
+        this.startAutoplay(parseInt(autoplay));
+      }
+      
+      // Handle resize
+      window.addEventListener('resize', () => {
+        this.handleResize();
+      });
+    }
+
+    setupDots() {
+      if (!this.dotsContainer) return;
+      
+      const totalDots = Math.ceil(this.slides.length / this.slidesPerView);
+      this.dotsContainer.innerHTML = '';
+      
+      for (let i = 0; i < totalDots; i++) {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'mk-swiper__dot' + (i === 0 ? ' mk-swiper__dot--active' : '');
+        dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+        dot.addEventListener('click', () => this.goToSlide(i));
+        this.dotsContainer.appendChild(dot);
+      }
+    }
+
+    bindEvents() {
+      if (this.prevBtn) {
+        this.prevBtn.addEventListener('click', () => this.prev());
+      }
+      if (this.nextBtn) {
+        this.nextBtn.addEventListener('click', () => this.next());
+      }
+    }
+
+    prev() {
+      if (this.isAnimating) return;
+      this.goToSlide(this.currentIndex - 1);
+    }
+
+    next() {
+      if (this.isAnimating) return;
+      this.goToSlide(this.currentIndex + 1);
+    }
+
+    goToSlide(index) {
+      if (this.isAnimating) return;
+      this.isAnimating = true;
+
+      const maxIndex = Math.max(0, this.slides.length - this.slidesPerView);
+      
+      if (index < 0) {
+        index = this.loop ? maxIndex : 0;
+      } else if (index > maxIndex) {
+        index = this.loop ? 0 : maxIndex;
+      }
+
+      this.currentIndex = index;
+      const offset = -index * (100 / this.slidesPerView);
+      this.container.style.transform = `translateX(${offset}%)`;
+
+      this.updateDots();
+      
+      setTimeout(() => {
+        this.isAnimating = false;
+      }, 400);
+    }
+
+    updateDots() {
+      if (!this.dotsContainer) return;
+      
+      const dots = this.dotsContainer.querySelectorAll('.mk-swiper__dot');
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('mk-swiper__dot--active', i === this.currentIndex);
+      });
+    }
+
+    handleResize() {
+      const wasMobile = this.isMobile;
+      this.isMobile = window.innerWidth < 750;
+      
+      if (wasMobile !== this.isMobile) {
+        this.slidesPerView = this.isMobile 
+          ? parseInt(this.dataset.swiperSlidesPerViewMobile) || 1
+          : parseInt(this.dataset.swiperSlidesPerViewDesktop) || 3;
+        this.spaceBetween = this.isMobile 
+          ? parseInt(this.dataset.swiperSpaceBetweenMobile) || 16
+          : parseInt(this.dataset.swiperSpaceBetweenDesktop) || 24;
+        this.setupDots();
+        this.goToSlide(0);
+      }
+    }
+
+    startAutoplay(delay) {
+      setInterval(() => {
+        this.next();
+      }, delay);
+    }
+  }
+
+  customElements.define('mk-swiper', MKSwiper);
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK 轮播滑块",
+  "tag": "section",
+  "class": "mk-swiper-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "轮播设置"
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_mobile",
+      "label": "每屏显示数量 (移动端)",
+      "min": 1,
+      "max": 4,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_desktop",
+      "label": "每屏显示数量 (PC端)",
+      "min": 1,
+      "max": 6,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "space_between_mobile",
+      "label": "幻灯片间距 (移动端)",
+      "min": 0,
+      "max": 50,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "space_between_desktop",
+      "label": "幻灯片间距 (PC端)",
+      "min": 0,
+      "max": 80,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "自动播放",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "autoplay_delay",
+      "label": "自动播放间隔",
+      "min": 1000,
+      "max": 10000,
+      "step": 500,
+      "default": 5000,
+      "unit": "ms"
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "循环播放",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "导航控件"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "显示箭头导航",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "显示分页点",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "颜色设置"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景颜色",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "幻灯片",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "描述"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "链接"
+        },
+        {
+          "type": "select",
+          "id": "text_alignment",
+          "label": "文本对齐",
+          "options": [
+            { "value": "left", "label": "居左" },
+            { "value": "center", "label": "居中" },
+            { "value": "right", "label": "居右" }
+          ],
+          "default": "center"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 轮播滑块"
+    }
+  ]
+}
+{% endschema %}

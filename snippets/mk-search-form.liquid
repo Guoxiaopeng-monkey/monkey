@@ -1,0 +1,87 @@
+{%- doc -%}
+  MK 搜索表单组件
+
+  渲染搜索框表单
+
+  @param {string} [class] - 额外CSS类名
+  @param {string} [placeholder] - 占位符文字
+
+  @example
+  {% render 'mk-search-form', placeholder: '搜索产品...' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+  assign placeholder = placeholder | default: '搜索...'
+-%}
+
+<form
+  action="{{ routes.search_url }}"
+  method="get"
+  class="mk-search-form {{ class }}"
+  role="search"
+>
+  <input
+    type="search"
+    name="q"
+    class="mk-search-form__input"
+    placeholder="{{ placeholder }}"
+    aria-label="{{ 'general.search' | t | default: '搜索' }}"
+  >
+  <button type="submit" class="mk-search-form__button" aria-label="{{ 'general.search' | t }}">
+    {{- 'icon-search.svg' | inline_asset_content -}}
+  </button>
+</form>
+
+{% stylesheet %}
+  .mk-search-form {
+    display: flex;
+    align-items: center;
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .mk-search-form:focus-within {
+    background-color: var(--color-background);
+    box-shadow: 0 0 0 2px var(--color-primary, #000);
+  }
+
+  .mk-search-form__input {
+    flex: 1;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--color-foreground);
+    background: transparent;
+    border: none;
+    outline: none;
+  }
+
+  .mk-search-form__input::placeholder {
+    color: var(--color-text-secondary, #999);
+  }
+
+  .mk-search-form__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-secondary, #666);
+    transition: color 0.2s ease;
+  }
+
+  .mk-search-form__button:hover {
+    color: var(--color-primary, #000);
+  }
+
+  .mk-search-form__button svg {
+    width: 18px;
+    height: 18px;
+  }
+{% endstylesheet %}

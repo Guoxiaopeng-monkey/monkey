@@ -1,0 +1,485 @@
+{%- comment -%}
+  MK 产品总览组件
+  
+  功能：展示产品详细信息、图片、视频
+  
+  作者：崽崽 (AI助手)
+  基于：whale ug-product-overview.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign bg_color = ss.background_color | default: '#ffffff'
+  assign product = all_products[ss.product]
+  
+  assign pt_mob = ss.padding_top_mobile | default: 48
+  assign pb_mob = ss.padding_bottom_mobile | default: 48
+  assign pt_desk = ss.padding_top_desktop | default: 80
+  assign pb_desk = ss.padding_bottom_desktop | default: 80
+-%}
+
+<style>
+  #{{ section.id }} {
+    --po-bg: {{ bg_color }};
+    --po-pt-mob: {{ pt_mob }}px;
+    --po-pb-mob: {{ pb_mob }}px;
+    --po-pt-desk: {{ pt_desk }}px;
+    --po-pb-desk: {{ pb_desk }}px;
+    background-color: var(--po-bg);
+    padding: var(--po-pt-mob) 0 var(--po-pb-mob);
+  }
+  
+  @media (min-width: 750px) {
+    #{{ section.id }} {
+      padding: var(--po-pt-desk) 0 var(--po-pb-desk);
+    }
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-product-overview"
+  data-skip-node-update
+>
+  <div class="mk-product-overview__container">
+    
+    {%- comment -%} 标题区域 {%- endcomment -%}
+    <div class="mk-product-overview__header">
+      {% if ss.label != blank %}
+        <p class="mk-product-overview__label">{{ ss.label }}</p>
+      {% endif %}
+      {% if ss.heading != blank %}
+        <h2 class="mk-product-overview__heading">{{ ss.heading }}</h2>
+      {% endif %}
+      {% if ss.description != blank %}
+        <p class="mk-product-overview__description">{{ ss.description }}</p>
+      {% endif %}
+    </div>
+    
+    {%- comment -%} 内容区块 {%- endcomment -%}
+    <div class="mk-product-overview__content">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'image' -%}
+            <div class="mk-product-overview__block mk-product-overview__block--image" {{ block.shopify_attributes }}>
+              {% if block.settings.image != blank %}
+                <img
+                  src="{{ block.settings.image | image_url: width: 1600 }}"
+                  alt="{{ block.settings.image.alt }}"
+                  width="1600"
+                  height="{{ 1600 | divided_by: block.settings.image.aspect_ratio | round }}"
+                  loading="lazy"
+                  class="mk-product-overview__image"
+                >
+              {% endif %}
+            </div>
+            
+          {%- when 'text' -%}
+            <div class="mk-product-overview__block mk-product-overview__block--text" {{ block.shopify_attributes }}>
+              <h3 class="mk-product-overview__block-title">{{ block.settings.title }}</h3>
+              <div class="mk-product-overview__block-content">
+                {{ block.settings.content }}
+              </div>
+            </div>
+            
+          {%- when 'video' -%}
+            <div class="mk-product-overview__block mk-product-overview__block--video" {{ block.shopify_attributes }}>
+              {% if block.settings.video_url != blank %}
+                <video
+                  src="{{ block.settings.video_url }}"
+                  autoplay="{{ block.settings.autoplay }}"
+                  loop="{{ block.settings.loop }}"
+                  muted="{{ block.settings.muted }}"
+                  playsinline
+                  controls
+                  class="mk-product-overview__video"
+                ></video>
+              {% endif %}
+            </div>
+            
+          {%- when 'feature' -%}
+            <div class="mk-product-overview__block mk-product-overview__block--feature" {{ block.shopify_attributes }}>
+              <div class="mk-product-overview__feature">
+                {% if block.settings.icon != blank %}
+                  <div class="mk-product-overview__feature-icon">
+                    {{ block.settings.icon | image_url: width: 48 | image_tag: width: 48 }}
+                  </div>
+                {% endif %}
+                <div class="mk-product-overview__feature-content">
+                  {% if block.settings.title != blank %}
+                    <h4 class="mk-product-overview__feature-title">{{ block.settings.title }}</h4>
+                  {% endif %}
+                  {% if block.settings.description != blank %}
+                    <p class="mk-product-overview__feature-desc">{{ block.settings.description }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+    
+    {%- comment -%} 底部 CTA {%- endcomment -%}
+    {% if ss.show_cta and ss.cta_text != blank %}
+      <div class="mk-product-overview__cta">
+        <a href="{{ ss.cta_link | default: '#' }}" class="mk-product-overview__cta-button">
+          {{ ss.cta_text }}
+          {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-product-overview__container {
+    max-width: var(--container-max-width, 1440px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  /* Header */
+  .mk-product-overview__header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 48px auto;
+  }
+
+  .mk-product-overview__label {
+    margin: 0 0 16px 0;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--color-primary, #000);
+  }
+
+  .mk-product-overview__heading {
+    margin: 0 0 20px 0;
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .mk-product-overview__description {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.6;
+    opacity: 0.85;
+  }
+
+  /* Content */
+  .mk-product-overview__content {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* Image Block */
+  .mk-product-overview__block--image {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .mk-product-overview__image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Text Block */
+  .mk-product-overview__block--text {
+    text-align: center;
+    padding: 32px;
+    background: var(--color-background-secondary, #f9f9f9);
+    border-radius: 12px;
+  }
+
+  .mk-product-overview__block-title {
+    margin: 0 0 16px 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .mk-product-overview__block-content {
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .mk-product-overview__block-content p {
+    margin: 0 0 12px 0;
+  }
+
+  .mk-product-overview__block-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Video Block */
+  .mk-product-overview__block--video {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .mk-product-overview__video {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Feature Block */
+  .mk-product-overview__block--feature {
+    padding: 24px;
+    background: var(--color-background-secondary, #f9f9f9);
+    border-radius: 12px;
+  }
+
+  .mk-product-overview__feature {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .mk-product-overview__feature-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+  }
+
+  .mk-product-overview__feature-icon img {
+    width: 100%;
+    height: auto;
+  }
+
+  .mk-product-overview__feature-title {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .mk-product-overview__feature-desc {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    opacity: 0.85;
+  }
+
+  /* CTA */
+  .mk-product-overview__cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 48px;
+  }
+
+  .mk-product-overview__cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--color-background, #fff);
+    background: var(--color-primary, #000);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-product-overview__cta-button:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+  }
+
+  .mk-product-overview__cta-button svg {
+    width: 16px;
+    height: 16px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 产品总览",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "内容设置"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "标签文字"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "标题",
+      "default": "产品总览"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "描述文字"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "关联产品"
+    },
+    {
+      "type": "header",
+      "content": "CTA 设置"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta",
+      "label": "显示底部按钮",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "按钮文字",
+      "default": "立即购买"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "按钮链接"
+    },
+    {
+      "type": "header",
+      "content": "颜色设置"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "图片",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "文本",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容"
+        }
+      ]
+    },
+    {
+      "type": "video",
+      "name": "视频",
+      "settings": [
+        {
+          "type": "url",
+          "id": "video_url",
+          "label": "视频URL"
+        },
+        {
+          "type": "checkbox",
+          "id": "autoplay",
+          "label": "自动播放",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "loop",
+          "label": "循环播放",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "muted",
+          "label": "静音",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "特性",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "图标"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "描述"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 产品总览"
+    }
+  ]
+}
+{% endschema %}

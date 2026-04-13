@@ -1,0 +1,152 @@
+{%- comment -%}
+  MK MegaMenu Mobile 组件 (移动端)
+  
+  功能：渲染移动端抽屉菜单中的 MegaMenu
+  
+  参数：
+    - mega_menu_block: MegaMenu block 对象
+    - link: 父级链接对象
+    - link_handle: 链接的处理名称（用于 ID）
+  
+  作者：崽崽 (AI助手)
+  基于：mypetcustom/mk-mega-menu-mobile.liquid
+{%- endcomment -%}
+
+{%- assign link_handle = link_handle | default: link.handle -%}
+
+<li class="menu-drawer__menu-item menu-drawer__menu-item--has-mega-menu">
+  <details id="Details-menu-drawer-{{ link_handle }}" data-accordion>
+    <summary
+      id="HeaderDrawer-{{ link_handle }}"
+      class="menu-drawer__menu-item-link menu-drawer__menu-item-link--mainlist menu-drawer__animated-element focus-inset{% if link.current %} menu-drawer__menu-item--active{% endif %}"
+      {% if link.current %}aria-current="page"{% endif %}
+    >
+      <span class="wrap-text">{{ link.title | escape }}</span>
+      <span class="svg-wrapper icon-caret">
+        {{- 'icon-caret.svg' | inline_asset_content -}}
+      </span>
+    </summary>
+    
+    <div
+      class="menu-drawer__mega-menu menu-drawer__animated-element details-content"
+      role="list"
+      tabindex="-1"
+    >
+      {% if mega_menu_block.settings.title != blank %}
+        <div class="menu-drawer__mega-menu-header">
+          <h3 class="menu-drawer__mega-menu-title">{{ mega_menu_block.settings.title }}</h3>
+          {% if mega_menu_block.settings.description != blank %}
+            <p class="menu-drawer__mega-menu-description">{{ mega_menu_block.settings.description }}</p>
+          {% endif %}
+        </div>
+      {% endif %}
+      
+      {% if mega_menu_block.settings.image != blank %}
+        <div class="menu-drawer__mega-menu-image">
+          {% if mega_menu_block.settings.image_link_url != blank %}
+            <a href="{{ mega_menu_block.settings.image_link_url }}">
+          {% endif %}
+          <img
+            src="{{ mega_menu_block.settings.image | image_url: width: 300 }}"
+            alt="{{ mega_menu_block.settings.image_title | default: mega_menu_block.settings.title }}"
+            width="300"
+            loading="lazy"
+          >
+          {% if mega_menu_block.settings.image_link_url != blank %}
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+      
+      {% if mega_menu_block.settings.link_text != blank and mega_menu_block.settings.link_url != blank %}
+        <a 
+          href="{{ mega_menu_block.settings.link_url }}" 
+          class="menu-drawer__mega-menu-link"
+        >
+          {{ mega_menu_block.settings.link_text }}
+          {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+        </a>
+      {% endif %}
+    </div>
+  </details>
+</li>
+
+{% stylesheet %}
+  .menu-drawer__menu-item--has-mega-menu {
+    border-bottom: none;
+  }
+
+  .menu-drawer__menu-item--has-mega-menu > details {
+    border-bottom: 1px solid rgba(var(--color-border), 0.1);
+  }
+
+  .menu-drawer__menu-item-link--mainlist {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .menu-drawer__menu-item-link--mainlist .icon-caret {
+    width: 12px;
+    height: 12px;
+    transition: transform 0.2s ease;
+  }
+
+  .menu-drawer__menu-item--has-mega-menu details[open] .icon-caret {
+    transform: rotate(180deg);
+  }
+
+  .menu-drawer__mega-menu {
+    padding: 16px 0 24px 0;
+  }
+
+  .menu-drawer__mega-menu-header {
+    margin-bottom: 16px;
+  }
+
+  .menu-drawer__mega-menu-title {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: inherit;
+  }
+
+  .menu-drawer__mega-menu-description {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(var(--color-foreground), 0.75);
+    line-height: 1.5;
+  }
+
+  .menu-drawer__mega-menu-image {
+    margin-bottom: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .menu-drawer__mega-menu-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .menu-drawer__mega-menu-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-primary, #000);
+    text-decoration: none;
+  }
+
+  .menu-drawer__mega-menu-link svg {
+    width: 14px;
+    height: 14px;
+  }
+{% endstylesheet %}

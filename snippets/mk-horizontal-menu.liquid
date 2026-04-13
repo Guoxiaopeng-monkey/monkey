@@ -1,0 +1,156 @@
+{%- doc -%}
+  MK 水平菜单组件
+
+  渲染水平导航菜单
+
+  @param {object[]} [links] - 链接数组
+
+  @example
+  {% render 'mk-horizontal-menu', links: linklists[section.settings.menu].links %}
+{%- enddoc -%}
+
+{% liquid
+  assign links = links | default: empty_array
+  if links == empty_array
+    assign links = '[]' | parse_json
+  endif
+-%}
+
+<nav class="mk-horizontal-menu" aria-label="{{ 'general.menu' | t | default: '菜单' }}">
+  <ul class="mk-horizontal-menu__list">
+    {%- for link in links -%}
+      <li class="mk-horizontal-menu__item {% if link.links.size > 0 %}mk-horizontal-menu__item--has-submenu{% endif %}">
+        <a
+          href="{{ link.url }}"
+          class="mk-horizontal-menu__link {% if link.active %}mk-horizontal-menu__link--active{% endif %}"
+          {% if link.links.size > 0 %}
+            aria-expanded="false"
+          {% endif %}
+        >
+          {{ link.title }}
+        </a>
+
+        {%- if link.links.size > 0 -%}
+          <button type="button" class="mk-horizontal-menu__toggle" aria-label="{{ link.title }}">
+            {{- 'icon-chevron-down.svg' | inline_asset_content -}}
+          </button>
+
+          <div class="mk-horizontal-menu__submenu">
+            <ul class="mk-horizontal-menu__submenu-list">
+              {%- for sublink in link.links -%}
+                <li class="mk-horizontal-menu__submenu-item">
+                  <a href="{{ sublink.url }}" class="mk-horizontal-menu__submenu-link">
+                    {{ sublink.title }}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+</nav>
+
+{% stylesheet %}
+  .mk-horizontal-menu__list {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mk-horizontal-menu__item {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .mk-horizontal-menu__link {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-horizontal-menu__link:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-horizontal-menu__link--active {
+    color: var(--color-primary, #000);
+  }
+
+  .mk-horizontal-menu__toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-horizontal-menu__toggle svg {
+    width: 12px;
+    height: 12px;
+    transition: transform 0.2s ease;
+  }
+
+  .mk-horizontal-menu__item--has-submenu:hover .mk-horizontal-menu__toggle svg {
+    transform: rotate(180deg);
+  }
+
+  /* 子菜单 */
+  .mk-horizontal-menu__submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    padding-top: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: all 0.2s ease;
+    z-index: 100;
+  }
+
+  .mk-horizontal-menu__item--has-submenu:hover .mk-horizontal-menu__submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .mk-horizontal-menu__submenu-list {
+    margin: 0;
+    padding: 8px 0;
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    list-style: none;
+  }
+
+  .mk-horizontal-menu__submenu-link {
+    display: block;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: var(--color-foreground);
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .mk-horizontal-menu__submenu-link:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+{% endstylesheet %}

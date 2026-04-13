@@ -1,0 +1,262 @@
+{%- doc -%}
+  MK 快速添加组件
+
+  渲染快速添加按钮，支持单 variant 直接添加或多 variant 选择后添加
+
+  @param {object} product - 产品对象
+  @param {string} section_id - Section ID
+  @param {object} [block] - Block 对象
+
+  @example
+  {% render 'mk-quick-add', product: product, section_id: section.id %}
+{%- enddoc -%}
+
+{% liquid
+  assign product_form_id = 'QuickAdd-ProductForm-' | append: product.id | append: '-' | append: block.id
+  assign add_to_cart_text = 'actions.add' | t | default: '添加'
+
+  # 确定使用哪个 variant
+  assign variant_to_use = product.selected_or_first_available_variant
+
+  if variant_to_use.available
+    assign can_add_to_cart = true
+  else
+    assign can_add_to_cart = false
+  endif
+%}
+
+<quick-add-component
+  class="mk-quick-add color-{{ settings.quick_add_color_scheme | default: 'background-1' }}"
+  ref="quickAdd"
+  data-product-title="{{ product.title }}"
+>
+  <product-form-component
+    data-section-id="{{ section_id }}"
+    data-product-id="{{ product.id }}"
+    on:submit="/handleSubmit"
+    class="
+      mk-quick-add__product-form
+      {% if product.options.size == 1 %} mk-quick-add__product-form--single-option {% else %} mk-quick-add__product-form--multi-option {% endif %}
+      {% if product.variants.size == 1 %} mk-quick-add__product-form--single-variant {% else %} mk-quick-add__product-form--multi-variant {% endif %}
+    "
+  >
+    <div
+      class="visually-hidden"
+      aria-live="assertive"
+      role="status"
+      aria-atomic="true"
+      ref="liveRegion"
+    ></div>
+
+    {%- form 'product', product, id: product_form_id, novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+      <input
+        type="hidden"
+        name="id"
+        ref="variantId"
+        value="{{ variant_to_use.id }}"
+        {% if variant_to_use.available == false %}
+          disabled
+        {% endif %}
+      >
+      <input
+        type="hidden"
+        name="quantity"
+        value="{% if variant_to_use.quantity_rule.min %}{{ variant_to_use.quantity_rule.min }}{% else %}1{% endif %}"
+      >
+
+      {%- comment -%} 单 variant 或单 option 产品直接显示添加按钮 {%- endcomment -%}
+      {%- if product.variants.size == 1 or product.options.size == 1 -%}
+        <button
+          type="submit"
+          class="mk-quick-add__button mk-quick-add__button--add"
+          {% unless can_add_to_cart %}
+            disabled
+          {% endunless %}
+        >
+          <span class="mk-quick-add__button-content">
+            {% if can_add_to_cart %}
+              <span class="mk-quick-add__icon">
+                {{- 'icon-add-to-cart.svg' | inline_asset_content -}}
+              </span>
+            {% endif %}
+            <span class="mk-quick-add__text">
+              {{ add_to_cart_text }}
+            </span>
+          </span>
+          <span class="mk-quick-add__button-added" aria-hidden="true">
+            {{- 'icon-check.svg' | inline_asset_content -}}
+            {{ 'actions.added' | t | default: '已添加' }}
+          </span>
+        </button>
+      {%- endif -%}
+
+      {%- comment -%} 多 variant 产品显示选择按钮 {%- endcomment -%}
+      {%- if product.variants.size > 1 -%}
+        <button
+          type="button"
+          class="mk-quick-add__button mk-quick-add__button--choose"
+          name="add"
+          on:click="quick-add-component/handleClick"
+        >
+          <span class="mk-quick-add__button-content">
+            <span class="mk-quick-add__icon">
+              {{- 'icon-plus.svg' | inline_asset_content -}}
+            </span>
+            <span class="mk-quick-add__text">
+              {{ add_to_cart_text }}
+            </span>
+          </span>
+        </button>
+      {%- endif -%}
+    {%- endform -%}
+  </product-form-component>
+</quick-add-component>
+
+{% stylesheet %}
+  .mk-quick-add {
+    --quick-add-offset: 12px;
+    --quick-add-z-index: 10;
+
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-end;
+    bottom: var(--quick-add-offset);
+    right: var(--quick-add-offset);
+    left: var(--quick-add-offset);
+    z-index: var(--quick-add-z-index);
+    pointer-events: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    .mk-quick-add {
+      --quick-add-offset: 16px;
+      display: flex;
+    }
+  }
+
+  .mk-quick-add__product-form {
+    pointer-events: all;
+  }
+
+  .mk-quick-add__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    border: none;
+    border-radius: 100px;
+    box-shadow: var(--shadow-popover, 0 4px 12px rgba(0,0,0,0.15));
+    cursor: pointer;
+    transition: all 0.2s ease;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .mk-quick-add__button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-popover-hover, 0 6px 16px rgba(0,0,0,0.2));
+  }
+
+  .mk-quick-add__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .mk-quick-add__button-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .mk-quick-add__button-added {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .mk-quick-add__button--add.atc-added .mk-quick-add__button-content {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+
+  .mk-quick-add__button--add.atc-added .mk-quick-add__button-added {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .mk-quick-add__icon {
+    display: flex;
+    width: 18px;
+    height: 18px;
+  }
+
+  .mk-quick-add__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-quick-add__text {
+    white-space: nowrap;
+  }
+
+  @media screen and (max-width: 749px) {
+    .mk-quick-add__button {
+      padding: 10px 12px;
+      border-radius: 50%;
+    }
+
+    .mk-quick-add__icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    .mk-quick-add__text {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class QuickAddComponent extends HTMLElement {
+    constructor() {
+      super();
+      this.refs = {
+        quickAdd: this.querySelector('quick-add-component'),
+        variantId: this.querySelector('ref="variantId"'),
+        liveRegion: this.querySelector('ref="liveRegion"')
+      };
+    }
+
+    connectedCallback() {
+      this.addEventListener('click', this.handleClick.bind(this));
+    }
+
+    async handleClick(event) {
+      const button = event.target.closest('.mk-quick-add__button--choose');
+      if (!button) return;
+
+      // 触发快速添加模态框或选择器
+      this.dispatchEvent(new CustomEvent('quick-add:open', {
+        bubbles: true,
+        detail: {
+          product: this.dataset.product
+        }
+      }));
+    }
+  }
+
+  customElements.define('quick-add-component', QuickAddComponent);
+{% endjavascript %}

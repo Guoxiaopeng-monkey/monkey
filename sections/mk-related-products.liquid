@@ -1,0 +1,190 @@
+{%- comment -%}
+  MK 相关产品组件
+
+  显示与当前产品相关的推荐产品
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+  assign products_to_show = ss.products_to_show | default: 4
+-%}
+
+<product-recommendations
+  class="mk-related-products color-{{ ss.color_scheme | default: 'background-1' }}"
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ products_to_show }}"
+>
+  {% if recommendations.performed and recommendations.products_count > 0 %}
+    <div class="mk-related-products__container">
+      {%- comment -%} 标题 {%- endcomment -%}
+      {% if ss.heading != blank %}
+        <h2 class="mk-related-products__heading {{ ss.heading_size | default: 'h2' }}">
+          {{ ss.heading }}
+        </h2>
+      {% endif %}
+
+      {%- comment -%} 产品网格 {%- endcomment -%}
+      <ul class="mk-related-products__grid" role="list">
+        {% for recommendation in recommendations.products %}
+          <li class="mk-related-products__item">
+            {% render 'mk-product-card', product: recommendation %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+</product-recommendations>
+
+{% stylesheet %}
+  .mk-related-products {
+    padding: {{ ss.padding_top_mobile | default: 40 }}px 0 {{ ss.padding_bottom_mobile | default: 40 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-related-products {
+      padding: {{ ss.padding_top_desktop | default: 60 }}px 0 {{ ss.padding_bottom_desktop | default: 60 }}px;
+    }
+  }
+
+  .mk-related-products__container {
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .mk-related-products__heading {
+    margin: 0 0 24px 0;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .mk-related-products__heading.h1 {
+    font-size: 32px;
+  }
+
+  .mk-related-products__heading.h2 {
+    font-size: 24px;
+  }
+
+  .mk-related-products__heading.h3 {
+    font-size: 20px;
+  }
+
+  .mk-related-products__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 480px) {
+    .mk-related-products__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 750px) {
+    .mk-related-products__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+  }
+
+  .mk-related-products__item {
+    min-width: 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 相关产品",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "标题",
+      "default": "您可能还喜欢"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "标题大小",
+      "options": [
+        { "value": "h1", "label": "大 (H1)" },
+        { "value": "h2", "label": "中 (H2)" },
+        { "value": "h3", "label": "小 (H3)" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "显示产品数量",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "颜色设置"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 相关产品"
+    }
+  ]
+}
+{% endschema %}

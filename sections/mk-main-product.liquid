@@ -1,0 +1,745 @@
+{%- comment -%}
+  MK 产品详情页组件
+  
+  功能：产品详情页完整展示
+  
+  作者：崽崽 (AI助手)
+  基于：whale ug-main-product.liquid, spx-product-information.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign product = product
+  assign section presents product
+  
+  assign pt_mob = ss.padding_top_mobile | default: 32
+  assign pb_mob = ss.padding_bottom_mobile | default: 32
+  assign pt_desk = ss.padding_top_desktop | default: 48
+  assign pb_desk = ss.padding_bottom_desktop | default: 48
+  
+  assign media_layout = ss.media_layout | default: 'grid'
+  assign show_vendor = ss.show_vendor
+  assign show_sku = ss.show_sku
+  assign show_barcode = ss.show_barcode
+  assign enable_sticky_info = ss.enable_sticky_info
+-%}
+
+<style>
+  #{{ section.id }} {
+    --product-pt-mob: {{ pt_mob }}px;
+    --product-pb-mob: {{ pb_mob }}px;
+    --product-pt-desk: {{ pt_desk }}px;
+    --product-pb-desk: {{ pb_desk }}px;
+    padding: var(--product-pt-mob) 0 var(--product-pb-mob);
+  }
+  
+  @media (min-width: 750px) {
+    #{{ section.id }} {
+      padding: var(--product-pt-desk) 0 var(--product-pb-desk);
+    }
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-main-product"
+  data-skip-node-update
+  data-section-id="{{ section.id }}"
+>
+  <div class="mk-main-product__container">
+    <div class="mk-main-product__layout {% if media_layout == 'sticky' %}mk-main-product__layout--sticky{% endif %}">
+      
+      {%- comment -%} 产品媒体区域 {%- endcomment -%}
+      <div class="mk-main-product__media" data-product-media>
+        {%- for media in product.media -%}
+          <div class="mk-main-product__media-item" data-media-id="{{ media.id }}">
+            {% case media.media_type %}
+              {% when 'image' %}
+                <img
+                  src="{{ media | image_url: width: 1200 }}"
+                  alt="{{ media.alt | default: product.title }}"
+                  width="1200"
+                  height="{{ 1200 | divided_by: media.aspect_ratio | round }}"
+                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                  class="mk-main-product__media-image"
+                >
+              {% when 'video' %}
+                <video
+                  src="{{ media.sources[1].url }}"
+                  autoplay
+                  loop
+                  muted
+                  playsinline
+                  class="mk-main-product__media-video"
+                ></video>
+              {% when 'external_video' %}
+                <iframe
+                  src="{{ media | external_video_url }}"
+                  frameborder="0"
+                  allowfullscreen
+                  class="mk-main-product__media-iframe"
+                ></iframe>
+              {% when 'model' %}
+                <model-viewer
+                  src="{{ media.sources[0].url }}"
+                  poster="{{ media.preview_image | image_url: width: 800 }}"
+                  alt="{{ media.alt | default: product.title }}"
+                  ar
+                  auto-rotate
+                  class="mk-main-product__media-model"
+                ></model-viewer>
+              {% else %}
+                <div class="mk-main-product__media-placeholder">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+            {% endcase %}
+          </div>
+        {%- else -%}
+          <div class="mk-main-product__media-placeholder">
+            {{ 'product-1' | placeholder_svg_tag }}
+          </div>
+        {%- endfor -%}
+      </div>
+      
+      {%- comment -%} 产品信息区域 {%- endcomment -%}
+      <div class="mk-main-product__info" data-product-info>
+        {%- comment -%} 标题和价格 {%- endcomment -%}
+        <div class="mk-main-product__header">
+          {%- comment -%} 供应商 {%- endcomment -%}
+          {% if show_vendor and product.vendor != blank %}
+            <p class="mk-main-product__vendor">{{ product.vendor }}</p>
+          {% endif %}
+          
+          {%- comment -%} 标题 {%- endcomment -%}
+          <h1 class="mk-main-product__title">{{ product.title }}</h1>
+          
+          {%- comment -%} SKU {%- endcomment -%}
+          {% if show_sku and product.selected_or_first_available_variant.sku != blank %}
+            <p class="mk-main-product__sku">
+              <span class="mk-main-product__sku-label">SKU:</span>
+              {{ product.selected_or_first_available_variant.sku }}
+            </p>
+          {% endif %}
+          
+          {%- comment -%} 价格 {%- endcomment -%}
+          <div class="mk-main-product__price" data-price>
+            <span class="mk-main-product__price-current" data-price-current>
+              {{ product.price_min | money }}
+            </span>
+            {% if product.compare_at_price_max > product.price_min %}
+              <span class="mk-main-product__price-compare">
+                {{ product.compare_at_price_max | money }}
+              </span>
+              <span class="mk-main-product__price-badge">
+                {{ 'products.product.on_sale' | t | default: '促销' }}
+              </span>
+            {% endif %}
+          </div>
+        </div>
+        
+        {%- comment -%} 描述 {%- endcomment -%}
+        {% if product.description != blank %}
+          <div class="mk-main-product__description">
+            {{ product.description }}
+          </div>
+        {% endif %}
+        
+        {%- comment -%} 变体选择器 {%- endcomment -%}
+        {%- for option in product.options_with_values -%}
+          <div class="mk-main-product__option" data-option-index="{{ forloop.index0 }}">
+            <label class="mk-main-product__option-label">
+              {{ option.name }}:
+              <span class="mk-main-product__option-value">{{ option.selected_value }}</span>
+            </label>
+            
+            {%- comment -%} 选项按钮 {%- endcomment -%}
+            <div class="mk-main-product__option-buttons">
+              {%- for value in option.values -%}
+                <button
+                  type="button"
+                  class="mk-main-product__option-btn{% if option.selected_value == value %} mk-main-product__option-btn--selected{% endif %}"
+                  data-option-value="{{ value }}"
+                  {% if option.selected_value == value %}aria-pressed="true"{% else %}aria-pressed="false"{% endif %}
+                >
+                  {{ value }}
+                </button>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endfor -%}
+        
+        {%- comment -%} 数量选择器 {%- endcomment -%}
+        <div class="mk-main-product__quantity">
+          <label class="mk-main-product__quantity-label" for="Quantity-{{ section.id }}">
+            {{ 'products.quantity.label' | t | default: '数量' }}
+          </label>
+          <div class="mk-main-product__quantity-selector">
+            <button type="button" class="mk-main-product__quantity-btn" data-quantity-decrease>-</button>
+            <input
+              type="number"
+              id="Quantity-{{ section.id }}"
+              name="quantity"
+              class="mk-main-product__quantity-input"
+              value="1"
+              min="1"
+              max="{{ product.selected_or_first_available_variant.inventory_quantity | default: 99 }}"
+            >
+            <button type="button" class="mk-main-product__quantity-btn" data-quantity-increase>+</button>
+          </div>
+        </div>
+        
+        {%- comment -%} 购买按钮 {%- endcomment -%}
+        <div class="mk-main-product__actions">
+          {% if product.selected_or_first_available_variant.available %}
+            <button
+              type="button"
+              class="mk-main-product__add-to-cart"
+              data-add-to-cart
+              data-product-id="{{ product.id }}"
+            >
+              <span data-add-to-cart-text>{{ 'products.product.add_to_cart' | t | default: '添加到购物车' }}</span>
+            </button>
+          {% else %}
+            <button type="button" class="mk-main-product__add-to-cart" disabled>
+              {{ 'products.product.sold_out' | t | default: '已售罄' }}
+            </button>
+          {% endif %}
+        </div>
+        
+        {%- comment -%} 产品元信息 {%- endcomment -%}
+        {%- if ss.show_product_meta -%}
+          <div class="mk-main-product__meta">
+            {%- if product.barcode != blank and show_barcode -%}
+              <p class="mk-main-product__meta-item">
+                <span>条码:</span> {{ product.barcode }}
+              </p>
+            {%- endif -%}
+            
+            {%- if ss.show_trust_badges -%}
+              <div class="mk-main-product__trust-badges">
+                <div class="mk-main-product__trust-badge">
+                  {{- 'icon-shield.svg' | inline_asset_content -}}
+                  <span>安全支付</span>
+                </div>
+                <div class="mk-main-product__trust-badge">
+                  {{- 'icon-truck.svg' | inline_asset_content -}}
+                  <span>全球配送</span>
+                </div>
+                <div class="mk-main-product__trust-badge">
+                  {{- 'icon-return.svg' | inline_asset_content -}}
+                  <span>30天退货</span>
+                </div>
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-main-product__container {
+    max-width: var(--container-max-width, 1440px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  /* Layout */
+  .mk-main-product__layout {
+    display: grid;
+    gap: 48px;
+  }
+
+  @media (min-width: 990px) {
+    .mk-main-product__layout {
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+    }
+
+    .mk-main-product__layout--sticky {
+      align-items: start;
+    }
+
+    .mk-main-product__layout--sticky .mk-main-product__info {
+      position: sticky;
+      top: 120px;
+    }
+  }
+
+  /* Media */
+  .mk-main-product__media {
+    display: grid;
+    gap: 12px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-main-product__media {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .mk-main-product__media-item {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 12px;
+    background: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-main-product__media-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mk-main-product__media-video,
+  .mk-main-product__media-iframe {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Info */
+  .mk-main-product__info {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* Header */
+  .mk-main-product__header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mk-main-product__vendor {
+    margin: 0;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-main-product__title {
+    margin: 0;
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .mk-main-product__sku {
+    margin: 0;
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  /* Price */
+  .mk-main-product__price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mk-main-product__price-current {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .mk-main-product__price-compare {
+    font-size: 18px;
+    color: var(--color-text-secondary, #999);
+    text-decoration: line-through;
+  }
+
+  .mk-main-product__price-badge {
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    background: var(--color-sale-bg, #e53935);
+    color: #fff;
+    border-radius: 4px;
+  }
+
+  /* Description */
+  .mk-main-product__description {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .mk-main-product__description p {
+    margin: 0 0 12px 0;
+  }
+
+  .mk-main-product__description p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Option */
+  .mk-main-product__option {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mk-main-product__option-label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .mk-main-product__option-value {
+    font-weight: 400;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-main-product__option-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mk-main-product__option-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    background: transparent;
+    border: 1px solid rgba(var(--color-border), 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-main-product__option-btn:hover {
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-main-product__option-btn--selected {
+    background: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+    border-color: var(--color-primary, #000);
+  }
+
+  /* Quantity */
+  .mk-main-product__quantity {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mk-main-product__quantity-label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .mk-main-product__quantity-selector {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    border: 1px solid rgba(var(--color-border), 0.3);
+    border-radius: 4px;
+  }
+
+  .mk-main-product__quantity-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    font-size: 18px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .mk-main-product__quantity-btn:hover {
+    background: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-main-product__quantity-input {
+    width: 60px;
+    height: 40px;
+    padding: 0;
+    font-size: 14px;
+    text-align: center;
+    border: none;
+    border-left: 1px solid rgba(var(--color-border), 0.3);
+    border-right: 1px solid rgba(var(--color-border), 0.3);
+  }
+
+  .mk-main-product__quantity-input:focus {
+    outline: none;
+  }
+
+  /* Actions */
+  .mk-main-product__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mk-main-product__add-to-cart {
+    width: 100%;
+    padding: 18px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-background, #fff);
+    background: var(--color-primary, #000);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-main-product__add-to-cart:hover:not(:disabled) {
+    opacity: 0.85;
+    transform: translateY(-2px);
+  }
+
+  .mk-main-product__add-to-cart:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Meta */
+  .mk-main-product__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(var(--color-border), 0.15);
+  }
+
+  .mk-main-product__meta-item {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .mk-main-product__meta-item span {
+    font-weight: 500;
+  }
+
+  /* Trust Badges */
+  .mk-main-product__trust-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .mk-main-product__trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-main-product__trust-badge svg {
+    width: 20px;
+    height: 20px;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class MKMainProduct extends HTMLElement {
+    constructor() {
+      super();
+      this.init();
+    }
+
+    init() {
+      // Quantity buttons
+      this.querySelectorAll('[data-quantity-decrease]').forEach(btn => {
+        btn.addEventListener('click', () => this.decreaseQuantity());
+      });
+
+      this.querySelectorAll('[data-quantity-increase]').forEach(btn => {
+        btn.addEventListener('click', () => this.increaseQuantity());
+      });
+
+      // Option buttons
+      this.querySelectorAll('.mk-main-product__option-btn').forEach(btn => {
+        btn.addEventListener('click', () => this.selectOption(btn));
+      });
+
+      // Add to cart
+      const addToCartBtn = this.querySelector('[data-add-to-cart]');
+      if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', () => this.addToCart());
+      }
+    }
+
+    decreaseQuantity() {
+      const input = this.querySelector('.mk-main-product__quantity-input');
+      const current = parseInt(input.value);
+      if (current > 1) {
+        input.value = current - 1;
+      }
+    }
+
+    increaseQuantity() {
+      const input = this.querySelector('.mk-main-product__quantity-input');
+      const max = parseInt(input.max);
+      const current = parseInt(input.value);
+      if (current < max) {
+        input.value = current + 1;
+      }
+    }
+
+    selectOption(btn) {
+      const optionButtons = btn.parentElement.querySelectorAll('.mk-main-product__option-btn');
+      optionButtons.forEach(b => {
+        b.classList.remove('mk-main-product__option-btn--selected');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('mk-main-product__option-btn--selected');
+      btn.setAttribute('aria-pressed', 'true');
+    }
+
+    async addToCart() {
+      const btn = this.querySelector('[data-add-to-cart]');
+      const productId = btn.dataset.productId;
+      const quantity = this.querySelector('.mk-main-product__quantity-input').value;
+      
+      btn.disabled = true;
+      btn.querySelector('[data-add-to-cart-text]').textContent = '添加中...';
+
+      try {
+        const response = await fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: productId,
+            quantity: parseInt(quantity)
+          })
+        });
+
+        if (response.ok) {
+          btn.querySelector('[data-add-to-cart-text]').textContent = '已添加 ✓';
+          setTimeout(() => {
+            btn.querySelector('[data-add-to-cart-text]').textContent = '添加到购物车';
+            btn.disabled = false;
+          }, 2000);
+        }
+      } catch (error) {
+        btn.querySelector('[data-add-to-cart-text]').textContent = '添加失败';
+        btn.disabled = false;
+      }
+    }
+  }
+
+  customElements.define('mk-main-product', MKMainProduct);
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK 产品详情",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "布局设置"
+    },
+    {
+      "type": "select",
+      "id": "media_layout",
+      "label": "媒体布局",
+      "options": [
+        { "value": "grid", "label": "网格" },
+        { "value": "sticky", "label": "粘性信息" }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "header",
+      "content": "产品信息"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "显示供应商",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sku",
+      "label": "显示 SKU",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_barcode",
+      "label": "显示条码",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky_info",
+      "label": "信息区域粘性定位",
+      "info": "PC端信息区域滚动时保持可见",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "信任标识"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_meta",
+      "label": "显示产品元信息",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_badges",
+      "label": "显示信任标识",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 48,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 产品详情"
+    }
+  ]
+}
+{% endschema %}

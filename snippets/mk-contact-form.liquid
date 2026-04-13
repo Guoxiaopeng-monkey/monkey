@@ -1,0 +1,231 @@
+{%- doc -%}
+  MK 联系表单组件
+
+  渲染包含姓名、邮箱、电话和留言的联系表单
+
+  @param {object} [settings] - 区块设置对象
+  @param {string} [submit_text] - 提交按钮文字
+
+  @example
+  {% render 'mk-contact-form', settings: block.settings %}
+{%- enddoc -%}
+
+{% liquid
+  assign form_id = section.id | prepend: 'ContactForm-'
+  assign submit_text = submit_text | default: '提交'
+-%}
+
+<div
+  class="mk-contact-form"
+  {{ block.shopify_attributes }}
+>
+  {%- form 'contact', id: form_id, class: 'mk-contact-form__form' -%}
+    {%- if form.errors -%}
+      <div class="mk-contact-form__error" tabindex="-1" autofocus>
+        <span class="mk-contact-form__error-icon">{{- 'icon-error.svg' | inline_asset_content -}}</span>
+        <span>{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</span>
+      </div>
+    {%- endif -%}
+
+    {%- if form.posted_successfully? -%}
+      <div class="mk-contact-form__success" tabindex="-1" autofocus>
+        <span class="mk-contact-form__success-icon">{{- 'icon-check.svg' | inline_asset_content -}}</span>
+        <span>{{ 'contact.form.post_success' | t | default: '感谢您的留言，我们会尽快与您联系！' }}</span>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} 姓名和邮箱行 {%- endcomment -%}
+    <div class="mk-contact-form__row">
+      <div class="mk-contact-form__field">
+        <label for="ContactForm-name" class="mk-contact-form__label">{{ 'contact.name' | t | default: '姓名' }}</label>
+        <input
+          type="text"
+          id="ContactForm-name"
+          class="mk-contact-form__input"
+          name="contact[name]"
+          value="{{ form.name | default: customer.name }}"
+          placeholder="{{ 'contact.name' | t | default: '您的姓名' }}"
+          autocomplete="name"
+        >
+      </div>
+
+      <div class="mk-contact-form__field">
+        <label for="ContactForm-email" class="mk-contact-form__label">
+          {{ 'contact.email' | t | default: '邮箱' }}
+          <span class="mk-contact-form__required">*</span>
+        </label>
+        <input
+          type="email"
+          id="ContactForm-email"
+          class="mk-contact-form__input"
+          name="contact[email]"
+          value="{{ form.email | default: customer.email }}"
+          placeholder="{{ 'contact.email' | t | default: 'your@email.com' }}"
+          autocomplete="email"
+          required
+          {% if form.errors contains 'email' %}
+            aria-invalid="true"
+            aria-describedby="ContactForm-email-error"
+          {% endif %}
+        >
+      </div>
+    </div>
+
+    {%- comment -%} 电话号码 {%- endcomment -%}
+    <div class="mk-contact-form__field">
+      <label for="ContactForm-phone" class="mk-contact-form__label">{{ 'contact.phone' | t | default: '电话' }}</label>
+      <input
+        type="tel"
+        id="ContactForm-phone"
+        class="mk-contact-form__input"
+        name="contact[phone]"
+        value="{{ form.phone | default: customer.phone }}"
+        placeholder="{{ 'contact.phone' | t | default: '+86 138 0000 0000' }}"
+        autocomplete="tel"
+        pattern="[0-9\-\+\s]*"
+      >
+    </div>
+
+    {%- comment -%} 留言内容 {%- endcomment -%}
+    <div class="mk-contact-form__field">
+      <label for="ContactForm-body" class="mk-contact-form__label">{{ 'contact.message' | t | default: '留言' }}</label>
+      <textarea
+        id="ContactForm-body"
+        class="mk-contact-form__input mk-contact-form__input--textarea"
+        name="contact[body]"
+        rows="6"
+        placeholder="{{ 'contact.message_placeholder' | t | default: '请输入您的留言内容...' }}"
+      >{{ form.body }}</textarea>
+    </div>
+
+    {%- comment -%} 提交按钮 {%- endcomment -%}
+    <button type="submit" class="mk-contact-form__submit">
+      {{ submit_text }}
+    </button>
+  {%- endform -%}
+</div>
+
+{% stylesheet %}
+  .mk-contact-form {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .mk-contact-form__form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .mk-contact-form__row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media (min-width: 600px) {
+    .mk-contact-form__row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .mk-contact-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mk-contact-form__label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .mk-contact-form__required {
+    color: var(--color-error, #e53935);
+  }
+
+  .mk-contact-form__input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .mk-contact-form__input:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .mk-contact-form__input::placeholder {
+    color: var(--color-text-secondary, #999);
+  }
+
+  .mk-contact-form__input--textarea {
+    min-height: 150px;
+    resize: vertical;
+  }
+
+  .mk-contact-form__error,
+  .mk-contact-form__success {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .mk-contact-form__error {
+    background-color: rgba(229, 57, 53, 0.1);
+    color: var(--color-error, #e53935);
+  }
+
+  .mk-contact-form__success {
+    background-color: rgba(46, 125, 50, 0.1);
+    color: var(--color-success, #2e7d32);
+  }
+
+  .mk-contact-form__error-icon,
+  .mk-contact-form__success-icon {
+    display: flex;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .mk-contact-form__error-icon svg,
+  .mk-contact-form__success-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-contact-form__submit {
+    width: 100%;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-contact-form__submit:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+
+  .mk-contact-form__submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+{% endstylesheet %}

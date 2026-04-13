@@ -1,0 +1,276 @@
+{%- comment -%}
+  MK 邮件订阅板块
+
+  邮件订阅表单
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+  assign form_id = 'newsletter-' | append: section.id
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-newsletter color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-newsletter__container">
+    {%- if ss.icon != blank -%}
+      <div class="mk-newsletter__icon">
+        {{ ss.icon | image_url: width: 64 | image_tag }}
+      </div>
+    {%- endif -%}
+
+    {%- if ss.title != blank -%}
+      <h2 class="mk-newsletter__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    {%- if ss.description != blank -%}
+      <p class="mk-newsletter__description">{{ ss.description }}</p>
+    {%- endif -%}
+
+    {%- form 'customer', id: form_id, class: 'mk-newsletter__form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      
+      <div class="mk-newsletter__inputs">
+        <input
+          type="email"
+          name="contact[email]"
+          class="mk-newsletter__input"
+          placeholder="{{ ss.placeholder | default: '输入您的邮箱地址' }}"
+          value="{{ form.email }}"
+          required
+          aria-label="{{ ss.title | default: '邮件订阅' }}"
+        >
+        
+        <button type="submit" class="mk-newsletter__button">
+          {{ ss.button_text | default: '订阅' }}
+        </button>
+      </div>
+
+      {%- if form.errors -%}
+        <p class="mk-newsletter__error">{{ form.errors.messages.email }}</p>
+      {%- endif -%}
+
+      {%- if form.posted_successfully? -%}
+        <p class="mk-newsletter__success">{{ 'newsletter.success' | t | default: '感谢您的订阅！' }}</p>
+      {%- endif -%}
+    {%- endform -%}
+
+    {%- if ss.privacy_text != blank -%}
+      <p class="mk-newsletter__privacy">{{ ss.privacy_text }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-newsletter {
+    padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-newsletter {
+      padding: {{ ss.padding_top_desktop | default: 64 }}px 0 {{ ss.padding_bottom_desktop | default: 64 }}px;
+    }
+  }
+
+  .mk-newsletter__container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+    text-align: center;
+  }
+
+  .mk-newsletter__icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  .mk-newsletter__icon img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+  }
+
+  .mk-newsletter__title {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .mk-newsletter__description {
+    margin: 0 0 24px 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+    line-height: 1.6;
+  }
+
+  .mk-newsletter__form {
+    margin-bottom: 12px;
+  }
+
+  .mk-newsletter__inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  @media (min-width: 480px) {
+    .mk-newsletter__inputs {
+      flex-direction: row;
+    }
+  }
+
+  .mk-newsletter__input {
+    flex: 1;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: border-color 0.2s ease;
+  }
+
+  .mk-newsletter__input:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-newsletter__input::placeholder {
+    color: var(--color-text-secondary, #999);
+  }
+
+  .mk-newsletter__button {
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+
+  .mk-newsletter__button:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+
+  .mk-newsletter__error {
+    margin: 12px 0 0 0;
+    font-size: 13px;
+    color: var(--color-error, #e53935);
+  }
+
+  .mk-newsletter__success {
+    margin: 12px 0 0 0;
+    font-size: 13px;
+    color: var(--color-success, #2e7d32);
+  }
+
+  .mk-newsletter__privacy {
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-text-secondary, #999);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 邮件订阅",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "icon",
+      "label": "图标"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "订阅我们"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "描述",
+      "default": "订阅我们的邮件，获取最新优惠和新品信息"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "输入框占位符",
+      "default": "输入您的邮箱地址"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "按钮文字",
+      "default": "订阅"
+    },
+    {
+      "type": "text",
+      "id": "privacy_text",
+      "label": "隐私政策文字",
+      "info": "显示在表单下方的隐私说明"
+    },
+    {
+      "type": "header",
+      "content": "间距"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 邮件订阅"
+    }
+  ]
+}
+{% endschema %}

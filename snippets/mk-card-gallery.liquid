@@ -1,0 +1,121 @@
+{%- doc -%}
+  MK 图片画廊卡片组件
+
+  渲染产品图片画廊
+
+  @param {object} product - 产品对象
+  @param {string} [image_ratio] - 图片比例：adapt, portrait, landscape, square
+  @param {boolean} [show_second_on_hover] - 悬停显示第二张图
+
+  @example
+  {% render 'mk-card-gallery', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign image_ratio = image_ratio | default: 'adapt'
+  assign show_second_on_hover = show_second_on_hover | default: false
+
+  # 获取产品媒体
+  if product != blank
+    assign media = product.media
+    assign featured_image = product.featured_image | default: product.featured_media.preview_image
+  else
+    assign media = nil
+    assign featured_image = nil
+  endif
+
+  # 计算比例
+  assign ratio = 1
+  if image_ratio == 'portrait'
+    assign ratio = '4 / 5'
+  elsif image_ratio == 'landscape'
+    assign ratio = '16 / 9'
+  elsif image_ratio == 'square'
+    assign ratio = '1'
+  elsif featured_image != blank and featured_image.aspect_ratio > 0
+    assign ratio = featured_image.aspect_ratio
+  endif
+-%}
+
+<div class="mk-card-gallery" data-show-second-on-hover="{{ show_second_on_hover }}">
+  <a href="{{ product.url }}" class="mk-card-gallery__link">
+    {%- if featured_image != blank -%}
+      <div class="mk-card-gallery__images" style="--aspect-ratio: {{ ratio }};">
+        {%- for media_item in media limit: 2 -%}
+          {% liquid
+            assign is_second = forloop.index == 2
+            assign image_class = 'mk-card-gallery__image'
+            if is_second
+              assign image_class = image_class | append: ' mk-card-gallery__image--second'
+            endif
+          %}
+          {{ media_item | image_url: width: 600 | image_tag: class: image_class, loading: 'lazy' }}
+        {%- else -%}
+          {%- comment -%} 没有媒体时显示占位图 {%- endcomment -%}
+          <div class="mk-card-gallery__placeholder">
+            {{ 'product-1' | placeholder_svg_tag: 'mk-card-gallery__placeholder-svg' }}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- elsif product == blank -%}
+      <div class="mk-card-gallery__placeholder" style="--aspect-ratio: {{ ratio }};">
+        {{ 'product-1' | placeholder_svg_tag: 'mk-card-gallery__placeholder-svg' }}
+      </div>
+    {%- endif -%}
+  </a>
+</div>
+
+{% stylesheet %}
+  .mk-card-gallery {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-card-gallery__link {
+    display: block;
+    cursor: pointer;
+  }
+
+  .mk-card-gallery__images {
+    position: relative;
+    aspect-ratio: var(--aspect-ratio, 1);
+  }
+
+  .mk-card-gallery__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+  }
+
+  .mk-card-gallery__image--second {
+    opacity: 0;
+  }
+
+  /* 悬停显示第二张图 */
+  .mk-card-gallery[data-show-second-on-hover="true"]:hover .mk-card-gallery__image--second {
+    opacity: 1;
+  }
+
+  .mk-card-gallery[data-show-second-on-hover="true"]:hover .mk-card-gallery__image:first-child {
+    opacity: 0;
+  }
+
+  .mk-card-gallery__placeholder {
+    aspect-ratio: var(--aspect-ratio, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mk-card-gallery__placeholder-svg {
+    width: 100%;
+    height: 100%;
+    opacity: 0.3;
+  }
+{% endstylesheet %}

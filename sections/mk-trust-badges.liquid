@@ -1,0 +1,244 @@
+{%- comment -%}
+  MK 信任标识组件
+
+  显示信任标识图标，如安全支付、免费退货等
+
+  作者：崽崽 (AI助手)
+  迁移自: poolin_store/sections/spx-nav-trusted.liquid
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+  assign bg_color = ss.background_color | default: '#f5f5f5'
+  assign title = ss.title_text | default: ss.title
+  assign content = ss.content_text | default: ss.content
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-trust-badges color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-trust-badges__container">
+    {%- comment -%} 标题 {%- endcomment -%}
+    {% if title != blank %}
+      <div class="mk-trust-badges__title">
+        <span>{{ title }}</span>
+      </div>
+    {% endif %}
+
+    {%- comment -%} 信任图标列表 {%- endcomment -%}
+    <div class="mk-trust-badges__grid">
+      {%- for i in (1..6) -%}
+        {%- assign icon_setting = 'icon_' | append: forloop.index -%}
+        {%- assign text_setting = 'text_' | append: forloop.index -%}
+        {%- assign icon = ss[icon_setting] -%}
+        {%- assign text = ss[text_setting] -%}
+
+        {%- if icon != blank or text != blank -%}
+          <div class="mk-trust-badge">
+            {%- if icon != blank -%}
+              <div class="mk-trust-badge__icon">
+                {{ icon | image_url: width: 48 | image_tag: width: 48 }}
+              </div>
+            {%- endif -%}
+            {%- if text != blank -%}
+              <span class="mk-trust-badge__text">{{ text }}</span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- comment -%} 默认信任标识 {%- endcomment -%}
+      {% if ss.show_default_icons %}
+        <div class="mk-trust-badge">
+          <div class="mk-trust-badge__icon">
+            {{- 'icon-shield.svg' | inline_asset_content -}}
+          </div>
+          <span class="mk-trust-badge__text">安全支付</span>
+        </div>
+        <div class="mk-trust-badge">
+          <div class="mk-trust-badge__icon">
+            {{- 'icon-truck.svg' | inline_asset_content -}}
+          </div>
+          <span class="mk-trust-badge__text">免费配送</span>
+        </div>
+        <div class="mk-trust-badge">
+          <div class="mk-trust-badge__icon">
+            {{- 'icon-return.svg' | inline_asset_content -}}
+          </div>
+          <span class="mk-trust-badge__text">免费退货</span>
+        </div>
+        <div class="mk-trust-badge">
+          <div class="mk-trust-badge__icon">
+            {{- 'icon-package.svg' | inline_asset_content -}}
+          </div>
+          <span class="mk-trust-badge__text">正品保证</span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-trust-badges {
+    background-color: var(--color-background-secondary, #f5f5f5);
+    padding: 24px 0;
+  }
+
+  .mk-trust-badges__container {
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .mk-trust-badges__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-secondary, #666);
+    text-align: center;
+  }
+
+  .mk-trust-badges__grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 24px 32px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-trust-badges__grid {
+      gap: 32px 48px;
+    }
+  }
+
+  .mk-trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .mk-trust-badge__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  .mk-trust-badge__icon svg,
+  .mk-trust-badge__icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .mk-trust-badge__icon svg {
+    fill: var(--color-primary, #000);
+  }
+
+  .mk-trust-badge__text {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 480px) {
+    .mk-trust-badge__text {
+      font-size: 12px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 信任标识",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "Trusted by:"
+    },
+    {
+      "type": "text",
+      "id": "content",
+      "label": "内容文字",
+      "default": "Amazon, Walmart, Ebay, Temu"
+    },
+    {
+      "type": "header",
+      "content": "自定义图标"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_1",
+      "label": "图标 1"
+    },
+    {
+      "type": "text",
+      "id": "text_1",
+      "label": "文字 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_2",
+      "label": "图标 2"
+    },
+    {
+      "type": "text",
+      "id": "text_2",
+      "label": "文字 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_3",
+      "label": "图标 3"
+    },
+    {
+      "type": "text",
+      "id": "text_3",
+      "label": "文字 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_4",
+      "label": "图标 4"
+    },
+    {
+      "type": "text",
+      "id": "text_4",
+      "label": "文字 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_default_icons",
+      "label": "显示默认图标",
+      "default": true,
+      "info": "显示默认的安全支付、免费配送等图标"
+    },
+    {
+      "type": "header",
+      "content": "颜色设置"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 信任标识"
+    }
+  ]
+}
+{% endschema %}

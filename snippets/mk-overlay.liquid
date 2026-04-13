@@ -1,0 +1,47 @@
+{%- doc -%}
+  MK 遮罩层组件
+
+  渲染全出血遮罩层
+
+  @param {string} [color] - 遮罩颜色
+  @param {string} [style] - 样式：solid, gradient
+  @param {string} [opacity] - 透明度 (0-1)
+  @param {string} [direction] - 渐变方向：to top, to bottom, to left, to right
+
+  @example
+  {% render 'mk-overlay', color: '#000', opacity: 0.3, style: 'gradient' %}
+{%- enddoc -%}
+
+{% liquid
+  assign color = color | default: 'rgb(0 0 0 / 0.5)'
+  assign style = style | default: 'gradient'
+  assign opacity_val = opacity | default: 0.5
+  assign direction = direction | default: 'to top'
+
+  assign color_with_alpha = color | color_modify: 'alpha', opacity_val
+-%}
+
+<div
+  class="mk-overlay mk-overlay--{{ style }}"
+  style="
+    --overlay-color: {{ color_with_alpha }};
+    --overlay-direction: {{ direction }};
+  "
+></div>
+
+{% stylesheet %}
+  .mk-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .mk-overlay--solid {
+    background: var(--overlay-color);
+  }
+
+  .mk-overlay--gradient {
+    background: linear-gradient(var(--overlay-direction), var(--overlay-color), transparent);
+  }
+{% endstylesheet %}

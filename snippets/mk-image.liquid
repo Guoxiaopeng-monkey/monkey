@@ -1,0 +1,48 @@
+{%- doc -%}
+  MK 图片组件
+
+  渲染响应式图片
+
+  @param {object} image - 图片对象
+  @param {number} [width] - 图片宽度
+  @param {number} [height] - 图片高度
+  @param {string} [class] - 额外CSS类名
+  @param {string} [alt] - 图片替代文本
+  @param {string} [loading] - 加载方式：lazy, eager
+
+  @example
+  {% render 'mk-image', image: product.featured_image, width: 600, height: 600, class: 'product-img' %}
+{%- enddoc -%}
+
+{% liquid
+  assign image = image | default: nil
+  assign width = width | default: 600
+  assign height = height | default: nil
+  assign class = class | default: ''
+  assign alt = alt | default: image.alt | default: ''
+  assign loading = loading | default: 'lazy'
+-%}
+
+{%- if image != blank -%}
+  {{ image | image_url: width: width | image_tag: class: class, alt: alt, loading: loading, widths: '200, 300, 400, 600, 800, 1000' }}
+{%- else -%}
+  <div class="mk-image-placeholder {{ class }}">
+    {{ 'image' | placeholder_svg_tag: 'mk-image-placeholder__svg' }}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-background-secondary, #f5f5f5);
+    aspect-ratio: 1 / 1;
+  }
+
+  .mk-image-placeholder__svg {
+    width: 50%;
+    height: 50%;
+    opacity: 0.3;
+  }
+{% endstylesheet %}

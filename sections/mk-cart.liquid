@@ -1,0 +1,535 @@
+{%- comment -%}
+  MK 购物车页面组件
+  
+  功能：购物车页面展示
+  
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign pt_mob = ss.padding_top_mobile | default: 32
+  assign pb_mob = ss.padding_bottom_mobile | default: 32
+  assign pt_desk = ss.padding_top_desktop | default: 48
+  assign pb_desk = ss.padding_bottom_desktop | default: 48
+-%}
+
+<style>
+  #{{ section.id }} {
+    --cart-pt-mob: {{ pt_mob }}px;
+    --cart-pb-mob: {{ pb_mob }}px;
+    --cart-pt-desk: {{ pt_desk }}px;
+    --cart-pb-desk: {{ pb_desk }}px;
+    padding: var(--cart-pt-mob) 0 var(--cart-pb-mob);
+  }
+  
+  @media (min-width: 750px) {
+    #{{ section.id }} {
+      padding: var(--cart-pt-desk) 0 var(--cart-pb-desk);
+    }
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-cart"
+  data-skip-node-update
+>
+  <div class="mk-cart__container">
+    
+    {%- comment -%} 购物车标题 {%- endcomment -%}
+    <div class="mk-cart__header">
+      <h1 class="mk-cart__title">{{ 'cart.title' | t | default: '购物车' }}</h1>
+      <span class="mk-cart__count">{{ cart.item_count }} 件商品</span>
+    </div>
+    
+    {%- comment -%} 购物车内容 {%- endcomment -%}
+    {% if cart.item_count > 0 %}
+      <div class="mk-cart__content">
+        
+        {%- comment -%} 购物车商品列表 {%- endcomment -%}
+        <div class="mk-cart__items">
+          {%- for item in cart.items -%}
+            <div class="mk-cart__item" data-item-id="{{ item.id }}">
+              {%- comment -%} 商品图片 {%- endcomment -%}
+              <div class="mk-cart__item-image">
+                {% if item.image != blank %}
+                  <img
+                    src="{{ item.image | image_url: width: 200 }}"
+                    alt="{{ item.title }}"
+                    width="200"
+                    height="{{ 200 | divided_by: item.image.aspect_ratio | round }}"
+                    loading="lazy"
+                  >
+                {% else %}
+                  {{ 'product-1' | placeholder_svg_tag }}
+                {% endif %}
+              </div>
+              
+              {%- comment -%} 商品信息 {%- endcomment -%}
+              <div class="mk-cart__item-info">
+                <a href="{{ item.url }}" class="mk-cart__item-title">{{ item.product.title }}</a>
+                
+                {%- comment -%} 变体信息 {%- endcomment -%}
+                {% unless item.product.has_only_default_variant %}
+                  <p class="mk-cart__item-variant">
+                    {%- for option in item.options_with_values -%}
+                      {{ option.name }}: {{ option.value }}
+                      {% unless forloop.last %} / {% endunless %}
+                    {%- endfor -%}
+                  </p>
+                {% endunless %}
+                
+                {%- comment -%} 价格 {%- endcomment -%}
+                <p class="mk-cart__item-price">
+                  {% if item.original_line_price > item.line_price %}
+                    <span class="mk-cart__item-price-compare">{{ item.original_price | money }}</span>
+                  {% endif %}
+                  {{ item.line_price | money }}
+                </p>
+              </div>
+              
+              {%- comment -%} 数量选择 {%- endcomment -%}
+              <div class="mk-cart__item-quantity">
+                <button type="button" class="mk-cart__qty-btn" data-qty-decrease data-item-id="{{ item.id }}">-</button>
+                <input
+                  type="number"
+                  name="updates[]"
+                  id="updates_{{ item.key }}"
+                  value="{{ item.quantity }}"
+                  min="0"
+                  class="mk-cart__qty-input"
+                  data-item-id="{{ item.id }}"
+                >
+                <button type="button" class="mk-cart__qty-btn" data-qty-increase data-item-id="{{ item.id }}">+</button>
+              </div>
+              
+              {%- comment -%} 小计 {%- endcomment -%}
+              <div class="mk-cart__item-total">
+                {{ item.line_price | money }}
+              </div>
+              
+              {%- comment -%} 删除按钮 {%- endcomment -%}
+              <button type="button" class="mk-cart__item-remove" data-item-remove data-item-id="{{ item.id }}" aria-label="{{ 'cart.remove' | t | default: '移除' }}">
+                {{- 'icon-close.svg' | inline_asset_content -}}
+              </button>
+            </div>
+          {%- endfor -%}
+        </div>
+        
+        {%- comment -%} 购物车备注 {%- endcomment -%}
+        <div class="mk-cart__note">
+          <label for="CartNote" class="mk-cart__note-label">{{ 'cart.note' | t | default: '添加备注' }}</label>
+          <textarea
+            id="CartNote"
+            name="note"
+            class="mk-cart__note-textarea"
+            placeholder="{{ 'cart.special_instructions' | t | default: '特别说明...' }}"
+          >{{ cart.note }}</textarea>
+        </div>
+        
+        {%- comment -%} 购物车汇总 {%- endcomment -%}
+        <div class="mk-cart__summary">
+          <div class="mk-cart__summary-row">
+            <span>{{ 'cart.subtotal' | t | default: '小计' }}</span>
+            <span data-cart-subtotal>{{ cart.total_price | money }}</span>
+          </div>
+          
+          {%- comment -%} 运费提示 {%- endcomment -%}
+          {% if cart.cart_level_discount_applications.size > 0 %}
+            {% for discount in cart.cart_level_discount_applications %}
+              <div class="mk-cart__summary-row mk-cart__summary-row--discount">
+                <span>
+                  {{ discount.title }}
+                  (-{{ discount.total_allocated_amount | money }})
+                </span>
+              </div>
+            {% endfor %}
+          {% endif %}
+          
+          <p class="mk-cart__summary-note">
+            运费和税费在结账时计算
+          </p>
+          
+          {%- comment -%} 结账按钮 {%- endcomment -%}
+          <a href="{{ routes.checkout_url }}" class="mk-cart__checkout-btn">
+            {{ 'cart.checkout' | t | default: '结账' }}
+            {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+          </a>
+          
+          {%- comment -%} 继续购物 {%- endcomment -%}
+          <a href="{{ routes.all_products_collection_url }}" class="mk-cart__continue-btn">
+            {{ 'cart.continue_shopping' | t | default: '继续购物' }}
+          </a>
+        </div>
+      </div>
+    {% else %}
+      {%- comment -%} 空购物车 {%- endcomment -%}
+      <div class="mk-cart__empty">
+        <div class="mk-cart__empty-icon">
+          {{- 'icon-cart.svg' | inline_asset_content -}}
+        </div>
+        <h2 class="mk-cart__empty-title">{{ 'cart.empty' | t | default: '购物车是空的' }}</h2>
+        <p class="mk-cart__empty-message">{{ 'cart.empty_message' | t | default: '您的购物车目前没有商品。' }}</p>
+        <a href="{{ routes.all_products_collection_url }}" class="mk-cart__empty-btn">
+          {{ 'cart.continue_shopping' | t | default: '开始购物' }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-cart__container {
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  /* Header */
+  .mk-cart__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(var(--color-border), 0.15);
+  }
+
+  .mk-cart__title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .mk-cart__count {
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  /* Items */
+  .mk-cart__items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .mk-cart__item {
+    display: grid;
+    grid-template-columns: 100px 1fr auto auto;
+    gap: 16px;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(var(--color-border), 0.1);
+  }
+
+  @media (max-width: 749px) {
+    .mk-cart__item {
+      grid-template-columns: 80px 1fr;
+      grid-template-rows: auto auto;
+    }
+
+    .mk-cart__item-image {
+      grid-row: span 2;
+    }
+
+    .mk-cart__item-quantity,
+    .mk-cart__item-total {
+      grid-column: 2;
+    }
+  }
+
+  .mk-cart__item-image {
+    width: 100px;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-cart__item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mk-cart__item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .mk-cart__item-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .mk-cart__item-variant {
+    margin: 0;
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-cart__item-price {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .mk-cart__item-price-compare {
+    text-decoration: line-through;
+    color: var(--color-text-secondary, #999);
+    margin-right: 8px;
+  }
+
+  /* Quantity */
+  .mk-cart__item-quantity {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(var(--color-border), 0.3);
+    border-radius: 4px;
+  }
+
+  .mk-cart__qty-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    font-size: 16px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  .mk-cart__qty-btn:hover {
+    background: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-cart__qty-input {
+    width: 40px;
+    height: 32px;
+    padding: 0;
+    font-size: 14px;
+    text-align: center;
+    border: none;
+    border-left: 1px solid rgba(var(--color-border), 0.3);
+    border-right: 1px solid rgba(var(--color-border), 0.3);
+  }
+
+  /* Total */
+  .mk-cart__item-total {
+    font-size: 15px;
+    font-weight: 600;
+    text-align: right;
+  }
+
+  /* Remove */
+  .mk-cart__item-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-secondary, #666);
+    transition: color 0.2s ease;
+  }
+
+  .mk-cart__item-remove:hover {
+    color: var(--color-error, #e53935);
+  }
+
+  .mk-cart__item-remove svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Note */
+  .mk-cart__note {
+    margin-bottom: 32px;
+  }
+
+  .mk-cart__note-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .mk-cart__note-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    font-size: 14px;
+    border: 1px solid rgba(var(--color-border), 0.3);
+    border-radius: 4px;
+    resize: vertical;
+  }
+
+  /* Summary */
+  .mk-cart__summary {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    background: var(--color-background-secondary, #f9f9f9);
+    border-radius: 12px;
+  }
+
+  .mk-cart__summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+  }
+
+  .mk-cart__summary-row--discount {
+    color: var(--color-sale, #2e7d32);
+  }
+
+  .mk-cart__summary-note {
+    margin: 0;
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-cart__checkout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--color-background, #fff);
+    background: var(--color-primary, #000);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-cart__checkout-btn:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+  }
+
+  .mk-cart__checkout-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .mk-cart__continue-btn {
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-cart__continue-btn:hover {
+    color: var(--color-primary, #000);
+  }
+
+  /* Empty */
+  .mk-cart__empty {
+    text-align: center;
+    padding: 80px 20px;
+  }
+
+  .mk-cart__empty-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .mk-cart__empty-icon svg {
+    width: 64px;
+    height: 64px;
+    opacity: 0.3;
+  }
+
+  .mk-cart__empty-title {
+    margin: 0 0 12px 0;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .mk-cart__empty-message {
+    margin: 0 0 32px 0;
+    font-size: 16px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-cart__empty-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--color-background, #fff);
+    background: var(--color-primary, #000);
+    border-radius: 4px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 购物车",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 48,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 购物车"
+    }
+  ]
+}
+{% endschema %}

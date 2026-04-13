@@ -1,0 +1,89 @@
+{%- doc -%}
+  MK 面包屑导航组件
+
+  渲染面包屑导航
+
+  @param {object[]} [links] - 链接数组：[{ title: string, url: string }]
+
+  @example
+  {% render 'mk-breadcrumbs', links: linklists[section.settings.menu].links %}
+{%- enddoc -%}
+
+{% liquid
+  assign links = links | default: empty_array
+  if links == empty_array
+    assign links = '[]' | parse_json
+  endif
+-%}
+
+{%- if links.size > 0 -%}
+  <nav class="mk-breadcrumbs" aria-label="{{ 'general.breadcrumbs' | t | default: '面包屑' }}">
+    <ol class="mk-breadcrumbs__list">
+      <li class="mk-breadcrumbs__item">
+        <a href="/" class="mk-breadcrumbs__link">{{ 'general.home' | t | default: '首页' }}</a>
+      </li>
+
+      {%- for link in links -%}
+        <li class="mk-breadcrumbs__item">
+          <span class="mk-breadcrumbs__separator">{{- 'icon-chevron-right.svg' | inline_asset_content -}}</span>
+          {%- if forloop.last or link.url == blank -%}
+            <span class="mk-breadcrumbs__current" {% if forloop.last %}aria-current="page"{% endif %}>{{ link.title }}</span>
+          {%- else -%}
+            <a href="{{ link.url }}" class="mk-breadcrumbs__link">{{ link.title }}</a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ol>
+  </nav>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-breadcrumbs {
+    padding: 16px 0;
+  }
+
+  .mk-breadcrumbs__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mk-breadcrumbs__item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .mk-breadcrumbs__separator {
+    display: flex;
+    width: 14px;
+    height: 14px;
+    color: var(--color-text-secondary, #999);
+  }
+
+  .mk-breadcrumbs__separator svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-breadcrumbs__link {
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .mk-breadcrumbs__link:hover {
+    color: var(--color-primary, #000);
+  }
+
+  .mk-breadcrumbs__current {
+    font-size: 13px;
+    color: var(--color-foreground);
+    font-weight: 500;
+  }
+{% endstylesheet %}

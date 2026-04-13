@@ -1,0 +1,467 @@
+{%- comment -%}
+  MK 图片横幅组件
+  
+  功能：全宽图片横幅，支持叠加文字
+  
+  作者：崽崽 (AI助手)
+  基于：mypetcustom mk-image-banner.liquid, whale ug-img-with-text-overlay.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign image = ss.image
+  assign image_mobile = ss.image_mobile
+  
+  assign height = ss.height | default: 'adapt'
+  assign height_mobile = ss.height_mobile | default: 'auto'
+  
+  assign overlay_enabled = ss.overlay_enabled
+  assign overlay_color = ss.overlay_color | default: '#000000'
+  assign overlay_opacity = ss.overlay_opacity | default: 0.3
+  
+  assign text_alignment = ss.text_alignment | default: 'center'
+  assign text_position = ss.text_position | default: 'center'
+  
+  assign pt_mob = ss.padding_top_mobile | default: 48
+  assign pb_mob = ss.padding_bottom_mobile | default: 48
+  assign pt_desk = ss.padding_top_desktop | default: 80
+  assign pb_desk = ss.padding_bottom_desktop | default: 80
+-%}
+
+<style>
+  #{{ section.id }} {
+    --banner-height: {% case height %}
+      {% when 'small' %}400px
+      {% when 'medium' %}600px
+      {% when 'large' %}800px
+      {% when 'full' %}100vh
+      {% else %}auto
+    {% endcase %};
+    --banner-height-mobile: {% case height_mobile %}
+      {% when 'small' %}300px
+      {% when 'medium' %}400px
+      {% when 'large' %}500px
+      {% else %}auto
+    {% endcase %};
+    --banner-overlay: {{ overlay_color }};
+    --banner-overlay-opacity: {{ overlay_opacity }};
+    position: relative;
+    overflow: hidden;
+  }
+  
+  @media (max-width: 749px) {
+    #{{ section.id }} {
+      --banner-height: var(--banner-height-mobile);
+    }
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-image-banner"
+  data-skip-node-update
+>
+  
+  {%- comment -%} 图片 {%- endcomment -%}
+  <div class="mk-image-banner__media">
+    {% if image_mobile != blank %}
+      <img
+        src="{{ image_mobile | image_url: width: 1200 }}"
+        alt="{{ image_mobile.alt | default: ss.heading }}"
+        width="1200"
+        height="{{ 1200 | divided_by: image_mobile.aspect_ratio | round }}"
+        loading="eager"
+        class="mk-image-banner__image mk-image-banner__image--mobile"
+      >
+    {% endif %}
+    
+    {% if image != blank %}
+      <img
+        src="{{ image | image_url: width: 2400 }}"
+        alt="{{ image.alt | default: ss.heading }}"
+        width="2400"
+        height="{{ 2400 | divided_by: image.aspect_ratio | round }}"
+        loading="eager"
+        class="mk-image-banner__image mk-image-banner__image--desktop {% if image_mobile != blank %}hidden-phone{% endif %}"
+      >
+    {% else %}
+      {{ 'image' | placeholder_svg_tag: 'mk-image-banner__placeholder' }}
+    {% endif %}
+    
+    {%- comment -%} 叠加层 {%- endcomment -%}
+    {% if overlay_enabled %}
+      <div class="mk-image-banner__overlay" style="background: var(--banner-overlay); opacity: var(--banner-overlay-opacity);"></div>
+    {% endif %}
+  </div>
+  
+  {%- comment -%} 内容 {%- endcomment -%}
+  <div class="mk-image-banner__content mk-image-banner__content--{{ text_position }} mk-image-banner__content--{{ text_alignment }}">
+    <div class="mk-image-banner__content-inner" style="padding-top: {{ pt_mob }}px; padding-bottom: {{ pb_mob }}px;">
+      {% if ss.label != blank %}
+        <p class="mk-image-banner__label">{{ ss.label }}</p>
+      {% endif %}
+      
+      {% if ss.heading != blank %}
+        <h1 class="mk-image-banner__heading">{{ ss.heading }}</h1>
+      {% endif %}
+      
+      {% if ss.subheading != blank %}
+        <p class="mk-image-banner__subheading">{{ ss.subheading }}</p>
+      {% endif %}
+      
+      {% if ss.button_text != blank %}
+        <a href="{{ ss.button_link | default: '#' }}" class="mk-image-banner__button mk-image-banner__button--{{ ss.button_style | default: 'primary' }}">
+          {{ ss.button_text }}
+          {% if ss.show_arrow %}
+            <span class="mk-image-banner__arrow">
+              {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+            </span>
+          {% endif %}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-image-banner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: var(--banner-height);
+  }
+
+  /* Media */
+  .mk-image-banner__media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .mk-image-banner__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mk-image-banner__placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    background: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-image-banner__overlay {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Content */
+  .mk-image-banner__content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    text-align: center;
+  }
+
+  .mk-image-banner__content--left { text-align: left; }
+  .mk-image-banner__content--center { text-align: center; }
+  .mk-image-banner__content--right { text-align: right; }
+
+  .mk-image-banner__content-inner {
+    max-width: var(--container-max-width, 1440px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  /* Content Positions */
+  .mk-image-banner__content--top { align-items: flex-start; }
+  .mk-image-banner__content--center { align-items: center; }
+  .mk-image-banner__content--bottom { align-items: flex-end; }
+
+  /* Elements */
+  .mk-image-banner__label {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--color-background, #fff);
+  }
+
+  .mk-image-banner__heading {
+    margin: 0 0 20px 0;
+    font-size: clamp(32px, 6vw, 64px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--color-background, #fff);
+  }
+
+  .mk-image-banner__subheading {
+    margin: 0 0 32px 0;
+    font-size: clamp(16px, 2vw, 20px);
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--color-background, #fff);
+    opacity: 0.9;
+  }
+
+  /* Button */
+  .mk-image-banner__button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-image-banner__button--primary {
+    background: var(--color-background, #fff);
+    color: var(--color-primary, #000);
+  }
+
+  .mk-image-banner__button--primary:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+
+  .mk-image-banner__button--outline {
+    background: transparent;
+    color: var(--color-background, #fff);
+    border: 2px solid var(--color-background, #fff);
+  }
+
+  .mk-image-banner__button--outline:hover {
+    background: var(--color-background, #fff);
+    color: var(--color-primary, #000);
+  }
+
+  .mk-image-banner__arrow {
+    display: flex;
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+  }
+
+  .mk-image-banner__button:hover .mk-image-banner__arrow {
+    transform: translateX(4px);
+  }
+
+  .mk-image-banner__arrow svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Responsive */
+  @media (min-width: 750px) {
+    .mk-image-banner__content-inner {
+      padding-top: {{ pt_desk }}px;
+      padding-bottom: {{ pb_desk }}px;
+    }
+  }
+
+  @media (max-width: 749px) {
+    .hidden-phone {
+      display: none !important;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 图片横幅",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "图片设置"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "图片 (PC端)"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "图片 (移动端)",
+      "info": "可选，如不设置则使用 PC 端图片"
+    },
+    {
+      "type": "header",
+      "content": "高度设置"
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "高度 (PC端)",
+      "options": [
+        { "value": "auto", "label": "自适应" },
+        { "value": "small", "label": "小 (400px)" },
+        { "value": "medium", "label": "中 (600px)" },
+        { "value": "large", "label": "大 (800px)" },
+        { "value": "full", "label": "全屏" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "select",
+      "id": "height_mobile",
+      "label": "高度 (移动端)",
+      "options": [
+        { "value": "auto", "label": "自适应" },
+        { "value": "small", "label": "小 (300px)" },
+        { "value": "medium", "label": "中 (400px)" },
+        { "value": "large", "label": "大 (500px)" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "header",
+      "content": "叠加层设置"
+    },
+    {
+      "type": "checkbox",
+      "id": "overlay_enabled",
+      "label": "启用叠加层",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "叠加层颜色",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "叠加层透明度",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.3
+    },
+    {
+      "type": "header",
+      "content": "内容设置"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "标签文字"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "标题",
+      "default": "横幅标题"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "副标题"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "文本对齐",
+      "options": [
+        { "value": "left", "label": "居左" },
+        { "value": "center", "label": "居中" },
+        { "value": "right", "label": "居右" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "内容位置",
+      "options": [
+        { "value": "top", "label": "顶部" },
+        { "value": "center", "label": "居中" },
+        { "value": "bottom", "label": "底部" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "按钮设置"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "按钮文字"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "按钮链接"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "按钮样式",
+      "options": [
+        { "value": "primary", "label": "实心（Primary）" },
+        { "value": "outline", "label": "描边（Outline）" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrow",
+      "label": "显示箭头",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 200,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 200,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 300,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 300,
+      "default": 80,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 图片横幅"
+    }
+  ]
+}
+{% endschema %}

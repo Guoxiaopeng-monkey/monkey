@@ -1,0 +1,273 @@
+{%- comment -%}
+  MK 图片画廊组件
+
+  展示多张图片的画廊
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+  assign aspect_ratio = ss.aspect_ratio | default: '1/1'
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-image-gallery color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-image-gallery__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-image-gallery__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    <div class="mk-image-gallery__grid" style="--aspect-ratio: {{ aspect_ratio }};">
+      {%- for i in (1..6) -%}
+        {%- assign image_setting = 'image_' | append: i -%}
+        {%- assign link_setting = 'link_' | append: i -%}
+        {%- assign image = ss[image_setting] -%}
+        {%- assign link = ss[link_setting] -%}
+
+        {%- if image != blank -%}
+          <div class="mk-image-gallery__item">
+            {%- if link != blank -%}
+              <a href="{{ link }}" class="mk-image-gallery__link">
+            {%- endif -%}
+
+            {{ image | image_url: width: 800 | image_tag: class: 'mk-image-gallery__image' }}
+
+            {%- if link != blank -%}
+              </a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-image-gallery {
+    padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-image-gallery {
+      padding: {{ ss.padding_top_desktop | default: 64 }}px 0 {{ ss.padding_bottom_desktop | default: 64 }}px;
+    }
+  }
+
+  .mk-image-gallery__container {
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .mk-image-gallery__title {
+    margin: 0 0 24px 0;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .mk-image-gallery__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  @media (min-width: 480px) {
+    .mk-image-gallery__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+  }
+
+  @media (min-width: 750px) {
+    .mk-image-gallery__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .mk-image-gallery__grid:has(.mk-image-gallery__item:nth-child(5)) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .mk-image-gallery__grid:has(.mk-image-gallery__item:nth-child(6)) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .mk-image-gallery__item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-image-gallery__link {
+    display: block;
+    cursor: pointer;
+  }
+
+  .mk-image-gallery__image {
+    width: 100%;
+    aspect-ratio: var(--aspect-ratio, 1 / 1);
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .mk-image-gallery__item:hover .mk-image-gallery__image {
+    transform: scale(1.05);
+  }
+
+  @media (min-width: 750px) {
+    .mk-image-gallery__grid:has(.mk-image-gallery__item:nth-child(5)) .mk-image-gallery__item:first-child {
+      grid-row: span 2;
+    }
+
+    .mk-image-gallery__grid:has(.mk-image-gallery__item:nth-child(5)) .mk-image-gallery__item:first-child .mk-image-gallery__image {
+      aspect-ratio: 1 / 2;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 图片画廊",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题"
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "图片比例",
+      "options": [
+        { "value": "1/1", "label": "1:1 (方形)" },
+        { "value": "4/3", "label": "4:3" },
+        { "value": "16/9", "label": "16:9" },
+        { "value": "3/4", "label": "3:4 (纵向)" }
+      ],
+      "default": "1/1"
+    },
+    {
+      "type": "header",
+      "content": "图片"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "图片 1"
+    },
+    {
+      "type": "url",
+      "id": "link_1",
+      "label": "链接 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "图片 2"
+    },
+    {
+      "type": "url",
+      "id": "link_2",
+      "label": "链接 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "图片 3"
+    },
+    {
+      "type": "url",
+      "id": "link_3",
+      "label": "链接 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "图片 4"
+    },
+    {
+      "type": "url",
+      "id": "link_4",
+      "label": "链接 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_5",
+      "label": "图片 5"
+    },
+    {
+      "type": "url",
+      "id": "link_5",
+      "label": "链接 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_6",
+      "label": "图片 6"
+    },
+    {
+      "type": "url",
+      "id": "link_6",
+      "label": "链接 6"
+    },
+    {
+      "type": "header",
+      "content": "间距"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 图片画廊"
+    }
+  ]
+}
+{% endschema %}

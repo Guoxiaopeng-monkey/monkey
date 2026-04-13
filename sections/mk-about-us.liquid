@@ -1,0 +1,275 @@
+{%- comment -%}
+  MK 关于我们板块
+
+  展示关于我们页面内容
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-about-us color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-about-us__container">
+    {%- if ss.image != blank -%}
+      <div class="mk-about-us__image">
+        {{ ss.image | image_url: width: 1200 | image_tag: class: 'mk-about-us__image-img' }}
+      </div>
+    {%- endif -%}
+
+    <div class="mk-about-us__content">
+      {%- if ss.subtitle != blank -%}
+        <p class="mk-about-us__subtitle">{{ ss.subtitle }}</p>
+      {%- endif -%}
+
+      {%- if ss.title != blank -%}
+        <h2 class="mk-about-us__title">{{ ss.title }}</h2>
+      {%- endif -%}
+
+      {%- if ss.text != blank -%}
+        <div class="mk-about-us__text">{{ ss.text }}</div>
+      {%- endif -%}
+
+      {%- if ss.button_text != blank -%}
+        <a href="{{ ss.button_link | default: '#' }}" class="mk-about-us__button">
+          {{ ss.button_text }}
+        </a>
+      {%- endif -%}
+    </div>
+
+    {%- if ss.features != blank -%}
+      <div class="mk-about-us__features">
+        {%- assign features = ss.features | parse_json -%}
+        {%- for feature in features -%}
+          <div class="mk-about-us__feature">
+            <span class="mk-about-us__feature-icon">{{- 'icon-check.svg' | inline_asset_content -}}</span>
+            <span class="mk-about-us__feature-text">{{ feature }}</span>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-about-us {
+    padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-about-us {
+      padding: {{ ss.padding_top_desktop | default: 64 }}px 0 {{ ss.padding_bottom_desktop | default: 64 }}px;
+    }
+  }
+
+  .mk-about-us__container {
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .mk-about-us__image {
+    margin-bottom: 32px;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .mk-about-us__image-img {
+    width: 100%;
+    height: auto;
+  }
+
+  .mk-about-us__content {
+    max-width: 700px;
+    margin: 0 auto 32px;
+    text-align: center;
+  }
+
+  .mk-about-us__subtitle {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-about-us__title {
+    margin: 0 0 16px 0;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  @media (min-width: 750px) {
+    .mk-about-us__title {
+      font-size: 36px;
+    }
+  }
+
+  .mk-about-us__text {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--color-text-secondary, #666);
+    margin-bottom: 24px;
+  }
+
+  .mk-about-us__text p {
+    margin: 0 0 16px 0;
+  }
+
+  .mk-about-us__text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .mk-about-us__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .mk-about-us__button:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+
+  .mk-about-us__features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 750px) {
+    .mk-about-us__features {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .mk-about-us__feature {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mk-about-us__feature-icon {
+    display: flex;
+    width: 20px;
+    height: 20px;
+    color: var(--color-success, #2e7d32);
+  }
+
+  .mk-about-us__feature-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-about-us__feature-text {
+    font-size: 14px;
+    color: var(--color-foreground);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 关于我们",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "图片"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "副标题"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "关于我们"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "文本内容"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "按钮文字"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "按钮链接"
+    },
+    {
+      "type": "header",
+      "content": "间距"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 关于我们"
+    }
+  ]
+}
+{% endschema %}

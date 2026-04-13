@@ -1,0 +1,274 @@
+{%- comment -%}
+  MK Logo 滚动组件
+  
+  功能：横向滚动展示品牌 Logo
+  
+  作者：崽崽 (AI助手)
+  基于：whale ug-logo-marquee.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign bg_color = ss.background_color | default: '#f5f5f5'
+  assign speed = ss.speed | default: 30
+  assign direction = ss.direction | default: 'left'
+-%}
+
+<style>
+  #{{ section.id }} {
+    --marquee-bg: {{ bg_color }};
+    --marquee-speed: {{ speed }}s;
+    --marquee-direction: {{ direction }};
+    background-color: var(--marquee-bg);
+    padding: 40px 0;
+    overflow: hidden;
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-logo-marquee"
+  aria-label="{{ ss.heading | default: '合作伙伴' }}"
+  data-skip-node-update
+>
+  {%- comment -%} 标题 {%- endcomment -%}
+  {% if ss.heading != blank %}
+    <div class="mk-logo-marquee__header">
+      <h3 class="mk-logo-marquee__heading">{{ ss.heading }}</h3>
+      {% if ss.description != blank %}
+        <p class="mk-logo-marquee__description">{{ ss.description }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+  
+  {%- comment -%} Logo 滚动区域 {%- endcomment -%}
+  <div class="mk-logo-marquee__viewport">
+    <div class="mk-logo-marquee__track" data-marquee-track>
+      {%- comment -%} 第一组 Logo {%- endcomment -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'logo' and block.settings.image != blank -%}
+          <div class="mk-logo-marquee__item" {{ block.shopify_attributes }}>
+            {% if block.settings.link != blank %}
+              <a href="{{ block.settings.link }}" class="mk-logo-marquee__link" target="_blank" rel="noopener">
+            {% endif %}
+              <img
+                src="{{ block.settings.image | image_url: width: 200 }}"
+                alt="{{ block.settings.alt | default: block.settings.image.alt }}"
+                width="200"
+                height="{{ 200 | divided_by: block.settings.image.aspect_ratio | round }}"
+                loading="lazy"
+                class="mk-logo-marquee__image"
+              >
+            {% if block.settings.link != blank %}
+              </a>
+            {% endif %}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+      
+      {%- comment -%} 第二组 Logo（无缝滚动需要） {%- endcomment -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'logo' and block.settings.image != blank -%}
+          <div class="mk-logo-marquee__item" aria-hidden="true">
+            {% if block.settings.link != blank %}
+              <a href="{{ block.settings.link }}" class="mk-logo-marquee__link" target="_blank" rel="noopener">
+            {% endif %}
+              <img
+                src="{{ block.settings.image | image_url: width: 200 }}"
+                alt="{{ block.settings.alt | default: block.settings.image.alt }}"
+                width="200"
+                height="{{ 200 | divided_by: block.settings.image.aspect_ratio | round }}"
+                loading="lazy"
+                class="mk-logo-marquee__image"
+              >
+            {% if block.settings.link != blank %}
+              </a>
+            {% endif %}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-logo-marquee__header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .mk-logo-marquee__heading {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-logo-marquee__description {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+    opacity: 0.8;
+  }
+
+  .mk-logo-marquee__viewport {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .mk-logo-marquee__track {
+    display: flex;
+    gap: 48px;
+    animation: marquee var(--marquee-speed, 30s) linear infinite;
+    animation-direction: var(--marquee-direction, normal);
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Pause on hover */
+  .mk-logo-marquee:hover .mk-logo-marquee__track {
+    animation-play-state: paused;
+  }
+
+  /* Logo Item */
+  .mk-logo-marquee__item {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mk-logo-marquee__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .mk-logo-marquee__image {
+    max-width: 140px;
+    height: auto;
+    object-fit: contain;
+    filter: grayscale(100%);
+    opacity: 0.6;
+    transition: all 0.3s ease;
+  }
+
+  .mk-logo-marquee__link:hover .mk-logo-marquee__image {
+    filter: grayscale(0%);
+    opacity: 1;
+  }
+
+  /* RTL Support */
+  [dir="rtl"] .mk-logo-marquee__track {
+    animation-direction: reverse;
+  }
+
+  /* Responsive */
+  @media (max-width: 749px) {
+    .mk-logo-marquee__track {
+      gap: 32px;
+    }
+
+    .mk-logo-marquee__image {
+      max-width: 100px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK Logo 滚动",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "标题设置"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "标题",
+      "default": "合作伙伴"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "描述文字"
+    },
+    {
+      "type": "header",
+      "content": "动画设置"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "滚动速度",
+      "min": 10,
+      "max": 60,
+      "default": 30,
+      "unit": "秒"
+    },
+    {
+      "type": "select",
+      "id": "direction",
+      "label": "滚动方向",
+      "options": [
+        { "value": "normal", "label": "从右到左" },
+        { "value": "reverse", "label": "从左到右" }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "header",
+      "content": "颜色设置"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景颜色",
+      "default": "#f5f5f5"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Logo 图片"
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "替代文本",
+          "info": "Logo 的描述文字"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "链接（可选）"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK Logo 滚动"
+    }
+  ]
+}
+{% endschema %}

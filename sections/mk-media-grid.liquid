@@ -1,0 +1,519 @@
+{%- comment -%}
+  MK 媒体网格组件
+  
+  功能：灵活的图片/视频网格展示
+  
+  作者：崽崽 (AI助手)
+  基于：mypetcustom mk-media-grid.liquid, whale ug-media-gird.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign bg_color = ss.background_color | default: '#ffffff'
+  
+  assign layout = ss.layout | default: 'grid'
+  assign columns_mobile = ss.columns_mobile | default: 1
+  assign columns_tablet = ss.columns_tablet | default: 2
+  assign columns_desktop = ss.columns_desktop | default: 3
+  assign gap = ss.gap | default: 16
+  
+  assign pt_mob = ss.padding_top_mobile | default: 48
+  assign pb_mob = ss.padding_bottom_mobile | default: 48
+  assign pt_desk = ss.padding_top_desktop | default: 80
+  assign pb_desk = ss.padding_bottom_desktop | default: 80
+-%}
+
+<style>
+  #{{ section.id }} {
+    --mg-bg: {{ bg_color }};
+    --mg-gap: {{ gap }}px;
+    --mg-cols-mob: {{ columns_mobile }};
+    --mg-cols-tablet: {{ columns_tablet }};
+    --mg-cols-desk: {{ columns_desktop }};
+    --mg-pt-mob: {{ pt_mob }}px;
+    --mg-pb-mob: {{ pb_mob }}px;
+    --mg-pt-desk: {{ pt_desk }}px;
+    --mg-pb-desk: {{ pb_desk }}px;
+    background-color: var(--mg-bg);
+    padding: var(--mg-pt-mob) 0 var(--mg-pb-mob);
+  }
+  
+  @media (min-width: 750px) {
+    #{{ section.id }} {
+      padding: var(--mg-pt-desk) 0 var(--mg-pb-desk);
+    }
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-media-grid"
+  data-skip-node-update
+>
+  <div class="mk-media-grid__container">
+    
+    {%- comment -%} 头部 {%- endcomment -%}
+    {% if ss.heading != blank or ss.description != blank %}
+      <div class="mk-media-grid__header">
+        {% if ss.label != blank %}
+          <p class="mk-media-grid__label">{{ ss.label }}</p>
+        {% endif %}
+        {% if ss.heading != blank %}
+          <h2 class="mk-media-grid__heading">{{ ss.heading }}</h2>
+        {% endif %}
+        {% if ss.description != blank %}
+          <p class="mk-media-grid__description">{{ ss.description }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+    
+    {%- comment -%} 网格内容 {%- endcomment -%}
+    <div class="mk-media-grid__grid">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'media' -%}
+          <div 
+            class="mk-media-grid__item mk-media-grid__item--{{ block.settings.size | default: 'normal' }}"
+            {{ block.shopify_attributes }}
+          >
+            {%- comment -%} 图片 {%- endcomment -%}
+            {% if block.settings.image != blank %}
+              <div class="mk-media-grid__media">
+                <img
+                  src="{{ block.settings.image | image_url: width: 800 }}"
+                  alt="{{ block.settings.image.alt | default: '' }}"
+                  width="800"
+                  height="{{ 800 | divided_by: block.settings.image.aspect_ratio | round }}"
+                  loading="lazy"
+                  class="mk-media-grid__image"
+                >
+                
+                {%- comment -%} Hover Overlay {%- endcomment -%}
+                {% if block.settings.hover_title != blank or block.settings.hover_description != blank %}
+                  <div class="mk-media-grid__hover">
+                    {% if block.settings.hover_title != blank %}
+                      <h3 class="mk-media-grid__hover-title">{{ block.settings.hover_title }}</h3>
+                    {% endif %}
+                    {% if block.settings.hover_description != blank %}
+                      <p class="mk-media-grid__hover-desc">{{ block.settings.hover_description }}</p>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+            {% else %}
+              <div class="mk-media-grid__placeholder">
+                {{ 'image' | placeholder_svg_tag: 'mk-media-grid__placeholder-svg' }}
+              </div>
+            {% endif %}
+            
+            {%- comment -%} 底部标题 {%- endcomment -%}
+            {% if block.settings.title != blank and ss.show_titles %}
+              <div class="mk-media-grid__caption">
+                <h3 class="mk-media-grid__title">{{ block.settings.title }}</h3>
+                {% if block.settings.subtitle != blank %}
+                  <p class="mk-media-grid__subtitle">{{ block.settings.subtitle }}</p>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+    
+    {%- comment -%} View All {%- endcomment -%}
+    {% if ss.show_view_all and ss.view_all_link != blank %}
+      <div class="mk-media-grid__footer">
+        <a href="{{ ss.view_all_link }}" class="mk-media-grid__view-all">
+          {{ ss.view_all_text | default: '查看全部' }}
+          {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-media-grid__container {
+    max-width: var(--container-max-width, 1440px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  /* Header */
+  .mk-media-grid__header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .mk-media-grid__label {
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--color-primary, #000);
+  }
+
+  .mk-media-grid__heading {
+    margin: 0 0 16px 0;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .mk-media-grid__description {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    opacity: 0.8;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Grid */
+  .mk-media-grid__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--mg-cols-mob, 1), 1fr);
+    gap: var(--mg-gap, 16px);
+  }
+
+  @media (min-width: 480px) {
+    .mk-media-grid__grid {
+      grid-template-columns: repeat(var(--mg-cols-tablet, 2), 1fr);
+    }
+  }
+
+  @media (min-width: 990px) {
+    .mk-media-grid__grid {
+      grid-template-columns: repeat(var(--mg-cols-desk, 3), 1fr);
+    }
+  }
+
+  /* Item */
+  .mk-media-grid__item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .mk-media-grid__item--large {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  @media (max-width: 989px) {
+    .mk-media-grid__item--large {
+      grid-column: span 1;
+      grid-row: span 1;
+    }
+  }
+
+  /* Media */
+  .mk-media-grid__media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+  }
+
+  .mk-media-grid__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .mk-media-grid__item:hover .mk-media-grid__image {
+    transform: scale(1.05);
+  }
+
+  .mk-media-grid__placeholder {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-media-grid__placeholder-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Hover Overlay */
+  .mk-media-grid__hover {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .mk-media-grid__item:hover .mk-media-grid__hover {
+    opacity: 1;
+  }
+
+  .mk-media-grid__hover-title {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .mk-media-grid__hover-desc {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  /* Caption */
+  .mk-media-grid__caption {
+    padding: 16px 0 0 0;
+  }
+
+  .mk-media-grid__title {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .mk-media-grid__subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  /* Footer */
+  .mk-media-grid__footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+  }
+
+  .mk-media-grid__view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--color-primary, #000);
+    border: 1.5px solid var(--color-primary, #000);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-media-grid__view-all:hover {
+    background: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+  }
+
+  .mk-media-grid__view-all svg {
+    width: 16px;
+    height: 16px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 媒体网格",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "内容设置"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "标签文字"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "标题"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "描述文字"
+    },
+    {
+      "type": "header",
+      "content": "布局设置"
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "列数 (移动端)",
+      "min": 1,
+      "max": 3,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "列数 (平板)",
+      "min": 2,
+      "max": 4,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "列数 (PC端)",
+      "min": 2,
+      "max": 6,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "网格间距",
+      "min": 0,
+      "max": 40,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_titles",
+      "label": "显示图片标题",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "查看全部链接"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "显示查看全部按钮",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "按钮文字",
+      "default": "查看全部"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "链接地址"
+    },
+    {
+      "type": "header",
+      "content": "颜色设置"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "media",
+      "name": "媒体项",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片"
+        },
+        {
+          "type": "select",
+          "id": "size",
+          "label": "尺寸",
+          "options": [
+            { "value": "normal", "label": "正常" },
+            { "value": "large", "label": "大 (跨2列2行)" }
+          ],
+          "default": "normal"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "副标题"
+        },
+        {
+          "type": "header",
+          "content": "悬停效果"
+        },
+        {
+          "type": "text",
+          "id": "hover_title",
+          "label": "悬停标题"
+        },
+        {
+          "type": "textarea",
+          "id": "hover_description",
+          "label": "悬停描述"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "链接"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 媒体网格"
+    }
+  ]
+}
+{% endschema %}

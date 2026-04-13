@@ -1,0 +1,117 @@
+{%- doc -%}
+  MK 评分组件
+
+  渲染产品评分星级显示
+
+  @param {number} rating - 评分值（0-5）
+  @param {number} max - 最大评分（默认5）
+  @param {number} reviews_count - 评论数量
+
+  @example
+  {% render 'mk-rating', rating: 4.5, reviews_count: 128 %}
+{%- enddoc -%}
+
+{% liquid
+  assign rating = rating | default: 0
+  assign max = max | default: 5
+  assign reviews_count = reviews_count | default: 0
+
+  # 计算满星、半星、空星
+  assign full_stars = rating | floor
+  assign has_half_star = false
+  if rating > full_stars
+    assign has_half_star = true
+  endif
+  assign empty_stars = max | minus: full_stars | minus: 1 | at_least: 0
+-%}
+
+<div class="mk-rating" aria-label="{{ rating }} {{ 'products.stars' | t: count: rating }}">
+  <div class="mk-rating__stars">
+    {%- comment -%} 满星 {%- endcomment -%}
+    {%- for i in (1..full_stars) -%}
+      <span class="mk-rating__star mk-rating__star--full">
+        {{- 'icon-star.svg' | inline_asset_content -}}
+      </span>
+    {%- endfor -%}
+
+    {%- comment -%} 半星 {%- endcomment -%}
+    {%- if has_half_star -%}
+      <span class="mk-rating__star mk-rating__star--half">
+        {{- 'icon-star-half.svg' | inline_asset_content -}}
+      </span>
+    {%- endif -%}
+
+    {%- comment -%} 空星 {%- endcomment -%}
+    {%- for i in (1..empty_stars) -%}
+      <span class="mk-rating__star mk-rating__star--empty">
+        {{- 'icon-star.svg' | inline_asset_content -}}
+      </span>
+    {%- endfor -%}
+  </div>
+
+  {%- if reviews_count > 0 -%}
+    <span class="mk-rating__count">({{ reviews_count }})</span>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .mk-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .mk-rating__stars {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .mk-rating__star {
+    display: flex;
+    width: 16px;
+    height: 16px;
+  }
+
+  .mk-rating__star svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-rating__star--full svg {
+    fill: var(--color-star, #f5a623);
+  }
+
+  .mk-rating__star--half svg {
+    fill: var(--color-star, #f5a623);
+  }
+
+  .mk-rating__star--empty svg {
+    fill: var(--color-border, #ddd);
+  }
+
+  .mk-rating__count {
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  /* 大号评分 */
+  .mk-rating--large .mk-rating__star {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mk-rating--large .mk-rating__count {
+    font-size: 14px;
+  }
+
+  /* 小号评分 */
+  .mk-rating--small .mk-rating__star {
+    width: 12px;
+    height: 12px;
+  }
+
+  .mk-rating--small .mk-rating__count {
+    font-size: 12px;
+  }
+{% endstylesheet %}

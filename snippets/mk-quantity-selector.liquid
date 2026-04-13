@@ -1,0 +1,173 @@
+{%- doc -%}
+  MK 数量选择器组件
+
+  渲染商品数量增减选择器
+
+  @param {number} [value] - 当前数量
+  @param {number} [min] - 最小数量
+  @param {number} [max] - 最大数量
+  @param {string} [name] - 输入框名称
+
+  @example
+  {% render 'mk-quantity-selector', value: item.quantity, min: 1, max: 99 %}
+{%- enddoc -%}
+
+{% liquid
+  assign value = value | default: 1
+  assign min = min | default: 1
+  assign max = max | default: 99
+  assign name = name | default: 'quantity'
+-%}
+
+<div class="mk-quantity-selector">
+  <button
+    type="button"
+    class="mk-quantity-selector__btn mk-quantity-selector__btn--decrease"
+    data-action="decrease"
+    aria-label="{{ 'actions.decrease_quantity' | t | default: '减少数量' }}"
+    {% if value <= min %}
+      disabled
+    {% endif %}
+  >
+    {{- 'icon-minus.svg' | inline_asset_content -}}
+  </button>
+
+  <input
+    type="number"
+    class="mk-quantity-selector__input"
+    name="{{ name }}"
+    value="{{ value }}"
+    min="{{ min }}"
+    max="{{ max }}"
+    readonly
+    aria-label="{{ 'actions.quantity' | t | default: '数量' }}"
+  >
+
+  <button
+    type="button"
+    class="mk-quantity-selector__btn mk-quantity-selector__btn--increase"
+    data-action="increase"
+    aria-label="{{ 'actions.increase_quantity' | t | default: '增加数量' }}"
+    {% if value >= max %}
+      disabled
+    {% endif %}
+  >
+    {{- 'icon-plus.svg' | inline_asset_content -}}
+  </button>
+</div>
+
+{% stylesheet %}
+  .mk-quantity-selector {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .mk-quantity-selector__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-foreground);
+    transition: background-color 0.2s ease;
+  }
+
+  .mk-quantity-selector__btn:hover:not(:disabled) {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-quantity-selector__btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .mk-quantity-selector__btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .mk-quantity-selector__input {
+    width: 50px;
+    height: 36px;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    color: var(--color-foreground);
+    background: transparent;
+    border: none;
+    border-left: 1px solid var(--color-border);
+    border-right: 1px solid var(--color-border);
+  }
+
+  .mk-quantity-selector__input:focus {
+    outline: none;
+  }
+
+  /* 去除number输入框的箭头 */
+  .mk-quantity-selector__input::-webkit-outer-spin-button,
+  .mk-quantity-selector__input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .mk-quantity-selector__input[type=number] {
+    -moz-appearance: textfield;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class QuantitySelector extends HTMLElement {
+    constructor() {
+      super();
+      this.input = this.querySelector('.mk-quantity-selector__input');
+      this.minBtn = this.querySelector('[data-action="decrease"]');
+      this.maxBtn = this.querySelector('[data-action="increase"]');
+
+      this.min = parseInt(this.input.min) || 1;
+      this.max = parseInt(this.input.max) || 99;
+      this.value = parseInt(this.input.value) || 1;
+
+      this.init();
+    }
+
+    init() {
+      this.minBtn.addEventListener('click', () => this.decrease());
+      this.maxBtn.addEventListener('click', () => this.increase());
+    }
+
+    decrease() {
+      if (this.value > this.min) {
+        this.value--;
+        this.update();
+      }
+    }
+
+    increase() {
+      if (this.value < this.max) {
+        this.value++;
+        this.update();
+      }
+    }
+
+    update() {
+      this.input.value = this.value;
+      this.minBtn.disabled = this.value <= this.min;
+      this.maxBtn.disabled = this.value >= this.max;
+
+      this.input.dispatchEvent(new CustomEvent('change', {
+        bubbles: true,
+        detail: { quantity: this.value }
+      }));
+    }
+  }
+
+  customElements.define('quantity-selector', QuantitySelector);
+{% endjavascript %}

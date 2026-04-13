@@ -1,0 +1,116 @@
+{%- doc -%}
+  MK 复选框组件
+
+  渲染一个复选框输入框
+
+  @param {string} id - 输入框ID
+  @param {string} name - 输入框名称
+  @param {string} value - 输入框值
+  @param {string} label - 标签文字
+  @param {boolean} [checked] - 是否选中
+  @param {boolean} [disabled] - 是否禁用
+  @param {boolean} [required] - 是否必填
+
+  @example
+  {% render 'mk-checkbox', id: 'agree', name: 'agree', value: '1', label: '我同意条款', checked: false %}
+{%- enddoc -%}
+
+<div class="mk-checkbox" {{ events }}>
+  <input
+    type="checkbox"
+    name="{{ name }}"
+    value="{{ value }}"
+    id="{{ id }}"
+    class="mk-checkbox__input"
+    data-label="{{ label }}"
+    {% if checked %}
+      checked
+    {% endif %}
+    {% if disabled %}
+      disabled
+    {% endif %}
+    {% if required %}
+      required
+    {% endif %}
+  >
+  <label
+    class="mk-checkbox__label"
+    for="{{ id }}"
+  >
+    <span class="mk-checkbox__icon">{{- 'icon-check.svg' | inline_asset_content -}}</span>
+    <span class="mk-checkbox__label-text">{{ label }}</span>
+  </label>
+</div>
+
+{% stylesheet %}
+  .mk-checkbox {
+    display: inline-flex;
+  }
+
+  .mk-checkbox__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .mk-checkbox__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .mk-checkbox__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid var(--color-border);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-checkbox__icon svg {
+    width: 12px;
+    height: 12px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.2s ease;
+  }
+
+  .mk-checkbox__label-text {
+    font-size: 14px;
+    color: var(--color-foreground);
+  }
+
+  /* 选中状态 */
+  .mk-checkbox__input:checked + .mk-checkbox__label .mk-checkbox__icon {
+    background-color: var(--color-primary, #000);
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-checkbox__input:checked + .mk-checkbox__label .mk-checkbox__icon svg {
+    opacity: 1;
+    transform: scale(1);
+    fill: var(--color-on-primary, #fff);
+  }
+
+  /* 悬停状态 */
+  .mk-checkbox__label:hover .mk-checkbox__icon {
+    border-color: var(--color-primary, #000);
+  }
+
+  /* 禁用状态 */
+  .mk-checkbox__input:disabled + .mk-checkbox__label {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* 焦点状态 */
+  .mk-checkbox__input:focus + .mk-checkbox__label .mk-checkbox__icon {
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  }
+{% endstylesheet %}

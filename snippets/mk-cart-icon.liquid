@@ -1,0 +1,37 @@
+{%- doc -%}
+  MK 购物车图标组件
+
+  渲染购物车图标
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-cart-icon', class: 'header-icon' %}
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<span class="mk-cart-icon {{ class }}">
+  {{- 'icon-cart.svg' | inline_asset_content -}}
+  {% render 'mk-cart-bubble', count: cart.item_count %}
+</span>
+
+{% stylesheet %}
+  .mk-cart-icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+  }
+
+  .mk-cart-icon svg {
+    width: 100%;
+    height: 100%;
+    color: var(--color-foreground);
+  }
+{% endstylesheet %}

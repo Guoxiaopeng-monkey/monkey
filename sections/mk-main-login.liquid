@@ -1,0 +1,520 @@
+{%- comment -%}
+  MK 登录注册页面组件
+  
+  功能：客户登录和注册页面
+  
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign pt_mob = ss.padding_top_mobile | default: 32
+  assign pb_mob = ss.padding_bottom_mobile | default: 32
+  assign pt_desk = ss.padding_top_desktop | default: 48
+  assign pb_desk = ss.padding_bottom_desktop | default: 48
+-%}
+
+<style>
+  #{{ section.id }} {
+    --login-pt-mob: {{ pt_mob }}px;
+    --login-pb-mob: {{ pb_mob }}px;
+    --login-pt-desk: {{ pt_desk }}px;
+    --login-pb-desk: {{ pb_desk }}px;
+    padding: var(--login-pt-mob) 0 var(--login-pb-mob);
+  }
+  
+  @media (min-width: 750px) {
+    #{{ section.id }} {
+      padding: var(--login-pt-desk) 0 var(--login-pb-desk);
+    }
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-main-login"
+  data-skip-node-update
+>
+  <div class="mk-main-login__container">
+    <div class="mk-main-login__wrapper">
+      
+      {%- comment -%} 登录表单 {%- endcomment -%}
+      <div class="mk-main-login__form-container mk-main-login__form-container--login">
+        <div class="mk-main-login__header">
+          <h1 class="mk-main-login__title">
+            {{ 'customers.login.title' | t | default: '登录' }}
+          </h1>
+          <p class="mk-main-login__subtitle">
+            登录您的账户以便查看订单和管理设置
+          </p>
+        </div>
+        
+        {%- form 'customer_login', class: 'mk-main-login__form' -%}
+          {%- if form.errors -%}
+            <div class="mk-main-login__error">
+              {{ form.errors | default_errors }}
+            </div>
+          {%- endif -%}
+          
+          <div class="mk-main-login__field">
+            <label for="customer_email" class="mk-main-login__label">
+              {{ 'customers.login.email' | t | default: '邮箱' }}
+            </label>
+            <input
+              type="email"
+              id="customer_email"
+              name="customer[email]"
+              class="mk-main-login__input"
+              required
+              autocomplete="email"
+            >
+          </div>
+          
+          <div class="mk-main-login__field">
+            <label for="customer_password" class="mk-main-login__label">
+              {{ 'customers.login.password' | t | default: '密码' }}
+            </label>
+            <input
+              type="password"
+              id="customer_password"
+              name="customer[password]"
+              class="mk-main-login__input"
+              required
+              autocomplete="current-password"
+            >
+          </div>
+          
+          <div class="mk-main-login__actions">
+            <button type="submit" class="mk-main-login__submit">
+              {{ 'customers.login.submit' | t | default: '登录' }}
+            </button>
+            <a href="{{ routes.account_recover_url }}" class="mk-main-login__forgot">
+              {{ 'customers.login.forgot_password' | t | default: '忘记密码？' }}
+            </a>
+          </div>
+        {%- endform -%}
+        
+        <div class="mk-main-login__footer">
+          <p>
+            还没有账户?
+            <button type="button" class="mk-main-login__toggle" data-toggle="register">
+              {{ 'customers.login.sign_up' | t | default: '注册新账户' }}
+            </button>
+          </p>
+        </div>
+      </div>
+      
+      {%- comment -%} 注册表单 {%- endcomment -%}
+      <div class="mk-main-login__form-container mk-main-login__form-container--register" style="display: none;">
+        <div class="mk-main-login__header">
+          <h1 class="mk-main-login__title">
+            {{ 'customers.register.title' | t | default: '注册' }}
+          </h1>
+          <p class="mk-main-login__subtitle">
+            创建新账户以获得更好的购物体验
+          </p>
+        </div>
+        
+        {%- form 'create_customer', class: 'mk-main-login__form' -%}
+          {%- if form.errors -%}
+            <div class="mk-main-login__error">
+              {{ form.errors | default_errors }}
+            </div>
+          {%- endif -%}
+          
+          <div class="mk-main-login__field-row">
+            <div class="mk-main-login__field">
+              <label for="register_first_name" class="mk-main-login__label">
+                {{ 'customers.register.first_name' | t | default: '名' }}
+              </label>
+              <input
+                type="text"
+                id="register_first_name"
+                name="customer[first_name]"
+                class="mk-main-login__input"
+                autocomplete="given-name"
+              >
+            </div>
+            
+            <div class="mk-main-login__field">
+              <label for="register_last_name" class="mk-main-login__label">
+                {{ 'customers.register.last_name' | t | default: '姓' }}
+              </label>
+              <input
+                type="text"
+                id="register_last_name"
+                name="customer[last_name]"
+                class="mk-main-login__input"
+                autocomplete="family-name"
+              >
+            </div>
+          </div>
+          
+          <div class="mk-main-login__field">
+            <label for="register_email" class="mk-main-login__label">
+              {{ 'customers.register.email' | t | default: '邮箱' }}
+            </label>
+            <input
+              type="email"
+              id="register_email"
+              name="customer[email]"
+              class="mk-main-login__input"
+              required
+              autocomplete="email"
+            >
+          </div>
+          
+          <div class="mk-main-login__field">
+            <label for="register_password" class="mk-main-login__label">
+              {{ 'customers.register.password' | t | default: '密码' }}
+            </label>
+            <input
+              type="password"
+              id="register_password"
+              name="customer[password]"
+              class="mk-main-login__input"
+              required
+              autocomplete="new-password"
+              minlength="8"
+            >
+            <p class="mk-main-login__hint">密码至少8个字符</p>
+          </div>
+          
+          <div class="mk-main-login__actions">
+            <button type="submit" class="mk-main-login__submit">
+              {{ 'customers.register.submit' | t | default: '创建账户' }}
+            </button>
+          </div>
+        {%- endform -%}
+        
+        <div class="mk-main-login__footer">
+          <p>
+            已有账户?
+            <button type="button" class="mk-main-login__toggle" data-toggle="login">
+              {{ 'customers.login.title' | t | default: '登录' }}
+            </button>
+          </p>
+        </div>
+      </div>
+      
+      {%- comment -%} 侧边信息 {%- endcomment -%}
+      <div class="mk-main-login__info">
+        <h2 class="mk-main-login__info-title">成为会员</h2>
+        <ul class="mk-main-login__info-list">
+          <li>
+            {{- 'icon-check.svg' | inline_asset_content -}}
+            <span>更快结账</span>
+          </li>
+          <li>
+            {{- 'icon-check.svg' | inline_asset_content -}}
+            <span>查看订单历史</span>
+          </li>
+          <li>
+            {{- 'icon-check.svg' | inline_asset_content -}}
+            <span>保存收藏夹</span>
+          </li>
+          <li>
+            {{- 'icon-check.svg' | inline_asset_content -}}
+            <span>获取独家优惠</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-main-login__container {
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .mk-main-login__wrapper {
+    display: grid;
+    gap: 48px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 768px) {
+    .mk-main-login__wrapper {
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+  }
+
+  /* Form Container */
+  .mk-main-login__form-container {
+    padding: 32px;
+    background: var(--color-background-secondary, #f9f9f9);
+    border-radius: 16px;
+  }
+
+  /* Header */
+  .mk-main-login__header {
+    margin-bottom: 28px;
+    text-align: center;
+  }
+
+  .mk-main-login__title {
+    margin: 0 0 10px 0;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .mk-main-login__subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  /* Form */
+  .mk-main-login__form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .mk-main-login__error {
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--color-error, #c62828);
+    background: #ffebee;
+    border-radius: 8px;
+  }
+
+  .mk-main-login__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .mk-main-login__field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 480px) {
+    .mk-main-login__field-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .mk-main-login__label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .mk-main-login__input {
+    padding: 13px 16px;
+    font-size: 15px;
+    border: 1px solid rgba(var(--color-border), 0.3);
+    border-radius: 6px;
+    background: var(--color-background, #fff);
+    transition: border-color 0.2s ease;
+  }
+
+  .mk-main-login__input:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-main-login__hint {
+    margin: 4px 0 0 0;
+    font-size: 12px;
+    color: var(--color-text-secondary, #999);
+  }
+
+  /* Actions */
+  .mk-main-login__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  .mk-main-login__submit {
+    width: 100%;
+    padding: 15px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-background, #fff);
+    background: var(--color-primary, #000);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-main-login__submit:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+  }
+
+  .mk-main-login__forgot {
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .mk-main-login__forgot:hover {
+    color: var(--color-primary, #000);
+  }
+
+  /* Footer */
+  .mk-main-login__footer {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(var(--color-border), 0.15);
+    text-align: center;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-main-login__toggle {
+    padding: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-primary, #000);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* Info */
+  .mk-main-login__info {
+    display: none;
+    padding: 40px;
+    background: linear-gradient(135deg, var(--color-primary, #000) 0%, #333 100%);
+    border-radius: 16px;
+    color: var(--color-background, #fff);
+  }
+
+  @media (min-width: 768px) {
+    .mk-main-login__info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+
+  .mk-main-login__info-title {
+    margin: 0 0 28px 0;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .mk-main-login__info-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mk-main-login__info-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+  }
+
+  .mk-main-login__info-list svg {
+    width: 20px;
+    height: 20px;
+    color: #4caf50;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class MKMainLogin extends HTMLElement {
+    constructor() {
+      super();
+      this.initToggle();
+    }
+
+    initToggle() {
+      const toggles = this.querySelectorAll('.mk-main-login__toggle');
+      const loginForm = this.querySelector('.mk-main-login__form-container--login');
+      const registerForm = this.querySelector('.mk-main-login__form-container--register');
+
+      toggles.forEach(toggle => {
+        toggle.addEventListener('click', () => {
+          const target = toggle.dataset.toggle;
+
+          if (target === 'register') {
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+          } else {
+            loginForm.style.display = 'block';
+            registerForm.style.display = 'none';
+          }
+        });
+      });
+    }
+  }
+
+  customElements.define('mk-main-login', MKMainLogin);
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK 登录页面",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 48,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 登录页面"
+    }
+  ]
+}
+{% endschema %}

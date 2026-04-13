@@ -1,0 +1,228 @@
+{%- doc -%}
+  MK 标签页组件
+
+  渲染可切换的标签页内容
+
+  @param {string[]} tabs - 标签页标题数组
+  @param {string[]} contents - 内容数组
+  @param {string} [style] - 样式：'underline'、'pills'、'buttons'
+
+  @example
+  {% render 'mk-tabs', tabs: ['描述', '评论', 'FAQ'], contents: [description, reviews, faq] %}
+{%- enddoc -%}
+
+{% liquid
+  assign style = style | default: 'underline'
+-%}
+
+<div class="mk-tabs" data-style="{{ style }}">
+  {%- comment -%} 标签页标题 {%- endcomment -%}
+  <div class="mk-tabs__nav" role="tablist">
+    {%- for tab in tabs -%}
+      <button
+        type="button"
+        class="mk-tabs__tab {% if forloop.first %}mk-tabs__tab--active{% endif %}"
+        role="tab"
+        data-tab-index="{{ forloop.index0 }}"
+        aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+        aria-controls="mk-tabs-panel-{{ forloop.index0 }}"
+      >
+        {{ tab }}
+      </button>
+    {%- endfor -%}
+  </div>
+
+  {%- comment -%} 标签页内容 {%- endcomment -%}
+  <div class="mk-tabs__panels">
+    {%- for content in contents -%}
+      <div
+        class="mk-tabs__panel {% if forloop.first %}mk-tabs__panel--active{% endif %}"
+        id="mk-tabs-panel-{{ forloop.index0 }}"
+        role="tabpanel"
+        data-tab-index="{{ forloop.index0 }}"
+        {% if forloop.first %}
+          aria-hidden="false"
+        {% else %}
+          aria-hidden="true"
+        {% endif %}
+      >
+        {{ content }}
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-tabs {
+    width: 100%;
+  }
+
+  /* 标签导航 */
+  .mk-tabs__nav {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--color-border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .mk-tabs__nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Underline 样式 */
+  .mk-tabs[data-style="underline"] .mk-tabs__tab {
+    position: relative;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-secondary, #666);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+  }
+
+  .mk-tabs[data-style="underline"] .mk-tabs__tab:hover {
+    color: var(--color-foreground);
+  }
+
+  .mk-tabs[data-style="underline"] .mk-tabs__tab--active {
+    color: var(--color-primary, #000);
+  }
+
+  .mk-tabs[data-style="underline"] .mk-tabs__tab--active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--color-primary, #000);
+  }
+
+  /* Pills 样式 */
+  .mk-tabs[data-style="pills"] .mk-tabs__nav {
+    gap: 8px;
+    border-bottom: none;
+  }
+
+  .mk-tabs[data-style="pills"] .mk-tabs__tab {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-secondary, #666);
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-tabs[data-style="pills"] .mk-tabs__tab:hover {
+    background-color: var(--color-border);
+  }
+
+  .mk-tabs[data-style="pills"] .mk-tabs__tab--active {
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+  }
+
+  /* Buttons 样式 */
+  .mk-tabs[data-style="buttons"] .mk-tabs__nav {
+    gap: 0;
+    border-bottom: none;
+  }
+
+  .mk-tabs[data-style="buttons"] .mk-tabs__tab {
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-tabs[data-style="buttons"] .mk-tabs__tab:first-child {
+    border-radius: 8px 0 0 8px;
+  }
+
+  .mk-tabs[data-style="buttons"] .mk-tabs__tab:last-child {
+    border-radius: 0 8px 8px 0;
+  }
+
+  .mk-tabs[data-style="buttons"] .mk-tabs__tab:not(:last-child) {
+    border-right: none;
+  }
+
+  .mk-tabs[data-style="buttons"] .mk-tabs__tab:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-tabs[data-style="buttons"] .mk-tabs__tab--active {
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border-color: var(--color-primary, #000);
+  }
+
+  /* 内容面板 */
+  .mk-tabs__panels {
+    padding-top: 24px;
+  }
+
+  .mk-tabs__panel {
+    display: none;
+  }
+
+  .mk-tabs__panel--active {
+    display: block;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class TabsComponent extends HTMLElement {
+    constructor() {
+      super();
+      this.tabs = this.querySelectorAll('.mk-tabs__tab');
+      this.panels = this.querySelectorAll('.mk-tabs__panel');
+
+      this.init();
+    }
+
+    init() {
+      this.tabs.forEach(tab => {
+        tab.addEventListener('click', () => this.activate(tab));
+      });
+    }
+
+    activate(selectedTab) {
+      const index = selectedTab.dataset.tabIndex;
+
+      // 更新标签状态
+      this.tabs.forEach(tab => {
+        const isSelected = tab.dataset.tabIndex === index;
+        tab.classList.toggle('mk-tabs__tab--active', isSelected);
+        tab.setAttribute('aria-selected', isSelected);
+      });
+
+      // 更新面板状态
+      this.panels.forEach(panel => {
+        const isActive = panel.dataset.tabIndex === index;
+        panel.classList.toggle('mk-tabs__panel--active', isActive);
+        panel.setAttribute('aria-hidden', !isActive);
+      });
+
+      // 触发切换事件
+      this.dispatchEvent(new CustomEvent('tab-change', {
+        bubbles: true,
+        detail: { index: parseInt(index) }
+      }));
+    }
+  }
+
+  customElements.define('tabs-component', TabsComponent);
+{% endjavascript %}

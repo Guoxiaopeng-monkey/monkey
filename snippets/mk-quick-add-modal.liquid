@@ -1,0 +1,387 @@
+{%- doc -%}
+  MK 快速添加模态框组件
+
+  渲染快速添加产品的模态框，显示产品图片、标题、价格和购买按钮
+
+  @param {string} [color_scheme] - 颜色方案
+
+  @example
+  {% render 'mk-quick-add-modal', color_scheme: section.settings.popover_color_scheme %}
+{%- enddoc -%}
+
+<quick-add-dialog id="mk-quick-add-dialog">
+  <dialog
+    class="mk-quick-add-modal dialog-modal color-{{ color_scheme | default: 'background-1' }}"
+    ref="dialog"
+    scroll-lock
+  >
+    <button
+      ref="closeButton"
+      on:click="/closeDialog"
+      class="mk-quick-add-modal__close button button-unstyled"
+      aria-label="{{ 'accessibility.close_dialog' | t }}"
+    >
+      {{- 'icon-close.svg' | inline_asset_content -}}
+    </button>
+
+    <div
+      id="mk-quick-add-modal-content"
+      class="mk-quick-add-modal__content"
+    >
+      {%- comment -%} 内容由 JavaScript 动态填充 {%- endcomment -%}
+    </div>
+  </dialog>
+</quick-add-dialog>
+
+{% stylesheet %}
+  .mk-quick-add-modal {
+    padding: 0;
+    border: 1px solid var(--color-border);
+    height: fit-content;
+    overflow: hidden;
+    min-height: 500px;
+    box-shadow: 0 5px 30px rgb(0 0 0 / 0.15);
+    border-radius: var(--style-border-radius-popover, 12px);
+  }
+
+  @media screen and (max-width: 750px) {
+    .mk-quick-add-modal {
+      position: fixed;
+      display: block;
+      margin: auto 0 0 0;
+      min-height: unset;
+      max-width: 100%;
+      border-radius: 0;
+      width: 100%;
+      height: 100%;
+      max-height: 100vh;
+    }
+  }
+
+  .mk-quick-add-modal[open] {
+    @media screen and (min-width: 750px) {
+      display: flex;
+    }
+  }
+
+  .mk-quick-add-modal__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-background);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+    z-index: 10;
+  }
+
+  .mk-quick-add-modal__close:hover {
+    transform: scale(0.95);
+  }
+
+  .mk-quick-add-modal__close svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mk-quick-add-modal__content {
+    display: grid;
+    grid-template-columns: 1fr;
+    position: relative;
+    max-width: var(--wide-content-width, 900px);
+    overflow-y: auto;
+    max-height: 100vh;
+  }
+
+  @media screen and (min-width: 750px) {
+    .mk-quick-add-modal__content {
+      grid-template-columns: repeat(2, 1fr);
+      min-height: 500px;
+    }
+  }
+
+  .mk-quick-add-modal__content .mk-product-media {
+    background-color: var(--color-background-secondary, #f5f5f5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mk-quick-add-modal__content .mk-product-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mk-quick-add-modal__content .mk-product-details {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mk-quick-add-modal__content .mk-product-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .mk-quick-add-modal__content .mk-product-vendor {
+    font-size: 12px;
+    color: var(--color-text-secondary, #666);
+    margin: 0;
+  }
+
+  .mk-quick-add-modal__content .mk-product-price {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .mk-quick-add-modal__content .mk-product-price-compare {
+    text-decoration: line-through;
+    color: var(--color-text-secondary, #999);
+    margin-right: 8px;
+    font-weight: 400;
+  }
+
+  .mk-quick-add-modal__content .mk-variant-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mk-quick-add-modal__content .mk-variant-option {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mk-quick-add-modal__content .mk-variant-label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .mk-quick-add-modal__content .mk-variant-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mk-quick-add-modal__content .mk-variant-btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-background);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-quick-add-modal__content .mk-variant-btn:hover {
+    border-color: var(--color-foreground);
+  }
+
+  .mk-quick-add-modal__content .mk-variant-btn--selected {
+    border-color: var(--color-primary, #000);
+    background-color: var(--color-primary, #000);
+    color: var(--color-on-primary, #fff);
+  }
+
+  .mk-quick-add-modal__content .mk-variant-btn--unavailable {
+    opacity: 0.5;
+    cursor: not-allowed;
+    text-decoration: line-through;
+  }
+
+  .mk-quick-add-modal__content .mk-product-form {
+    margin-top: auto;
+  }
+
+  .mk-quick-add-modal__content .mk-add-to-cart-btn {
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-quick-add-modal__content .mk-add-to-cart-btn:hover:not(:disabled) {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+
+  .mk-quick-add-modal__content .mk-add-to-cart-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Animation */
+  .mk-quick-add-modal[open] {
+    animation: mkModalSlideIn 0.3s ease forwards;
+  }
+
+  .mk-quick-add-modal.dialog-closing {
+    animation: mkModalSlideOut 0.3s ease forwards;
+  }
+
+  @keyframes mkModalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes mkModalSlideOut {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class QuickAddDialog extends HTMLElement {
+    constructor() {
+      super();
+      this.dialog = this.querySelector('dialog');
+      this.content = this.querySelector('#mk-quick-add-modal-content');
+
+      this.addEventListener('quick-add:open', this.handleQuickAddOpen.bind(this));
+    }
+
+    async handleQuickAddOpen(event) {
+      const { product } = event.detail;
+
+      // 显示加载状态
+      this.content.innerHTML = '<div class="mk-quick-add-modal__loading">Loading...</div>';
+      this.dialog.showModal();
+
+      // 动态加载产品内容
+      try {
+        const response = await fetch(`/products/${product.handle}.js`);
+        const productData = await response.json();
+
+        this.renderProduct(productData);
+      } catch (error) {
+        console.error('Failed to load product:', error);
+        this.content.innerHTML = '<p>Failed to load product</p>';
+      }
+    }
+
+    renderProduct(product) {
+      const variant = product.selected_or_first_available_variant;
+      const price = variant.price / 100;
+      const compareAtPrice = variant.compare_at_price ? variant.compare_at_price / 100 : null;
+
+      this.content.innerHTML = `
+        <div class="mk-product-media">
+          <img src="${variant.featured_image || product.featured_image}" alt="${product.title}">
+        </div>
+        <div class="mk-product-details">
+          <h2 class="mk-product-title">${product.title}</h2>
+          ${product.vendor ? `<p class="mk-product-vendor">${product.vendor}</p>` : ''}
+          <div class="mk-product-price">
+            ${compareAtPrice ? `<span class="mk-product-price-compare">$${compareAtPrice}</span>` : ''}
+            <span class="mk-product-price-current">$${price}</span>
+          </div>
+          <div class="mk-variant-picker">
+            ${product.options.map((option, index) => `
+              <div class="mk-variant-option">
+                <span class="mk-variant-label">${option.name}</span>
+                <div class="mk-variant-options">
+                  ${option.values.map(value => {
+                    const optionIndex = index + 1;
+                    const available = product.variants.some(v =>
+                      v[`option${optionIndex}`] === value && v.available
+                    );
+                    return `
+                      <button
+                        type="button"
+                        class="mk-variant-btn ${available ? '' : 'mk-variant-btn--unavailable'}"
+                        data-option="${option.name}"
+                        data-value="${value}"
+                      >
+                        ${value}
+                      </button>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          <form class="mk-product-form" action="/cart/add" method="post">
+            <input type="hidden" name="id" value="${variant.id}">
+            <button type="submit" class="mk-add-to-cart-btn" ${!variant.available ? 'disabled' : ''}>
+              ${variant.available ? 'Add to Cart' : 'Sold Out'}
+            </button>
+          </form>
+        </div>
+      `;
+
+      // 绑定事件
+      this.bindVariantPicker();
+      this.bindAddToCart();
+    }
+
+    bindVariantPicker() {
+      const buttons = this.content.querySelectorAll('.mk-variant-btn:not(.mk-variant-btn--unavailable)');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const option = btn.dataset.option;
+          const value = btn.dataset.value;
+          // 更新选择状态
+          this.content.querySelectorAll(`.mk-variant-btn[data-option="${option}"]`).forEach(b => {
+            b.classList.remove('mk-variant-btn--selected');
+          });
+          btn.classList.add('mk-variant-btn--selected');
+        });
+      });
+    }
+
+    bindAddToCart() {
+      const form = this.content.querySelector('.mk-product-form');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+
+        try {
+          await fetch('/cart/add.js', {
+            method: 'POST',
+            body: formData
+          });
+          // 触发购物车更新事件
+          window.dispatchEvent(new CustomEvent('cart:updated'));
+          this.closeDialog();
+        } catch (error) {
+          console.error('Failed to add to cart:', error);
+        }
+      });
+    }
+
+    closeDialog() {
+      this.dialog.close();
+    }
+  }
+
+  customElements.define('quick-add-dialog', QuickAddDialog);
+{% endjavascript %}

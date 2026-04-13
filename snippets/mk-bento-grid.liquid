@@ -1,0 +1,129 @@
+{%- doc -%}
+  MK Bento网格布局组件
+
+  将HTML内容项放置在Bento网格布局中，最多12个项目为一组
+
+  @param {string[]} items - HTML字符串数组，每个字符串是一个集合列表项
+
+  @example
+  {% render 'mk-bento-grid', items: collection_items %}
+{%- enddoc -%}
+
+{% liquid
+  assign odd_item_check = items.size | modulo: 12
+  if odd_item_check == 1
+    assign first_box_size = 11
+  else
+    assign first_box_size = 12
+  endif
+%}
+
+{% for item in items %}
+  {% liquid
+    if first_box_size == 11
+      assign item_modulo = forloop.index | modulo: 11
+      if forloop.index == 12
+        assign item_modulo = forloop.index | modulo: 12
+        assign item_modulo = 1
+      endif
+    else
+      assign item_modulo = forloop.index | modulo: 12
+    endif
+  %}
+
+  {% if forloop.first or item_modulo == 1 %}
+    <div class="mk-bento-box">
+  {% endif %}
+
+  <div class="mk-bento-box__item">
+    {{ item }}
+  </div>
+
+  {% if forloop.last or item_modulo == 0 %}
+    </div>
+  {% endif %}
+{% endfor %}
+
+{% stylesheet %}
+  .mk-bento-box {
+    display: grid;
+    column-gap: var(--bento-gap, 16px);
+    row-gap: calc(var(--bento-gap, 16px) * 1.5);
+    width: 100%;
+  }
+
+  .mk-bento-box:has(.collection-card--image-bg) {
+    row-gap: var(--bento-gap, 16px);
+  }
+
+  .mk-bento-box ~ .mk-bento-box {
+    padding-block-start: var(--bento-gap, 16px);
+  }
+
+  @media (max-width: 900px) {
+    .mk-bento-box {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mk-bento-box__item:nth-child(3n + 1) {
+      grid-column: span 1;
+    }
+
+    .mk-bento-box__item:nth-child(3n + 2) {
+      grid-column: span 1;
+    }
+
+    .mk-bento-box__item:nth-child(3n + 3) {
+      grid-column: span 2;
+    }
+
+    .mk-bento-box__item:last-child:nth-child(3n + 5) {
+      grid-column: span 1;
+    }
+
+    .mk-bento-box__item:last-child:nth-child(3n + 4) {
+      grid-column: span 2;
+    }
+  }
+
+  @media (min-width: 901px) {
+    .mk-bento-box {
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-areas:
+        'A A A B B B B B B C C C'
+        'D D D D D D E E E F F F'
+        'G G G H H H I I I I I I'
+        'J J J J K K K K L L L L';
+    }
+
+    .mk-bento-box__item:nth-child(1) { grid-area: A; }
+    .mk-bento-box__item:nth-child(2) { grid-area: B; }
+    .mk-bento-box__item:nth-child(3) { grid-area: C; }
+    .mk-bento-box__item:nth-child(4) { grid-area: D; }
+    .mk-bento-box__item:nth-child(5) { grid-area: E; }
+    .mk-bento-box__item:nth-child(6) { grid-area: F; }
+    .mk-bento-box__item:nth-child(7) { grid-area: G; }
+    .mk-bento-box__item:nth-child(8) { grid-area: H; }
+    .mk-bento-box__item:nth-child(9) { grid-area: I; }
+    .mk-bento-box__item:nth-child(10) { grid-area: J; }
+    .mk-bento-box__item:nth-child(11) { grid-area: K; }
+    .mk-bento-box__item:nth-child(12) { grid-area: L; }
+
+    /* 自适应布局 - 如果项目少于12个 */
+    .mk-bento-box:has(__item:nth-child(1)):not(:has(__item:nth-child(2))) __item:nth-child(1) {
+      grid-area: auto / span 12;
+    }
+
+    .mk-bento-box:has(__item:nth-child(1)):has(__item:nth-child(2)):not(:has(__item:nth-child(3))) __item:nth-child(1) {
+      grid-area: auto / span 6;
+    }
+
+    .mk-bento-box:has(__item:nth-child(1)):has(__item:nth-child(2)):not(:has(__item:nth-child(3))) __item:nth-child(2) {
+      grid-area: auto / span 6;
+    }
+  }
+
+  .mk-bento-box__item {
+    min-width: 0;
+  }
+{% endstylesheet %}

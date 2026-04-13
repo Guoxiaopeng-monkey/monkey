@@ -1,0 +1,417 @@
+{%- comment -%}
+  MK 博客页面组件
+  
+  功能：博客列表页面
+  
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign blog = blog
+  assign pt_mob = ss.padding_top_mobile | default: 32
+  assign pb_mob = ss.padding_bottom_mobile | default: 32
+  assign pt_desk = ss.padding_top_desktop | default: 48
+  assign pb_desk = ss.padding_bottom_desktop | default: 48
+  assign columns = ss.columns | default: 3
+-%}
+
+<style>
+  #{{ section.id }} {
+    --blog-pt-mob: {{ pt_mob }}px;
+    --blog-pb-mob: {{ pb_mob }}px;
+    --blog-pt-desk: {{ pt_desk }}px;
+    --blog-pb-desk: {{ pb_desk }}px;
+    --blog-cols: {{ columns }};
+    padding: var(--blog-pt-mob) 0 var(--blog-pb-mob);
+  }
+  
+  @media (min-width: 750px) {
+    #{{ section.id }} {
+      padding: var(--blog-pt-desk) 0 var(--blog-pb-desk);
+    }
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-main-blog"
+  data-skip-node-update
+>
+  <div class="mk-main-blog__container">
+    
+    {%- comment -%} 博客标题 {%- endcomment -%}
+    <div class="mk-main-blog__header">
+      <h1 class="mk-main-blog__title">{{ blog.title }}</h1>
+      {% if ss.show_blog_description and blog.description != blank %}
+        <p class="mk-main-blog__description">{{ blog.description }}</p>
+      {% endif %}
+    </div>
+    
+    {%- comment -%} 文章网格 {%- endcomment -%}
+    <div class="mk-main-blog__grid">
+      {%- for article in blog.articles -%}
+        <article class="mk-main-blog__article">
+          {%- comment -%} 文章图片 {%- endcomment -%}
+          {% if article.image != blank %}
+            <a href="{{ article.url }}" class="mk-main-blog__article-image">
+              <img
+                src="{{ article.image | image_url: width: 600 }}"
+                alt="{{ article.title }}"
+                width="600"
+                height="{{ 600 | divided_by: article.image.aspect_ratio | round }}"
+                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+              >
+            </a>
+          {% endif %}
+          
+          {%- comment -%} 文章信息 {%- endcomment -%}
+          <div class="mk-main-blog__article-info">
+            <div class="mk-main-blog__article-meta">
+              <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                {{ article.published_at | date: "%Y年%m月%d日" }}
+              </time>
+              {% if ss.show_author %}
+                <span class="mk-main-blog__article-author">
+                  {{ article.author }}
+                </span>
+              {% endif %}
+            </div>
+            
+            <h2 class="mk-main-blog__article-title">
+              <a href="{{ article.url }}">{{ article.title }}</a>
+            </h2>
+            
+            <p class="mk-main-blog__article-excerpt">
+              {{ article.excerpt | strip_html | truncate: 120 }}
+            </p>
+            
+            <a href="{{ article.url }}" class="mk-main-blog__article-link">
+              阅读更多
+              {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+            </a>
+          </div>
+        </article>
+      {%- else -%}
+        <div class="mk-main-blog__empty">
+          <p>暂无文章</p>
+        </div>
+      {%- endfor -%}
+    </div>
+    
+    {%- comment -%} 分页 {%- endcomment -%}
+    {% if paginate.pages > 1 %}
+      <nav class="mk-main-blog__pagination" aria-label="{{ 'general.pagination' | t | default: '分页' }}">
+        {%- if paginate.previous -%}
+          <a href="{{ paginate.previous.url }}" class="mk-main-blog__pagination-btn">
+            {{- 'icon-arrow-left.svg' | inline_asset_content -}}
+          </a>
+        {%- endif -%}
+        
+        {%- for part in paginate.parts -%}
+          {% if part.is_link %}
+            <a href="{{ part.url }}" class="mk-main-blog__pagination-link">{{ part.title }}</a>
+          {% else %}
+            <span class="mk-main-blog__pagination-current">{{ part.title }}</span>
+          {% endif %}
+        {%- endfor -%}
+        
+        {%- if paginate.next -%}
+          <a href="{{ paginate.next.url }}" class="mk-main-blog__pagination-btn">
+            {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+          </a>
+        {%- endif -%}
+      </nav>
+    {% endif %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-main-blog__container {
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  /* Header */
+  .mk-main-blog__header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .mk-main-blog__title {
+    margin: 0 0 16px 0;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+  }
+
+  .mk-main-blog__description {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-text-secondary, #666);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* Grid */
+  .mk-main-blog__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--blog-cols, 3), 1fr);
+    gap: 32px;
+  }
+
+  @media (max-width: 990px) {
+    .mk-main-blog__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .mk-main-blog__grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+
+  /* Article */
+  .mk-main-blog__article {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mk-main-blog__article-image {
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 12px;
+    background: var(--color-background-secondary, #f5f5f5);
+    margin-bottom: 20px;
+  }
+
+  .mk-main-blog__article-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .mk-main-blog__article:hover .mk-main-blog__article-image img {
+    transform: scale(1.05);
+  }
+
+  .mk-main-blog__article-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mk-main-blog__article-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--color-text-secondary, #999);
+  }
+
+  .mk-main-blog__article-author::before {
+    content: "•";
+    margin-right: 12px;
+  }
+
+  .mk-main-blog__article-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .mk-main-blog__article-title a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .mk-main-blog__article-title a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .mk-main-blog__article-excerpt {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-main-blog__article-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--color-primary, #000);
+  }
+
+  .mk-main-blog__article-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .mk-main-blog__article-link svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.2s ease;
+  }
+
+  .mk-main-blog__article-link:hover svg {
+    transform: translateX(4px);
+  }
+
+  /* Empty */
+  .mk-main-blog__empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .mk-main-blog__empty p {
+    margin: 0;
+    font-size: 16px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  /* Pagination */
+  .mk-main-blog__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 48px;
+  }
+
+  .mk-main-blog__pagination-btn,
+  .mk-main-blog__pagination-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    color: inherit;
+    background: transparent;
+    border: 1px solid rgba(var(--color-border), 0.3);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-main-blog__pagination-btn:hover,
+  .mk-main-blog__pagination-link:hover {
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-main-blog__pagination-btn svg,
+  .mk-main-blog__pagination-link svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .mk-main-blog__pagination-current {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 600;
+    background: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+    border-radius: 4px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 博客页面",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "博客设置"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_blog_description",
+      "label": "显示博客描述",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "显示作者",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "布局设置"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "列数",
+      "min": 1,
+      "max": 4,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 48,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 博客页面"
+    }
+  ]
+}
+{% endschema %}

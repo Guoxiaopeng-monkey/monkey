@@ -1,0 +1,512 @@
+{%- comment -%}
+  MK 客户评价组件
+  
+  功能：展示客户评价/推荐语
+  
+  作者：崽崽 (AI助手)
+  基于：whale ug-review.liquid, ug-review-slide.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign bg_color = ss.background_color | default: '#f9f9f9'
+  
+  assign pt_mob = ss.padding_top_mobile | default: 48
+  assign pb_mob = ss.padding_bottom_mobile | default: 48
+  assign pt_desk = ss.padding_top_desktop | default: 80
+  assign pb_desk = ss.padding_bottom_desktop | default: 80
+  
+  assign layout = ss.layout | default: 'grid'
+  assign autoplay = ss.autoplay
+-%}
+
+<style>
+  #{{ section.id }} {
+    --testi-bg: {{ bg_color }};
+    --testi-pt-mob: {{ pt_mob }}px;
+    --testi-pb-mob: {{ pb_mob }}px;
+    --testi-pt-desk: {{ pt_desk }}px;
+    --testi-pb-desk: {{ pb_desk }}px;
+    background-color: var(--testi-bg);
+    padding: var(--testi-pt-mob) 0 var(--testi-pb-mob);
+  }
+  
+  @media (min-width: 750px) {
+    #{{ section.id }} {
+      padding: var(--testi-pt-desk) 0 var(--testi-pb-desk);
+    }
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-testimonials"
+  data-skip-node-update
+>
+  <div class="mk-testimonials__container">
+    
+    {%- comment -%} 标题区域 {%- endcomment -%}
+    <div class="mk-testimonials__header">
+      {% if ss.label != blank %}
+        <p class="mk-testimonials__label">{{ ss.label }}</p>
+      {% endif %}
+      {% if ss.heading != blank %}
+        <h2 class="mk-testimonials__heading">{{ ss.heading }}</h2>
+      {% endif %}
+      {% if ss.description != blank %}
+        <p class="mk-testimonials__description">{{ ss.description }}</p>
+      {% endif %}
+    </div>
+    
+    {%- comment -%} 评价网格 {%- endcomment -%}
+    <div class="mk-testimonials__grid {% if layout == 'carousel' %}mk-testimonials__grid--carousel{% endif %}">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'testimonial' -%}
+          <div class="mk-testimonials__item" {{ block.shopify_attributes }}>
+            <div class="mk-testimonials__card">
+              
+              {%- comment -%} 星级 {%- endcomment -%}
+              {% if block.settings.rating > 0 %}
+                <div class="mk-testimonials__rating">
+                  {%- for i in (1..5) limit: block.settings.rating -%}
+                    <span class="mk-testimonials__star">
+                      {{- 'icon-star.svg' | inline_asset_content -}}
+                    </span>
+                  {%- endfor -%}
+                </div>
+              {% endif %}
+              
+              {%- comment -%} 引用内容 {%- endcomment -%}
+              <blockquote class="mk-testimonials__quote">
+                <p>{{ block.settings.content }}</p>
+              </blockquote>
+              
+              {%- comment -%} 作者信息 {%- endcomment -%}
+              <div class="mk-testimonials__author">
+                {% if block.settings.avatar != blank %}
+                  <img
+                    src="{{ block.settings.avatar | image_url: width: 80 }}"
+                    alt="{{ block.settings.author }}"
+                    width="80"
+                    height="80"
+                    loading="lazy"
+                    class="mk-testimonials__avatar"
+                  >
+                {% else %}
+                  <div class="mk-testimonials__avatar mk-testimonials__avatar--placeholder">
+                    {{ block.settings.author | slice: 0 | upcase }}
+                  </div>
+                {% endif %}
+                <div class="mk-testimonials__author-info">
+                  <cite class="mk-testimonials__author-name">{{ block.settings.author }}</cite>
+                  {% if block.settings.title != blank %}
+                    <span class="mk-testimonials__author-title">{{ block.settings.title }}</span>
+                  {% endif %}
+                </div>
+              </div>
+              
+              {%- comment -%} 产品链接 {%- endcomment -%}
+              {% if block.settings.product != blank %}
+                <a href="{{ block.settings.product.url }}" class="mk-testimonials__product">
+                  {{ block.settings.product.title }}
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+    
+    {%- comment -%} View All {%- endcomment -%}
+    {% if ss.show_view_all and ss.view_all_link != blank %}
+      <div class="mk-testimonials__footer">
+        <a href="{{ ss.view_all_link }}" class="mk-testimonials__view-all">
+          {{ ss.view_all_text | default: '查看全部评价' }}
+          {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-testimonials__container {
+    max-width: var(--container-max-width, 1440px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  /* Header */
+  .mk-testimonials__header {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 48px auto;
+  }
+
+  .mk-testimonials__label {
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--color-primary, #000);
+  }
+
+  .mk-testimonials__heading {
+    margin: 0 0 16px 0;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .mk-testimonials__description {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    opacity: 0.85;
+  }
+
+  /* Grid */
+  .mk-testimonials__grid {
+    display: grid;
+    gap: 24px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-testimonials__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+  }
+
+  .mk-testimonials__grid--carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 24px;
+    padding-bottom: 24px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mk-testimonials__grid--carousel .mk-testimonials__item {
+    flex: 0 0 85%;
+    scroll-snap-align: start;
+  }
+
+  @media (min-width: 750px) {
+    .mk-testimonials__grid--carousel .mk-testimonials__item {
+      flex: 0 0 45%;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .mk-testimonials__grid--carousel .mk-testimonials__item {
+      flex: 0 0 30%;
+    }
+  }
+
+  /* Card */
+  .mk-testimonials__card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 32px;
+    background: var(--color-background, #fff);
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .mk-testimonials__card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Rating */
+  .mk-testimonials__rating {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+  }
+
+  .mk-testimonials__star {
+    display: flex;
+    width: 18px;
+    height: 18px;
+    color: #ffc107;
+  }
+
+  .mk-testimonials__star svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Quote */
+  .mk-testimonials__quote {
+    flex: 1;
+    margin: 0 0 24px 0;
+    font-size: 16px;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--color-text, #333);
+  }
+
+  .mk-testimonials__quote p {
+    margin: 0;
+  }
+
+  /* Author */
+  .mk-testimonials__author {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .mk-testimonials__avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .mk-testimonials__avatar--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .mk-testimonials__author-name {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    font-style: normal;
+  }
+
+  .mk-testimonials__author-title {
+    display: block;
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  /* Product */
+  .mk-testimonials__product {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--color-primary, #000);
+    background: var(--color-background-secondary, #f5f5f5);
+    border-radius: 20px;
+    transition: background 0.2s ease;
+  }
+
+  .mk-testimonials__product:hover {
+    background: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+  }
+
+  /* Footer */
+  .mk-testimonials__footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 48px;
+  }
+
+  .mk-testimonials__view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--color-primary, #000);
+    border: 1.5px solid var(--color-primary, #000);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-testimonials__view-all:hover {
+    background: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+  }
+
+  .mk-testimonials__view-all svg {
+    width: 16px;
+    height: 16px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 客户评价",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "内容设置"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "标签文字"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "标题",
+      "default": "客户评价"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "描述文字"
+    },
+    {
+      "type": "header",
+      "content": "布局设置"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "布局模式",
+      "options": [
+        { "value": "grid", "label": "网格" },
+        { "value": "carousel", "label": "轮播" }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "自动播放（轮播模式）",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "查看全部链接"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "显示查看全部按钮",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "按钮文字",
+      "default": "查看全部评价"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "链接地址"
+    },
+    {
+      "type": "header",
+      "content": "颜色设置"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景颜色",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "评价",
+      "settings": [
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "星级",
+          "min": 0,
+          "max": 5,
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "content",
+          "label": "评价内容",
+          "default": "这款产品真的很棒！质量很好，包装也很精美。物流很快，客服态度也很好。强烈推荐！"
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "评价者姓名",
+          "default": "张三"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "评价者职位/描述"
+        },
+        {
+          "type": "image_picker",
+          "id": "avatar",
+          "label": "头像"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "关联产品"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 客户评价"
+    }
+  ]
+}
+{% endschema %}

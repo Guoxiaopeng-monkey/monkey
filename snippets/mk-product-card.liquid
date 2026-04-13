@@ -1,0 +1,193 @@
+{%- doc -%}
+  MK 产品卡片组件
+
+  渲染产品卡片
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-product-card', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = product | default: nil
+  assign class = class | default: ''
+-%}
+
+{%- if product != blank -%}
+  <div class="mk-product-card {{ class }}" data-product-id="{{ product.id }}">
+    <a href="{{ product.url }}" class="mk-product-card__link">
+      {%- comment -%} 产品图片 {%- endcomment -%}
+      <div class="mk-product-card__media">
+        {%- if product.featured_image -%}
+          {{ product.featured_image | image_url: width: 600 | image_tag: class: 'mk-product-card__image', loading: 'lazy' }}
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag: 'mk-product-card__placeholder' }}
+        {%- endif -%}
+
+        {%- comment -%} 悬停第二张图 {%- endcomment -%}
+        {%- if product.images.size > 1 -%}
+          {{ product.images[1] | image_url: width: 600 | image_tag: class: 'mk-product-card__image mk-product-card__image--hover', loading: 'lazy' }}
+        {%- endif -%}
+
+        {%- comment -%} 快速添加按钮 {%- endcomment -%}
+        {%- if product.available -%}
+          <div class="mk-product-card__quick-add">
+            <button type="button" class="mk-product-card__quick-add-btn" data-product-id="{{ product.id }}">
+              {{ 'products.quick_add' | t | default: '快速添加' }}
+            </button>
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} 产品信息 {%- endcomment -%}
+      <div class="mk-product-card__info">
+        <h3 class="mk-product-card__title">{{ product.title }}</h3>
+
+        {%- comment -%} 价格 {%- endcomment -%}
+        <div class="mk-product-card__price">
+          {%- if product.compare_at_price > product.price -%}
+            <s class="mk-product-card__price-compare">{{ product.compare_at_price | money }}</s>
+            <span class="mk-product-card__price-sale">{{ product.price | money }}</span>
+          {%- else -%}
+            <span class="mk-product-card__price-regular">{{ product.price | money }}</span>
+          {%- endif -%}
+        </div>
+
+        {%- comment -%} 评分 {%- endcomment -%}
+        {%- if product.metafields.reviews.rating.value != blank -%}
+          <div class="mk-product-card__rating">
+            {% render 'mk-rating', rating: product.metafields.reviews.rating.value, reviews_count: product.metafields.reviews.rating_count.value %}
+          </div>
+        {%- endif -%}
+      </div>
+    </a>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-product-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    background-color: var(--color-background);
+  }
+
+  .mk-product-card__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .mk-product-card__media {
+    position: relative;
+    aspect-ratio: 1 / 1.2;
+    overflow: hidden;
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-product-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .mk-product-card__image--hover {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+  }
+
+  .mk-product-card:hover .mk-product-card__image:not(.mk-product-card__image--hover) {
+    transform: scale(1.05);
+  }
+
+  .mk-product-card:hover .mk-product-card__image--hover {
+    opacity: 1;
+  }
+
+  .mk-product-card__placeholder {
+    width: 100%;
+    height: 100%;
+    opacity: 0.3;
+  }
+
+  /* 快速添加按钮 */
+  .mk-product-card__quick-add {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.3s ease;
+  }
+
+  .mk-product-card:hover .mk-product-card__quick-add {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .mk-product-card__quick-add-btn {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .mk-product-card__quick-add-btn:hover {
+    background-color: var(--color-primary-hover, #333);
+  }
+
+  /* 产品信息 */
+  .mk-product-card__info {
+    padding: 16px;
+  }
+
+  .mk-product-card__title {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .mk-product-card__price {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  .mk-product-card__price-regular {
+    font-weight: 600;
+    color: var(--color-price, #000);
+  }
+
+  .mk-product-card__price-compare {
+    font-weight: 400;
+    color: var(--color-text-secondary, #999);
+    text-decoration: line-through;
+  }
+
+  .mk-product-card__price-sale {
+    font-weight: 600;
+    color: var(--color-sale, #e53935);
+  }
+
+  .mk-product-card__rating {
+    margin-top: 8px;
+  }
+{% endstylesheet %}

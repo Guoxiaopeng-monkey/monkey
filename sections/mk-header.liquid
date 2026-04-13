@@ -1,0 +1,986 @@
+{%- comment -%}
+  MK 导航头部组件
+  功能：支持透明头部、粘性头部、MegaMenu、移动端菜单
+  
+  作者：崽崽 (AI助手)
+  基于：mypetcustom/mk-header.liquid, whale/ug-header.liquid
+{%- endcomment -%}
+
+{%- liquid
+  # ========================================
+  # 1. 透明头部逻辑
+  # ========================================
+  assign transparent = ''
+  if section.settings.enable_transparent_header_home and template.name == 'index'
+    assign transparent = 'always'
+  elsif section.settings.enable_transparent_header_product and template.name == 'product'
+    assign transparent = 'always'
+  elsif section.settings.enable_transparent_header_collection and template.name == 'collection'
+    assign transparent = 'always'
+  endif
+
+  # ========================================
+  # 2. 粘性头部逻辑
+  # ========================================
+  assign sticky = ''
+  if section.settings.enable_sticky_header == 'always'
+    assign sticky = 'always'
+  elsif section.settings.enable_sticky_header == 'scroll-up'
+    assign sticky = 'scroll-up'
+  endif
+
+  # 如果同时启用透明和粘性，透明只在非粘性时生效
+  if transparent != '' and sticky != ''
+    assign transparent = 'not-sticky'
+  endif
+
+  # ========================================
+  # 3. 头部高度模式
+  # ========================================
+  assign header_class = 'mk-header'
+  if section.settings.section_height == 'compact'
+    assign header_class = header_class | append: ' mk-header--compact'
+  endif
+
+  # ========================================
+  # 4. Logo 位置
+  # ========================================
+  assign logo_class = 'mk-header__logo'
+  if section.settings.logo_position == 'left'
+    assign logo_class = logo_class | append: ' mk-header__logo--left'
+  elsif section.settings.logo_position == 'center'
+    assign logo_class = logo_class | append: ' mk-header__logo--center'
+  elsif section.settings.logo_position == 'right'
+    assign logo_class = logo_class | append: ' mk-header__logo--right'
+  endif
+
+  # ========================================
+  # 5. Menu 位置
+  # ========================================
+  assign menu_class = 'mk-header__menu'
+  if section.settings.menu_position == 'left'
+    assign menu_class = menu_class | append: ' mk-header__menu--left'
+  elsif section.settings.menu_position == 'center'
+    assign menu_class = menu_class | append: ' mk-header__menu--center'
+  elsif section.settings.menu_position == 'right'
+    assign menu_class = menu_class | append: ' mk-header__menu--right'
+  endif
+
+  # ========================================
+  # 6. 获取菜单链接
+  # ========================================
+  assign menu_links = linklists[section.settings.menu].links
+-%}
+
+<header-component
+  id="mk-header-component"
+  class="{{ header_class }}"
+  {% if transparent != '' %}
+    transparent="{{ transparent }}"
+  {% endif %}
+  {% if sticky != '' %}
+    sticky="{{ sticky }}"
+  {% endif %}
+  data-skip-node-update
+  data-scroll-direction="none"
+>
+  <div
+    class="mk-header__row"
+    ref="headerRowTop"
+    style="
+      --padding-top: {{ section.settings.padding_top }}px;
+      --padding-bottom: {{ section.settings.padding_bottom }}px;
+      --padding-left: {{ section.settings.padding_left }}px;
+      --padding-right: {{ section.settings.padding_right }}px;
+      --border-width: {{ section.settings.border_width }}px;
+      --logo-width-desktop: {{ section.settings.logo_width }}px;
+      --logo-width-mobile: {{ section.settings.logo_width_mobile }}px;
+      --header-bg: {{ section.settings.background_color }};
+      --header-text: {{ section.settings.text_color }};
+    "
+  >
+    <div class="mk-header__container">
+      <div class="mk-header__columns">
+        
+        {%- comment -%} Mobile Menu Button {%- endcomment -%}
+        {% if section.settings.menu != blank and menu_links.size > 0 %}
+          <button
+            type="button"
+            class="mk-header__mobile-menu-button desktop:hidden"
+            aria-label="{{ 'accessibility.menu' | t }}"
+            aria-controls="Details-menu-drawer-container"
+            aria-expanded="false"
+            data-mobile-menu-trigger
+          >
+            <span class="svg-wrapper header-drawer-icon header-drawer-icon--open">
+              {{- 'icon-menu.svg' | inline_asset_content -}}
+            </span>
+            <span class="svg-wrapper header-drawer-icon header-drawer-icon--close">
+              {{- 'icon-close.svg' | inline_asset_content -}}
+            </span>
+          </button>
+        {% endif %}
+
+        {%- comment -%} Logo {%- endcomment -%}
+        {% if section.settings.logo != blank %}
+          <div class="{{ logo_class }}">
+            <a href="{{ routes.root_url }}" class="mk-header__logo-link">
+              <img
+                src="{{ section.settings.logo | image_url: width: section.settings.logo_width }}"
+                alt="{{ shop.name }}"
+                width="{{ section.settings.logo_width }}"
+                height="{{ section.settings.logo_width | divided_by: section.settings.logo.aspect_ratio | round }}"
+                class="mk-header__logo-image"
+                loading="eager"
+              >
+            </a>
+          </div>
+        {% else %}
+          <div class="{{ logo_class }}">
+            <a href="{{ routes.root_url }}" class="mk-header__logo-link">
+              <span class="mk-header__logo-text">{{ shop.name }}</span>
+            </a>
+          </div>
+        {% endif %}
+
+        {%- comment -%} Desktop Menu {%- endcomment -%}
+        {% if section.settings.menu != blank and menu_links.size > 0 %}
+          <nav class="{{ menu_class }}" ref="headerMenu" aria-label="{{ 'general.navigation' | t }}">
+            <ul class="mk-header__menu-list">
+              {% for link in menu_links %}
+                {%- comment -%} 查找匹配的 mega menu block {%- endcomment -%}
+                {% assign mega_menu_block = null %}
+                {% assign link_title_stripped = link.title | strip %}
+                {% for block in section.blocks %}
+                  {% assign block_trigger_stripped = block.settings.trigger | strip %}
+                  {% if block.type == 'mega_menu' or block.type == 'mega_menu_image' %}
+                    {% if block_trigger_stripped == link_title_stripped %}
+                      {% assign mega_menu_block = block %}
+                      {% break %}
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+
+                <li class="mk-header__menu-item{% if mega_menu_block %} mk-header__menu-item--has-mega-menu{% endif %}">
+                  <a
+                    href="{{ link.url }}"
+                    class="mk-header__menu-link{% if link.active %} mk-header__menu-link--active{% endif %}"
+                    {% if link.links != blank or mega_menu_block %}
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    {% endif %}
+                  >
+                    {{ link.title }}
+                  </a>
+                  
+                  {%- comment -%} Mega Menu 渲染 {%- endcomment -%}
+                  {% if mega_menu_block %}
+                    {% if mega_menu_block.type == 'mega_menu' %}
+                      {% render 'mk-mega-menu-desktop', mega_menu_block: mega_menu_block, link: link %}
+                    {% elsif mega_menu_block.type == 'mega_menu_image' %}
+                      {% render 'mk-mega-menu-desktop-image', mega_menu_block: mega_menu_block, link: link %}
+                    {% endif %}
+                  {% else %}
+                    {%- comment -%} 普通子菜单 {%- endcomment -%}
+                    {% if link.links != blank %}
+                      <ul class="mk-header__submenu">
+                        {% for child_link in link.links %}
+                          <li class="mk-header__submenu-item">
+                            <a
+                              href="{{ child_link.url }}"
+                              class="mk-header__submenu-link{% if child_link.active %} mk-header__submenu-link--active{% endif %}"
+                            >
+                              {{ child_link.title }}
+                            </a>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          </nav>
+        {% endif %}
+
+        {%- comment -%} Actions (Search & Cart) {%- endcomment -%}
+        <div class="mk-header__actions">
+          {% if section.settings.show_search %}
+            {% render 'search', style: 'modal' %}
+          {% endif %}
+
+          {% if section.settings.show_cart %}
+            {% if settings.cart_type == 'drawer' and template.name != 'cart' %}
+              {% render 'cart-drawer' %}
+            {% else %}
+              <a
+                href="{{ routes.cart_url }}"
+                class="mk-header__action-link"
+                aria-label="{{ 'accessibility.cart' | t }}"
+              >
+                {{- 'icon-cart.svg' | inline_asset_content -}}
+                {% if cart.item_count > 0 %}
+                  <span class="mk-header__cart-count">{{ cart.item_count }}</span>
+                {% endif %}
+              </a>
+            {% endif %}
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Mobile Menu Drawer {%- endcomment -%}
+  {% if section.settings.menu != blank %}
+    <div
+      id="Details-menu-drawer-container"
+      class="mk-header__mobile-menu-drawer menu-drawer{% if menu_links.size == 0 %} menu-drawer--empty{% endif %} color-{{ section.settings.color_scheme_mobile }}"
+      data-mobile-menu-drawer
+    >
+      <div class="menu-drawer__inner">
+        <div class="menu-drawer__navigation">
+          <nav class="menu-drawer__menu" aria-label="{{ 'general.navigation' | t }}">
+            <ul class="menu-drawer__menu-list" role="list">
+              {% for link in menu_links %}
+                {%- comment -%} 查找移动端 mega menu {%- endcomment -%}
+                {% assign mega_menu_block = null %}
+                {% assign link_title_stripped = link.title | strip %}
+                {% for block in section.blocks %}
+                  {% assign block_trigger_stripped = block.settings.trigger | strip %}
+                  {% if block.type == 'mega_menu' or block.type == 'mega_menu_image' %}
+                    {% if block_trigger_stripped == link_title_stripped %}
+                      {% assign mega_menu_block = block %}
+                      {% break %}
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+
+                {% if mega_menu_block %}
+                  {% render 'mk-mega-menu-mobile', mega_menu_block: mega_menu_block, link: link, link_handle: link.handle %}
+                {% else %}
+                  <li class="menu-drawer__menu-item">
+                    <a
+                      href="{{ link.url }}"
+                      class="menu-drawer__menu-link{% if link.active %} menu-drawer__menu-link--active{% endif %}"
+                      {% if link.links != blank %}
+                        aria-has-popup="true"
+                        aria-expanded="false"
+                        aria-controls="MenuDrawer-{{ link.handle }}"
+                      {% endif %}
+                    >
+                      {{ link.title | escape }}
+                    </a>
+                    {% if link.links != blank %}
+                      <ul class="menu-drawer__submenu" id="MenuDrawer-{{ link.handle }}">
+                        {% for child_link in link.links %}
+                          <li class="menu-drawer__submenu-item">
+                            <a
+                              href="{{ child_link.url }}"
+                              class="menu-drawer__submenu-link{% if child_link.active %} menu-drawer__submenu-link--active{% endif %}"
+                            >
+                              {{ child_link.title | escape }}
+                            </a>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</header-component>
+
+{%- comment -%} Schema Blocks for MegaMenu {%- endcomment -%}
+{%- for block in section.blocks -%}
+  {%- if block.type == 'mega_menu' or block.type == 'mega_menu_image' -%}
+    <template {{ block.shopify_attributes }}>
+      <div class="mk-mega-menu-template" data-trigger="{{ block.settings.trigger | escape }}">
+        {% if block.type == 'mega_menu' %}
+          {% render 'mk-mega-menu-desktop', mega_menu_block: block, link: nil %}
+        {% else %}
+          {% render 'mk-mega-menu-desktop-image', mega_menu_block: block, link: nil %}
+        {% endif %}
+      </div>
+    </template>
+  {%- endif -%}
+{%- endfor -%}
+
+{% stylesheet %}
+  /* ========================================
+     MK Header - 核心样式
+     ======================================== */
+  
+  :root {
+    --mk-header-height: 70px;
+    --mk-header-height-compact: 56px;
+    --mk-header-z-index: 100;
+  }
+
+  .mk-header {
+    position: relative;
+    background-color: var(--header-bg, #ffffff);
+    color: var(--header-text, #1a1a1a);
+    z-index: var(--mk-header-z-index);
+  }
+
+  .mk-header--compact {
+    --mk-header-height: var(--mk-header-height-compact);
+  }
+
+  .mk-header__row {
+    display: flex;
+    align-items: center;
+    height: var(--mk-header-height);
+    padding: var(--padding-top, 0) var(--padding-right, 0) var(--padding-bottom, 0) var(--padding-left, 0);
+    border-bottom: var(--border-width, 0) solid rgba(var(--color-border), var(--border-opacity, 0.1));
+  }
+
+  .mk-header__container {
+    width: 100%;
+    max-width: var(--container-max-width, 1440px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .mk-header__columns {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  /* Logo */
+  .mk-header__logo {
+    flex-shrink: 0;
+  }
+
+  .mk-header__logo--center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .mk-header__logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .mk-header__logo-image {
+    height: auto;
+    width: var(--logo-width-desktop, 120px);
+  }
+
+  .mk-header__logo-text {
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  /* Menu */
+  .mk-header__menu {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+
+  .mk-header__menu--left {
+    justify-content: flex-start;
+  }
+
+  .mk-header__menu--right {
+    justify-content: flex-end;
+  }
+
+  .mk-header__menu-list {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mk-header__menu-item {
+    position: relative;
+  }
+
+  .mk-header__menu-link {
+    display: block;
+    padding: 8px 0;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s ease;
+  }
+
+  .mk-header__menu-link:hover {
+    opacity: 0.7;
+  }
+
+  .mk-header__menu-link--active {
+    font-weight: 600;
+  }
+
+  /* Submenu */
+  .mk-header__submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    background: var(--header-bg, #ffffff);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    margin: 0;
+    padding: 8px 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: all 0.2s ease;
+    z-index: 10;
+  }
+
+  .mk-header__menu-item:hover > .mk-header__submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .mk-header__submenu-link {
+    display: block;
+    padding: 10px 16px;
+    font-size: 14px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s ease;
+  }
+
+  .mk-header__submenu-link:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  /* Actions */
+  .mk-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .mk-header__action-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s ease;
+  }
+
+  .mk-header__action-link:hover {
+    opacity: 0.7;
+  }
+
+  .mk-header__action-link svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .mk-header__cart-count {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 18px;
+    text-align: center;
+    background: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+    border-radius: 9px;
+  }
+
+  /* Mobile Menu Button */
+  .mk-header__mobile-menu-button {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+  }
+
+  .mk-header__mobile-menu-button .header-drawer-icon--close {
+    display: none;
+  }
+
+  .mk-header__mobile-menu-button[aria-expanded="true"] .header-drawer-icon--open {
+    display: none;
+  }
+
+  .mk-header__mobile-menu-button[aria-expanded="true"] .header-drawer-icon--close {
+    display: block;
+  }
+
+  /* Mobile Menu Drawer */
+  .mk-header__mobile-menu-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: 400px;
+    height: 100vh;
+    background: var(--header-bg, #ffffff);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+
+  .mk-header__mobile-menu-drawer.is-open {
+    transform: translateX(0);
+  }
+
+  .menu-drawer__inner {
+    padding: 24px;
+  }
+
+  .menu-drawer__menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .menu-drawer__menu-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .menu-drawer__menu-link {
+    display: block;
+    padding: 16px 0;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .menu-drawer__submenu {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 16px 16px;
+  }
+
+  .menu-drawer__submenu-link {
+    display: block;
+    padding: 10px 0;
+    font-size: 14px;
+    text-decoration: none;
+    color: inherit;
+    opacity: 0.8;
+  }
+
+  /* Transparent Header */
+  [transparent="always"] {
+    background: transparent !important;
+  }
+
+  [transparent="not-sticky"] {
+    background: transparent !important;
+  }
+
+  /* Sticky Header */
+  [sticky="always"] {
+    position: sticky;
+    top: 0;
+  }
+
+  [sticky="scroll-up"] {
+    position: sticky;
+    top: -100%;
+    transition: top 0.3s ease;
+  }
+
+  [sticky="scroll-up"].is-visible {
+    top: 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 749px) {
+    .mk-header__menu {
+      display: none;
+    }
+
+    .mk-header__mobile-menu-button {
+      display: flex;
+    }
+
+    .mk-header__logo--center {
+      position: static;
+      transform: none;
+    }
+
+    .mk-header__logo-image {
+      width: var(--logo-width-mobile, 100px);
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class HeaderComponent extends HTMLElement {
+    constructor() {
+      super();
+      this.mobileMenuTrigger = this.querySelector('[data-mobile-menu-trigger]');
+      this.mobileMenuDrawer = this.querySelector('[data-mobile-menu-drawer]');
+      
+      if (this.mobileMenuTrigger && this.mobileMenuDrawer) {
+        this.mobileMenuTrigger.addEventListener('click', this.toggleMobileMenu.bind(this));
+        
+        // Close on escape
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.mobileMenuDrawer.classList.contains('is-open')) {
+            this.closeMobileMenu();
+          }
+        });
+      }
+
+      // Sticky header scroll behavior
+      if (this.hasAttribute('sticky') && this.getAttribute('sticky') === 'scroll-up') {
+        this.initScrollUpSticky();
+      }
+    }
+
+    toggleMobileMenu() {
+      const isOpen = this.mobileMenuDrawer.classList.toggle('is-open');
+      this.mobileMenuTrigger.setAttribute('aria-expanded', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
+
+    closeMobileMenu() {
+      this.mobileMenuDrawer.classList.remove('is-open');
+      this.mobileMenuTrigger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    initScrollUpSticky() {
+      let lastScrollY = window.scrollY;
+      
+      window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+        
+        if (currentScrollY < lastScrollY && currentScrollY > 100) {
+          this.classList.add('is-visible');
+        } else {
+          this.classList.remove('is-visible');
+        }
+        
+        lastScrollY = currentScrollY;
+      }, { passive: true });
+    }
+  }
+
+  customElements.define('header-component', HeaderComponent);
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK 导航头部",
+  "tag": "section",
+  "class": "mk-header-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Logo 设置"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo 图片"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo 宽度 (PC端)",
+      "min": 80,
+      "max": 200,
+      "default": 120,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "logo_width_mobile",
+      "label": "Logo 宽度 (移动端)",
+      "min": 60,
+      "max": 150,
+      "default": 100,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "logo_position",
+      "label": "Logo 位置",
+      "options": [
+        { "value": "left", "label": "居左" },
+        { "value": "center", "label": "居中" },
+        { "value": "right", "label": "居右" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "菜单设置"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "主菜单",
+      "default": "main-menu"
+    },
+    {
+      "type": "select",
+      "id": "menu_position",
+      "label": "菜单位置",
+      "options": [
+        { "value": "left", "label": "居左" },
+        { "value": "center", "label": "居中" },
+        { "value": "right", "label": "居右" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "透明头部"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_transparent_header_home",
+      "label": "首页启用透明头部",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_transparent_header_product",
+      "label": "产品页启用透明头部",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_transparent_header_collection",
+      "label": "集合页启用透明头部",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "粘性头部"
+    },
+    {
+      "type": "select",
+      "id": "enable_sticky_header",
+      "label": "粘性效果",
+      "options": [
+        { "value": "none", "label": "禁用" },
+        { "value": "always", "label": "始终固定" },
+        { "value": "scroll-up", "label": "向上滚动时显示" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "高度模式"
+    },
+    {
+      "type": "select",
+      "id": "section_height",
+      "label": "头部高度",
+      "options": [
+        { "value": "default", "label": "默认 (70px)" },
+        { "value": "compact", "label": "紧凑 (56px)" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "header",
+      "content": "功能按钮"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "显示搜索按钮",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart",
+      "label": "显示购物车按钮",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "颜色设置"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文字颜色",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme_mobile",
+      "label": "移动端配色",
+      "default": "background-1"
+    },
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "上内边距",
+      "min": 0,
+      "max": 50,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "下内边距",
+      "min": 0,
+      "max": 50,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "左内边距",
+      "min": 0,
+      "max": 100,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "右内边距",
+      "min": 0,
+      "max": 100,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "底部边框宽度",
+      "min": 0,
+      "max": 10,
+      "default": 0,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "mega_menu",
+      "name": "Mega Menu 菜单",
+      "settings": [
+        {
+          "type": "text",
+          "id": "trigger",
+          "label": "触发菜单项",
+          "info": "填写需要触发 MegaMenu 的菜单项名称，必须与菜单中的名称完全匹配"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "描述文字"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "链接文字"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "链接地址"
+        }
+      ]
+    },
+    {
+      "type": "mega_menu_image",
+      "name": "Mega Menu 图片菜单",
+      "settings": [
+        {
+          "type": "text",
+          "id": "trigger",
+          "label": "触发菜单项",
+          "info": "填写需要触发 MegaMenu 的菜单项名称"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "描述文字"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片"
+        },
+        {
+          "type": "text",
+          "id": "image_title",
+          "label": "图片标题"
+        },
+        {
+          "type": "text",
+          "id": "image_link_text",
+          "label": "图片链接文字"
+        },
+        {
+          "type": "url",
+          "id": "image_link_url",
+          "label": "图片链接地址"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 导航头部",
+      "blocks": []
+    }
+  ]
+}
+{% endschema %}

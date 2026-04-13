@@ -1,0 +1,109 @@
+{%- doc -%}
+  MK 下拉菜单组件
+
+  渲染下拉选择菜单
+
+  @param {string} id - 下拉框ID
+  @param {string} name - 下拉框名称
+  @param {string[]} options - 选项数组
+  @param {string} [selected] - 当前选中值
+  @param {string} [label] - 标签文字
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-dropdown-menu', id: 'sort', name: 'sort', options: sort_options, selected: current_sort %}
+{%- enddoc -%}
+
+{% liquid
+  assign id = id | default: ''
+  assign name = name | default: ''
+  assign options = options | default: empty_array
+  assign selected = selected | default: ''
+  assign label = label | default: ''
+  assign class = class | default: ''
+-%}
+
+<div class="mk-dropdown-menu {{ class }}">
+  {%- if label != blank -%}
+    <label for="{{ id }}" class="mk-dropdown-menu__label">{{ label }}</label>
+  {%- endif -%}
+
+  <div class="mk-dropdown-menu__wrapper">
+    <select
+      id="{{ id }}"
+      name="{{ name }}"
+      class="mk-dropdown-menu__select"
+    >
+      {%- for option in options -%}
+        <option
+          value="{{ option.value | default: option }}"
+          {% if option == selected or option.value == selected %}
+            selected
+          {% endif %}
+        >
+          {{ option.label | default: option }}
+        </option>
+      {%- endfor -%}
+    </select>
+
+    <span class="mk-dropdown-menu__icon">{{- 'icon-chevron-down.svg' | inline_asset_content -}}</span>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-dropdown-menu {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .mk-dropdown-menu__label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .mk-dropdown-menu__wrapper {
+    position: relative;
+  }
+
+  .mk-dropdown-menu__select {
+    width: 100%;
+    appearance: none;
+    padding: 12px 36px 12px 14px;
+    font-size: 14px;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+
+  .mk-dropdown-menu__select:hover {
+    border-color: var(--color-foreground);
+  }
+
+  .mk-dropdown-menu__select:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-dropdown-menu__icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-dropdown-menu__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+{% endstylesheet %}

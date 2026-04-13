@@ -1,0 +1,329 @@
+{%- comment -%}
+  MK 常见问题板块
+
+  展示FAQ问答内容
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-faq color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-faq__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-faq__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    {%- if ss.subtitle != blank -%}
+      <p class="mk-faq__subtitle">{{ ss.subtitle }}</p>
+    {%- endif -%}
+
+    <div class="mk-faq__list">
+      {%- for i in (1..10) -%}
+        {%- assign question_setting = 'question_' | append: i -%}
+        {%- assign answer_setting = 'answer_' | append: i -%}
+        {%- assign question = ss[question_setting] -%}
+        {%- assign answer = ss[answer_setting] -%}
+
+        {%- if question != blank -%}
+          <details class="mk-faq__item" {{ block.shopify_attributes }}>
+            <summary class="mk-faq__question">
+              <span class="mk-faq__question-text">{{ question }}</span>
+              <span class="mk-faq__icon">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+            </summary>
+            <div class="mk-faq__answer">
+              {{ answer }}
+            </div>
+          </details>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if ss.contact_title != blank -%}
+      <div class="mk-faq__contact">
+        <p class="mk-faq__contact-text">{{ ss.contact_title }}</p>
+        {%- if ss.contact_link_text != blank and ss.contact_link != blank -%}
+          <a href="{{ ss.contact_link }}" class="mk-faq__contact-link">{{ ss.contact_link_text }}</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-faq {
+    padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-faq {
+      padding: {{ ss.padding_top_desktop | default: 64 }}px 0 {{ ss.padding_bottom_desktop | default: 64 }}px;
+    }
+  }
+
+  .mk-faq__container {
+    max-width: var(--container-max-width, 800px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .mk-faq__title {
+    margin: 0 0 8px 0;
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  @media (min-width: 750px) {
+    .mk-faq__title {
+      font-size: 36px;
+    }
+  }
+
+  .mk-faq__subtitle {
+    margin: 0 0 32px 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+    text-align: center;
+  }
+
+  .mk-faq__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mk-faq__item {
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .mk-faq__item[open] {
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-faq__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .mk-faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .mk-faq__question-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .mk-faq__icon {
+    display: flex;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--color-text-secondary, #666);
+    transition: transform 0.2s ease;
+  }
+
+  .mk-faq__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-faq__item[open] .mk-faq__icon {
+    transform: rotate(45deg);
+  }
+
+  .mk-faq__answer {
+    padding: 0 24px 20px 24px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-faq__answer p {
+    margin: 0;
+  }
+
+  .mk-faq__contact {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+  }
+
+  .mk-faq__contact-text {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-faq__contact-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-primary, #000);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 常见问题",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "常见问题"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "副标题"
+    },
+    {
+      "type": "header",
+      "content": "问答"
+    },
+    {
+      "type": "text",
+      "id": "question_1",
+      "label": "问题 1"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_1",
+      "label": "答案 1"
+    },
+    {
+      "type": "text",
+      "id": "question_2",
+      "label": "问题 2"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_2",
+      "label": "答案 2"
+    },
+    {
+      "type": "text",
+      "id": "question_3",
+      "label": "问题 3"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_3",
+      "label": "答案 3"
+    },
+    {
+      "type": "text",
+      "id": "question_4",
+      "label": "问题 4"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_4",
+      "label": "答案 4"
+    },
+    {
+      "type": "text",
+      "id": "question_5",
+      "label": "问题 5"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_5",
+      "label": "答案 5"
+    },
+    {
+      "type": "header",
+      "content": "联系信息"
+    },
+    {
+      "type": "text",
+      "id": "contact_title",
+      "label": "联系标题"
+    },
+    {
+      "type": "text",
+      "id": "contact_link_text",
+      "label": "联系链接文字"
+    },
+    {
+      "type": "url",
+      "id": "contact_link",
+      "label": "联系链接"
+    },
+    {
+      "type": "header",
+      "content": "间距"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 常见问题",
+      "settings": {
+        "title": "常见问题"
+      }
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,515 @@
+{%- comment -%}
+  MK 产品集合页面组件
+  
+  功能：展示产品集合网格，支持筛选和排序
+  
+  作者：崽崽 (AI助手)
+  基于：whale ug-main-collection.liquid, spx-main-collection.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign products = collection.products
+  
+  assign pt_mob = ss.padding_top_mobile | default: 32
+  assign pb_mob = ss.padding_bottom_mobile | default: 32
+  assign pt_desk = ss.padding_top_desktop | default: 48
+  assign pb_desk = ss.padding_bottom_desktop | default: 48
+  
+  assign columns_mobile = ss.columns_mobile | default: 2
+  assign columns_tablet = ss.columns_tablet | default: 3
+  assign columns_desktop = ss.columns_desktop | default: 4
+  assign show_filters = ss.show_filters
+  assign show_sort = ss.show_sort
+-%}
+
+<style>
+  #{{ section.id }} {
+    --coll-pt-mob: {{ pt_mob }}px;
+    --coll-pb-mob: {{ pb_mob }}px;
+    --coll-pt-desk: {{ pt_desk }}px;
+    --coll-pb-desk: {{ pb_desk }}px;
+    --coll-cols-mob: {{ columns_mobile }};
+    --coll-cols-tablet: {{ columns_tablet }};
+    --coll-cols-desk: {{ columns_desktop }};
+    padding: var(--coll-pt-mob) 0 var(--coll-pb-mob);
+  }
+  
+  @media (min-width: 750px) {
+    #{{ section.id }} {
+      padding: var(--coll-pt-desk) 0 var(--coll-pb-desk);
+    }
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-main-collection"
+  data-skip-node-update
+>
+  <div class="mk-main-collection__container">
+    
+    {%- comment -%} 集合头部 {%- endcomment -%}
+    <div class="mk-main-collection__header">
+      {% if ss.show_collection_title %}
+        <h1 class="mk-main-collection__title">
+          {{ collection.title | default: '全部产品' }}
+        </h1>
+      {% endif %}
+      
+      {% if ss.show_collection_description and collection.description != blank %}
+        <div class="mk-main-collection__description">
+          {{ collection.description }}
+        </div>
+      {% endif %}
+      
+      {%- comment -%} 产品数量 {%- endcomment -%}
+      <p class="mk-main-collection__count">
+        {{ 'collections.products_count' | t: count: collection.products_count | default: products_count }}
+      </p>
+    </div>
+    
+    {%- comment -%} 筛选和排序栏 {%- endcomment -%}
+    {% if show_filters or show_sort %}
+      <div class="mk-main-collection__toolbar">
+        {% if show_filters %}
+          <div class="mk-main-collection__filters">
+            {%- comment -%} 筛选按钮 {%- endcomment -%}
+            <button type="button" class="mk-main-collection__filter-btn" data-filter-trigger>
+              {{ 'sections.filter_by' | t | default: '筛选' }}
+              {{- 'icon-filter.svg' | inline_asset_content -}}
+            </button>
+          </div>
+        {% endif %}
+        
+        {% if show_sort %}
+          <div class="mk-main-collection__sort">
+            <label for="SortBy" class="mk-main-collection__sort-label">
+              {{ 'collections.sort_by' | t | default: '排序' }}:
+            </label>
+            {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+            <select id="SortBy" class="mk-main-collection__sort-select" data-sort-select>
+              <option value="manual" {% if sort_by == 'manual' %}selected{% endif %}>精选</option>
+              <option value="best-selling" {% if sort_by == 'best-selling' %}selected{% endif %}>畅销产品</option>
+              <option value="title-ascending" {% if sort_by == 'title-ascending' %}selected{% endif %}>A-Z</option>
+              <option value="title-descending" {% if sort_by == 'title-descending' %}selected{% endif %}>Z-A</option>
+              <option value="price-ascending" {% if sort_by == 'price-ascending' %}selected{% endif %}>价格：从低到高</option>
+              <option value="price-descending" {% if sort_by == 'price-descending' %}selected{% endif %}>价格：从高到低</option>
+              <option value="created-descending" {% if sort_by == 'created-descending' %}selected{% endif %}>新品在前</option>
+              <option value="created-ascending" {% if sort_by == 'created-ascending' %}selected{% endif %}>旧品在前</option>
+            </select>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+    
+    {%- comment -%} 产品网格 {%- endcomment -%}
+    <div class="mk-main-collection__grid" data-products-grid>
+      {%- if products.size > 0 -%}
+        {%- for product in products -%}
+          <div class="mk-main-collection__item">
+            {% render 'mk-product-card', 
+              product: product,
+              show_vendor: ss.show_vendor,
+              show_rating: ss.show_rating,
+              aspect_ratio: ss.image_ratio | default: '1/1'
+            %}
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        {%- comment -%} 空状态 {%- endcomment -%}
+        <div class="mk-main-collection__empty">
+          <p>{{ 'collections.no_products' | t | default: '此集合中没有产品' }}</p>
+          <a href="{{ routes.all_products_collection_url }}" class="mk-main-collection__empty-link">
+            {{ 'collections.all' | t | default: '查看全部产品' }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+    
+    {%- comment -%} 分页 {%- endcomment -%}
+    {% if paginate.pages > 1 %}
+      <nav class="mk-main-collection__pagination" aria-label="{{ 'general.pagination' | t | default: '分页' }}">
+        {%- if paginate.previous -%}
+          <a href="{{ paginate.previous.url }}" class="mk-main-collection__pagination-btn">
+            {{- 'icon-arrow-left.svg' | inline_asset_content -}}
+          </a>
+        {%- endif -%}
+        
+        {%- for part in paginate.parts -%}
+          {% if part.is_link %}
+            <a href="{{ part.url }}" class="mk-main-collection__pagination-link">{{ part.title }}</a>
+          {% else %}
+            <span class="mk-main-collection__pagination-current">{{ part.title }}</span>
+          {% endif %}
+        {%- endfor -%}
+        
+        {%- if paginate.next -%}
+          <a href="{{ paginate.next.url }}" class="mk-main-collection__pagination-btn">
+            {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+          </a>
+        {%- endif -%}
+      </nav>
+    {% endif %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-main-collection__container {
+    max-width: var(--container-max-width, 1440px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  /* Header */
+  .mk-main-collection__header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .mk-main-collection__title {
+    margin: 0 0 16px 0;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+  }
+
+  .mk-main-collection__description {
+    max-width: 700px;
+    margin: 0 auto 16px auto;
+    font-size: 16px;
+    line-height: 1.6;
+    opacity: 0.85;
+  }
+
+  .mk-main-collection__count {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  /* Toolbar */
+  .mk-main-collection__toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(var(--color-border), 0.15);
+  }
+
+  .mk-main-collection__filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    background: transparent;
+    border: 1px solid rgba(var(--color-border), 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-main-collection__filter-btn:hover {
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-main-collection__filter-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .mk-main-collection__sort {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mk-main-collection__sort-label {
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-main-collection__sort-select {
+    padding: 10px 32px 10px 12px;
+    font-size: 14px;
+    background: transparent;
+    border: 1px solid rgba(var(--color-border), 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+  }
+
+  /* Grid */
+  .mk-main-collection__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--coll-cols-mob, 2), 1fr);
+    gap: 16px;
+  }
+
+  @media (min-width: 480px) {
+    .mk-main-collection__grid {
+      gap: 20px;
+    }
+  }
+
+  @media (min-width: 750px) {
+    .mk-main-collection__grid {
+      grid-template-columns: repeat(var(--coll-cols-tablet, 3), 1fr);
+      gap: 24px;
+    }
+  }
+
+  @media (min-width: 990px) {
+    .mk-main-collection__grid {
+      grid-template-columns: repeat(var(--coll-cols-desk, 4), 1fr);
+      gap: 32px;
+    }
+  }
+
+  /* Empty */
+  .mk-main-collection__empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 20px;
+  }
+
+  .mk-main-collection__empty p {
+    margin: 0 0 24px 0;
+    font-size: 16px;
+    opacity: 0.7;
+  }
+
+  .mk-main-collection__empty-link {
+    display: inline-block;
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--color-background, #fff);
+    background: var(--color-primary, #000);
+    border-radius: 4px;
+    transition: opacity 0.2s ease;
+  }
+
+  .mk-main-collection__empty-link:hover {
+    opacity: 0.85;
+  }
+
+  /* Pagination */
+  .mk-main-collection__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 48px;
+  }
+
+  .mk-main-collection__pagination-btn,
+  .mk-main-collection__pagination-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    color: inherit;
+    background: transparent;
+    border: 1px solid rgba(var(--color-border), 0.3);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-main-collection__pagination-btn:hover,
+  .mk-main-collection__pagination-link:hover {
+    border-color: var(--color-primary, #000);
+  }
+
+  .mk-main-collection__pagination-btn svg,
+  .mk-main-collection__pagination-link svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .mk-main-collection__pagination-current {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 600;
+    background: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+    border-radius: 4px;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class MKMainCollection extends HTMLElement {
+    constructor() {
+      super();
+      this.sortSelect = this.querySelector('[data-sort-select]');
+      
+      if (this.sortSelect) {
+        this.sortSelect.addEventListener('change', () => {
+          const url = new URL(window.location.href);
+          url.searchParams.set('sort_by', this.sortSelect.value);
+          window.location.href = url.toString();
+        });
+      }
+    }
+  }
+
+  customElements.define('mk-main-collection', MKMainCollection);
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK 产品集合",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "集合设置"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_title",
+      "label": "显示集合标题",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "label": "显示集合描述",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "工具栏设置"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "显示筛选按钮",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sort",
+      "label": "显示排序选项",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "布局设置"
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "列数 (移动端)",
+      "min": 1,
+      "max": 4,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "列数 (平板)",
+      "min": 2,
+      "max": 5,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "列数 (PC端)",
+      "min": 2,
+      "max": 6,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "图片比例",
+      "options": [
+        { "value": "1/1", "label": "正方形 1:1" },
+        { "value": "3/4", "label": "竖向 3:4" },
+        { "value": "4/3", "label": "横向 4:3" }
+      ],
+      "default": "1/1"
+    },
+    {
+      "type": "header",
+      "content": "产品信息"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "显示供应商",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "显示评分",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 48,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 产品集合"
+    }
+  ]
+}
+{% endschema %}

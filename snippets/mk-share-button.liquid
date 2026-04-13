@@ -1,0 +1,296 @@
+{%- doc -%}
+  MK 分享按钮组件
+
+  渲染社交分享按钮（微信、微博、Facebook等）
+
+  @param {string} [title] - 分享标题
+  @param {string} [url] - 分享链接
+  @param {string} [image] - 分享图片
+
+  @example
+  {% render 'mk-share-button', title: product.title, url: product.url %}
+{%- enddoc -%}
+
+{% liquid
+  assign share_url = url | default: shop.url
+  assign share_title = title | default: shop.name
+-%}
+
+<div class="mk-share-button" data-share-url="{{ share_url }}" data-share-title="{{ share_title }}">
+  {%- comment -%} 默认触发按钮 {%- endcomment -%}
+  <button type="button" class="mk-share-button__trigger" aria-label="{{ 'general.social.share' | t | default: '分享' }}">
+    {{- 'icon-share.svg' | inline_asset_content | default: '📤' -}}
+  </button>
+
+  {%- comment -%} 分享弹窗 {%- endcomment -%}
+  <div class="mk-share-button__dropdown" hidden>
+    <div class="mk-share-button__header">
+      <span class="mk-share-button__title">{{ 'general.social.share' | t | default: '分享到' }}</span>
+      <button type="button" class="mk-share-button__close" aria-label="{{ 'actions.close' | t }}">
+        {{- 'icon-close.svg' | inline_asset_content -}}
+      </button>
+    </div>
+
+    <div class="mk-share-button__platforms">
+      {%- comment -%} 微信 {%- endcomment -%}
+      <button type="button" class="mk-share-button__platform" data-platform="wechat" aria-label="WeChat">
+        {{- 'icon-wechat.svg' | inline_asset_content | default: '💬' -}}
+        <span>WeChat</span>
+      </button>
+
+      {%- comment -%} 微博 {%- endcomment -%}
+      <a
+        href="https://service.weibo.com/share/share.php?url={{ share_url | url_encode }}&title={{ share_title | url_encode }}"
+        target="_blank"
+        class="mk-share-button__platform"
+        aria-label="Weibo"
+      >
+        {{- 'icon-weibo.svg' | inline_asset_content | default: '📝' -}}
+        <span>Weibo</span>
+      </a>
+
+      {%- comment -%} Facebook {%- endcomment -%}
+      <a
+        href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}"
+        target="_blank"
+        class="mk-share-button__platform"
+        aria-label="Facebook"
+      >
+        {{- 'icon-facebook.svg' | inline_asset_content -}}
+        <span>Facebook</span>
+      </a>
+
+      {%- comment -%} Twitter {%- endcomment -%}
+      <a
+        href="https://twitter.com/intent/tweet?url={{ share_url | url_encode }}&text={{ share_title | url_encode }}"
+        target="_blank"
+        class="mk-share-button__platform"
+        aria-label="Twitter"
+      >
+        {{- 'icon-twitter.svg' | inline_asset_content -}}
+        <span>Twitter</span>
+      </a>
+    </div>
+
+    {%- comment -%} 复制链接 {%- endcomment -%}
+    <div class="mk-share-button__copy">
+      <input
+        type="text"
+        class="mk-share-button__input"
+        value="{{ share_url }}"
+        readonly
+      >
+      <button type="button" class="mk-share-button__copy-btn">
+        {{ 'general.social.copy_link' | t | default: '复制链接' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-share-button {
+    position: relative;
+    display: inline-block;
+  }
+
+  .mk-share-button__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-foreground);
+    transition: color 0.2s ease;
+  }
+
+  .mk-share-button__trigger:hover {
+    color: var(--color-primary, #000);
+  }
+
+  .mk-share-button__trigger svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mk-share-button__dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 280px;
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    overflow: hidden;
+  }
+
+  .mk-share-button__dropdown[hidden] {
+    display: none;
+  }
+
+  .mk-share-button__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .mk-share-button__title {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .mk-share-button__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-secondary, #666);
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+  }
+
+  .mk-share-button__close:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-share-button__close svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .mk-share-button__platforms {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 16px;
+  }
+
+  .mk-share-button__platform {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 8px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--color-foreground);
+    transition: background-color 0.2s ease;
+  }
+
+  .mk-share-button__platform:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-share-button__platform svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .mk-share-button__platform span {
+    font-size: 11px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-share-button__copy {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .mk-share-button__input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--color-text-secondary, #666);
+    background-color: var(--color-background-secondary, #f5f5f5);
+    border: none;
+    border-radius: 6px;
+  }
+
+  .mk-share-button__copy-btn {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-primary, #000);
+    background-color: transparent;
+    border: 1px solid var(--color-primary, #000);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mk-share-button__copy-btn:hover {
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class ShareButton extends HTMLElement {
+    constructor() {
+      super();
+      this.trigger = this.querySelector('.mk-share-button__trigger');
+      this.dropdown = this.querySelector('.mk-share-button__dropdown');
+      this.closeBtn = this.querySelector('.mk-share-button__close');
+      this.copyBtn = this.querySelector('.mk-share-button__copy-btn');
+      this.input = this.querySelector('.mk-share-button__input');
+
+      this.init();
+    }
+
+    init() {
+      this.trigger.addEventListener('click', () => this.toggle());
+      this.closeBtn.addEventListener('click', () => this.close());
+      this.copyBtn.addEventListener('click', () => this.copyLink());
+
+      // 点击外部关闭
+      document.addEventListener('click', (e) => {
+        if (!this.contains(e.target)) {
+          this.close();
+        }
+      });
+    }
+
+    toggle() {
+      const isHidden = this.dropdown.hidden;
+      this.dropdown.hidden = !isHidden;
+    }
+
+    close() {
+      this.dropdown.hidden = true;
+    }
+
+    async copyLink() {
+      const url = this.input.value;
+      try {
+        await navigator.clipboard.writeText(url);
+        this.copyBtn.textContent = 'Copied!';
+        setTimeout(() => {
+          this.copyBtn.textContent = 'Copy Link';
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy:', err);
+      }
+    }
+  }
+
+  customElements.define('share-button', ShareButton);
+{% endjavascript %}

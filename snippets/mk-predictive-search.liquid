@@ -1,0 +1,169 @@
+{%- doc -%}
+  MK 预测搜索组件
+
+  渲染预测搜索下拉框
+
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  <div class="mk-predictive-search-wrapper">
+    {% render 'mk-predictive-search' %}
+  </div>
+{%- enddoc -%}
+
+{% liquid
+  assign class = class | default: ''
+-%}
+
+<div class="mk-predictive-search {{ class }}" data-predictive-search>
+  <div class="mk-predictive-search__loading" hidden>
+    <span class="mk-predictive-search__spinner"></span>
+  </div>
+
+  <div class="mk-predictive-search__results" hidden>
+    <div class="mk-predictive-search__result" data-result-type="products">
+      <h4 class="mk-predictive-search__result-title">{{ 'general.search.products' | t | default: '产品' }}</h4>
+      <ul class="mk-predictive-search__list" data-result-list="products"></ul>
+    </div>
+
+    <div class="mk-predictive-search__result" data-result-type="collections">
+      <h4 class="mk-predictive-search__result-title">{{ 'general.search.collections' | t | default: '集合' }}</h4>
+      <ul class="mk-predictive-search__list" data-result-list="collections"></ul>
+    </div>
+
+    <div class="mk-predictive-search__result" data-result-type="articles">
+      <h4 class="mk-predictive-search__result-title">{{ 'general.search.articles' | t | default: '文章' }}</h4>
+      <ul class="mk-predictive-search__list" data-result-list="articles"></ul>
+    </div>
+  </div>
+
+  <div class="mk-predictive-search__empty" hidden>
+    <p>{{ 'general.search.no_results' | t | default: '没有找到相关结果' }}</p>
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-predictive-search {
+    position: relative;
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  .mk-predictive-search[hidden] {
+    display: none;
+  }
+
+  .mk-predictive-search__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .mk-predictive-search__spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--color-border);
+    border-top-color: var(--color-primary, #000);
+    border-radius: 50%;
+    animation: mk-spin 0.8s linear infinite;
+  }
+
+  @keyframes mk-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .mk-predictive-search__results {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .mk-predictive-search__result {
+    padding: 16px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .mk-predictive-search__result:last-child {
+    border-bottom: none;
+  }
+
+  .mk-predictive-search__result-title {
+    margin: 0 0 12px 0;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-predictive-search__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mk-predictive-search__list li {
+    margin-bottom: 8px;
+  }
+
+  .mk-predictive-search__list li:last-child {
+    margin-bottom: 0;
+  }
+
+  .mk-predictive-search__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    text-decoration: none;
+    color: var(--color-foreground);
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+  }
+
+  .mk-predictive-search__item:hover {
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-predictive-search__item-image {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  .mk-predictive-search__item-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .mk-predictive-search__item-title {
+    margin: 0 0 2px 0;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mk-predictive-search__item-price {
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-predictive-search__empty {
+    padding: 24px;
+    text-align: center;
+  }
+
+  .mk-predictive-search__empty p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}

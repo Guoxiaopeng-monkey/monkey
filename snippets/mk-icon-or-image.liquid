@@ -1,0 +1,52 @@
+{%- doc -%}
+  MK 图标或图片组件
+
+  根据设置渲染SVG图标或上传的图片
+
+  @param {string} [icon] - 图标名称
+  @param {object} [image] - 上传的图片对象
+  @param {number} [size] - 图标/图片尺寸
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-icon-or-image', icon: 'star', size: 24, class: 'my-icon' %}
+{%- enddoc -%}
+
+{% liquid
+  assign icon = icon | default: 'none'
+  assign image = image | default: nil
+  assign size = size | default: 24
+  assign class = class | default: ''
+-%}
+
+{%- if icon != 'none' and image == blank -%}
+  <span class="mk-icon-or-image {{ class }}" style="width: {{ size }}px; height: {{ size }}px;">
+    {{- 'icon-' | append: icon | append: '.svg' | inline_asset_content -}}
+  </span>
+{%- elsif image != blank -%}
+  <div class="mk-icon-or-image mk-icon-or-image--image {{ class }}">
+    {{ image | image_url: width: 200 | image_tag: width: size }}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .mk-icon-or-image {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .mk-icon-or-image svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-icon-or-image--image img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+{% endstylesheet %}

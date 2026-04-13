@@ -1,0 +1,126 @@
+{%- doc -%}
+  MK 价格显示组件
+
+  渲染产品价格，支持原价和促销价对比
+
+  @param {object} product - 产品对象
+  @param {string} [class] - 额外的CSS类名
+  @param {boolean} [show_compare_at_price] - 是否显示原价
+
+  @example
+  {% render 'mk-price', product: product %}
+{%- enddoc -%}
+
+{% liquid
+  assign product_price_min = product.price_min | default: product.price
+  assign product_price_max = product.price_max | default: product.price
+  assign product_compare_at_price = product.compare_at_price | default: product.compare_at_price_max
+
+  assign show_compare = true
+  if show_compare_at_price == false
+    assign show_compare = false
+  endif
+
+  # 判断是否有折扣
+  assign has_discount = false
+  if product_compare_at_price > product_price_min
+    assign has_discount = true
+    assign discount_amount = product_compare_at_price | minus: product_price_min
+    assign discount_percent = discount_amount | times: 100.0 | divided_by: product_compare_at_price | round
+  endif
+-%}
+
+<div class="mk-price {{ class }}" data-has-discount="{{ has_discount }}">
+  {%- comment -%} 当前价格 {%- endcomment -%}
+  <span class="mk-price__current">
+    {% if product_price_min != product_price_max %}
+      {{ 'products.from' | t | default: '从' }}
+    {% endif %}
+    <span class="mk-price__amount">{{ product_price_min | money }}</span>
+  </span>
+
+  {%- comment -%} 原价（如果有折扣） {%- endcomment -%}
+  {% if show_compare and has_discount %}
+    <span class="mk-price__compare">
+      <s class="mk-price__compare-amount">{{ product_compare_at_price | money }}</s>
+      <span class="mk-price__badge">-{{ discount_percent }}%</span>
+    </span>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .mk-price {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .mk-price__current {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-price, #000);
+  }
+
+  .mk-price__amount {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  .mk-price__compare {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mk-price__compare-amount {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--color-text-secondary, #999);
+    text-decoration: line-through;
+  }
+
+  .mk-price__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-on-sale, #fff);
+    background-color: var(--color-sale, #e53935);
+    border-radius: 4px;
+  }
+
+  /* 水平排列 */
+  .mk-price--horizontal {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mk-price--horizontal .mk-price__compare {
+    margin-left: auto;
+  }
+
+  /* 大号价格 */
+  .mk-price--large .mk-price__current {
+    font-size: 24px;
+  }
+
+  .mk-price--large .mk-price__compare-amount {
+    font-size: 16px;
+  }
+
+  /* 小号价格 */
+  .mk-price--small .mk-price__current {
+    font-size: 13px;
+  }
+
+  .mk-price--small .mk-price__compare-amount {
+    font-size: 11px;
+  }
+
+  .mk-price--small .mk-price__badge {
+    font-size: 10px;
+    padding: 1px 4px;
+  }
+{% endstylesheet %}

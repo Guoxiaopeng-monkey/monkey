@@ -1,0 +1,422 @@
+{%- comment -%}
+  MK 分屏 Hero 组件
+  
+  功能：左右分屏的 Hero 展示，一边图片一边文字
+  
+  作者：崽崽 (AI助手)
+  基于：spx-image-bg-lr.liquid, whale ug-img-with-text.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign image_position = ss.image_position | default: 'right'
+  
+  assign pt_mob = ss.padding_top_mobile | default: 48
+  assign pb_mob = ss.padding_bottom_mobile | default: 48
+  assign pt_desk = ss.padding_top_desktop | default: 80
+  assign pb_desk = ss.padding_bottom_desktop | default: 80
+-%}
+
+<style>
+  #{{ section.id }} {
+    --hero-split-pt-mob: {{ pt_mob }}px;
+    --hero-split-pb-mob: {{ pb_mob }}px;
+    --hero-split-pt-desk: {{ pt_desk }}px;
+    --hero-split-pb-desk: {{ pb_desk }}px;
+    padding: var(--hero-split-pt-mob) 0 var(--hero-split-pb-mob);
+  }
+  
+  @media (min-width: 750px) {
+    #{{ section.id }} {
+      padding: var(--hero-split-pt-desk) 0 var(--hero-split-pb-desk);
+    }
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-hero-split mk-hero-split--{{ image_position }}"
+  data-skip-node-update
+>
+  <div class="mk-hero-split__container">
+    
+    {%- comment -%} 图片区域 {%- endcomment -%}
+    <div class="mk-hero-split__media">
+      {% if ss.image != blank %}
+        <img
+          src="{{ ss.image | image_url: width: 1600 }}"
+          alt="{{ ss.image.alt | default: ss.heading }}"
+          width="1600"
+          height="{{ 1600 | divided_by: ss.image.aspect_ratio | round }}"
+          loading="eager"
+          class="mk-hero-split__image"
+        >
+      {% else %}
+        <div class="mk-hero-split__placeholder">
+          {{ 'image' | placeholder_svg_tag: '' }}
+        </div>
+      {% endif %}
+    </div>
+    
+    {%- comment -%} 内容区域 {%- endcomment -%}
+    <div class="mk-hero-split__content">
+      {%- comment -%} 标签 {%- endcomment -%}
+      {% if ss.label != blank %}
+        <p class="mk-hero-split__label">{{ ss.label }}</p>
+      {% endif %}
+      
+      {%- comment -%} 标题 {%- endcomment -%}
+      {% if ss.heading != blank %}
+        <h1 class="mk-hero-split__heading">{{ ss.heading }}</h1>
+      {% endif %}
+      
+      {%- comment -%} 描述 {%- endcomment -%}
+      {% if ss.description != blank %}
+        <p class="mk-hero-split__description">{{ ss.description }}</p>
+      {% endif %}
+      
+      {%- comment -%} 按钮组 {%- endcomment -%}
+      {% if ss.button_text_primary != blank or ss.button_text_secondary != blank %}
+        <div class="mk-hero-split__buttons">
+          {% if ss.button_text_primary != blank %}
+            <a 
+              href="{{ ss.button_link_primary | default: '#' }}" 
+              class="mk-hero-split__btn mk-hero-split__btn--primary"
+            >
+              {{ ss.button_text_primary }}
+              {% if ss.show_arrow_primary %}
+                {{- 'icon-arrow-right.svg' | inline_asset_content -}}
+              {% endif %}
+            </a>
+          {% endif %}
+          
+          {% if ss.button_text_secondary != blank %}
+            <a 
+              href="{{ ss.button_link_secondary | default: '#' }}" 
+              class="mk-hero-split__btn mk-hero-split__btn--secondary"
+            >
+              {{ ss.button_text_secondary }}
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-hero-split__container {
+    display: grid;
+    max-width: var(--container-max-width, 1440px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+    gap: 48px;
+    align-items: center;
+  }
+
+  @media (min-width: 990px) {
+    .mk-hero-split__container {
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+    }
+  }
+
+  /* Image Position */
+  .mk-hero-split--left .mk-hero-split__media {
+    order: 1;
+  }
+
+  .mk-hero-split--left .mk-hero-split__content {
+    order: 2;
+  }
+
+  .mk-hero-split--right .mk-hero-split__media {
+    order: 2;
+  }
+
+  .mk-hero-split--right .mk-hero-split__content {
+    order: 1;
+  }
+
+  @media (min-width: 990px) {
+    .mk-hero-split--left .mk-hero-split__content {
+      order: 1;
+    }
+
+    .mk-hero-split--left .mk-hero-split__media {
+      order: 2;
+    }
+
+    .mk-hero-split--right .mk-hero-split__content {
+      order: 2;
+    }
+
+    .mk-hero-split--right .mk-hero-split__media {
+      order: 1;
+    }
+  }
+
+  /* Media */
+  .mk-hero-split__media {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    aspect-ratio: 1 / 1;
+  }
+
+  @media (min-width: 990px) {
+    .mk-hero-split__media {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  .mk-hero-split__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mk-hero-split__placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-hero-split__placeholder svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Content */
+  .mk-hero-split__content {
+    text-align: center;
+  }
+
+  @media (min-width: 990px) {
+    .mk-hero-split--left .mk-hero-split__content {
+      text-align: left;
+    }
+
+    .mk-hero-split--right .mk-hero-split__content {
+      text-align: right;
+    }
+  }
+
+  /* Label */
+  .mk-hero-split__label {
+    display: inline-block;
+    margin: 0 0 20px 0;
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--color-primary, #000);
+    background: var(--color-background-secondary, #f5f5f5);
+    border-radius: 24px;
+  }
+
+  /* Heading */
+  .mk-hero-split__heading {
+    margin: 0 0 24px 0;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  /* Description */
+  .mk-hero-split__description {
+    margin: 0 0 36px 0;
+    font-size: clamp(16px, 2vw, 18px);
+    line-height: 1.7;
+    opacity: 0.85;
+  }
+
+  /* Buttons */
+  .mk-hero-split__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+  }
+
+  @media (min-width: 990px) {
+    .mk-hero-split--left .mk-hero-split__buttons {
+      justify-content: flex-start;
+    }
+
+    .mk-hero-split--right .mk-hero-split__buttons {
+      justify-content: flex-end;
+    }
+  }
+
+  .mk-hero-split__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .mk-hero-split__btn svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+  }
+
+  .mk-hero-split__btn:hover svg {
+    transform: translateX(4px);
+  }
+
+  .mk-hero-split__btn--primary {
+    background: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+  }
+
+  .mk-hero-split__btn--primary:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+  }
+
+  .mk-hero-split__btn--secondary {
+    background: transparent;
+    color: var(--color-primary, #000);
+    border: 1.5px solid var(--color-primary, #000);
+  }
+
+  .mk-hero-split__btn--secondary:hover {
+    background: var(--color-primary, #000);
+    color: var(--color-background, #fff);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 分屏 Hero",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "图片设置"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "图片"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "图片位置",
+      "options": [
+        { "value": "left", "label": "居左" },
+        { "value": "right", "label": "居右" }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "header",
+      "content": "内容设置"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "标签文字"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "标题",
+      "default": "欢迎来到我们的商店"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "描述文字"
+    },
+    {
+      "type": "header",
+      "content": "主按钮"
+    },
+    {
+      "type": "text",
+      "id": "button_text_primary",
+      "label": "主按钮文字"
+    },
+    {
+      "type": "url",
+      "id": "button_link_primary",
+      "label": "主按钮链接"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrow_primary",
+      "label": "主按钮显示箭头",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "次按钮"
+    },
+    {
+      "type": "text",
+      "id": "button_text_secondary",
+      "label": "次按钮文字"
+    },
+    {
+      "type": "url",
+      "id": "button_link_secondary",
+      "label": "次按钮链接"
+    },
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 分屏 Hero"
+    }
+  ]
+}
+{% endschema %}

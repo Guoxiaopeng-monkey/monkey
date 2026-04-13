@@ -1,0 +1,261 @@
+{%- comment -%}
+  MK 图标盒子组件
+  
+  功能：水平排列的图标+文字特性展示条
+  
+  作者：崽崽 (AI助手)
+  基于：spx-icon-box.liquid, whale ug-index-section-icons-bar.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign bg_color = ss.background_color | default: '#f9f9f9'
+  
+  assign columns = ss.columns | default: 4
+  assign icon_size = ss.icon_size | default: 40
+  assign show_divider = ss.show_divider
+-%}
+
+<style>
+  #{{ section.id }} {
+    --icon-boxes-bg: {{ bg_color }};
+    --icon-boxes-icon-size: {{ icon_size }}px;
+    background-color: var(--icon-boxes-bg);
+    padding: {{ ss.padding_vertical | default: 24 }}px 0;
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-icon-boxes"
+  data-skip-node-update
+>
+  <div class="mk-icon-boxes__container">
+    <div class="mk-icon-boxes__grid" style="--icon-boxes-cols: {{ columns }};">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'item' -%}
+          <div class="mk-icon-boxes__item" {{ block.shopify_attributes }}>
+            {%- comment -%} 图标 {%- endcomment -%}
+            {% if block.settings.icon != blank %}
+              <div class="mk-icon-boxes__icon">
+                {{ block.settings.icon | image_url: width: 80 | image_tag: width: icon_size }}
+              </div>
+            {% else %}
+              <div class="mk-icon-boxes__icon mk-icon-boxes__icon--placeholder">
+                {{- 'icon-check.svg' | inline_asset_content -}}
+              </div>
+            {% endif %}
+            
+            {%- comment -%} 文字 {%- endcomment -%}
+            <div class="mk-icon-boxes__content">
+              {% if block.settings.title != blank %}
+                <span class="mk-icon-boxes__title">{{ block.settings.title }}</span>
+              {% endif %}
+            </div>
+          </div>
+          
+          {%- comment -%} 分隔线 {%- endcomment -%}
+          {% if show_divider and forloop.last == false %}
+            <div class="mk-icon-boxes__divider" aria-hidden="true"></div>
+          {% endif %}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-icon-boxes__container {
+    max-width: var(--container-max-width, 1440px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .mk-icon-boxes__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--icon-boxes-cols, 4), 1fr);
+    gap: 16px;
+    align-items: center;
+  }
+
+  @media (max-width: 989px) {
+    .mk-icon-boxes__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .mk-icon-boxes__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Item */
+  .mk-icon-boxes__item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  @media (max-width: 749px) {
+    .mk-icon-boxes__item {
+      justify-content: center;
+      text-align: center;
+    }
+  }
+
+  /* Icon */
+  .mk-icon-boxes__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--icon-boxes-icon-size, 40px);
+    height: var(--icon-boxes-icon-size, 40px);
+  }
+
+  .mk-icon-boxes__icon img {
+    width: 100%;
+    height: auto;
+  }
+
+  .mk-icon-boxes__icon--placeholder {
+    color: var(--color-primary, #000);
+  }
+
+  .mk-icon-boxes__icon--placeholder svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Content */
+  .mk-icon-boxes__content {
+    flex: 1;
+  }
+
+  .mk-icon-boxes__title {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  /* Divider */
+  .mk-icon-boxes__divider {
+    display: none;
+  }
+
+  @media (min-width: 990px) {
+    .mk-icon-boxes__divider {
+      display: block;
+      width: 1px;
+      height: 40px;
+      background: rgba(var(--color-border), 0.2);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 图标盒子",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "布局设置"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "列数 (PC端)",
+      "min": 2,
+      "max": 6,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "图标大小",
+      "min": 24,
+      "max": 64,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "上下内边距",
+      "min": 8,
+      "max": 48,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "显示分隔线",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "颜色设置"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景颜色",
+      "default": "#f9f9f9"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "项目",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "图标"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "文字",
+          "default": "免费配送"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 图标盒子",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "title": "免费配送"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "安全支付"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "客户支持"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "30天退货"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

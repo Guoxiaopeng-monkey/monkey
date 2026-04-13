@@ -1,0 +1,495 @@
+{%- comment -%}
+  MK 视频弹窗组件
+  
+  功能：带缩略图的视频展示，点击播放弹窗视频
+  
+  作者：崽崽 (AI助手)
+  基于：spx-video.liquid, whale ug-video-list.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign bg_color = ss.background_color | default: '#000000'
+  
+  assign pt_mob = ss.padding_top_mobile | default: 48
+  assign pb_mob = ss.padding_bottom_mobile | default: 48
+  assign pt_desk = ss.padding_top_desktop | default: 80
+  assign pb_desk = ss.padding_bottom_desktop | default: 80
+-%}
+
+<style>
+  #{{ section.id }} {
+    --video-popup-bg: {{ bg_color }};
+    --video-popup-pt-mob: {{ pt_mob }}px;
+    --video-popup-pb-mob: {{ pb_mob }}px;
+    --video-popup-pt-desk: {{ pt_desk }}px;
+    --video-popup-pb-desk: {{ pb_desk }}px;
+    background-color: var(--video-popup-bg);
+    padding: var(--video-popup-pt-mob) 0 var(--video-popup-pb-mob);
+  }
+  
+  @media (min-width: 750px) {
+    #{{ section.id }} {
+      padding: var(--video-popup-pt-desk) 0 var(--video-popup-pb-desk);
+    }
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-video-popup"
+  data-skip-node-update
+>
+  <div class="mk-video-popup__container">
+    
+    {%- comment -%} 标题 {%- endcomment -%}
+    {% if ss.heading != blank %}
+      <h2 class="mk-video-popup__heading" style="color: {{ ss.text_color | default: '#fff' }};">
+        {{ ss.heading }}
+      </h2>
+    {% endif %}
+    
+    {%- comment -%} 视频网格 {%- endcomment -%}
+    <div class="mk-video-popup__grid">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'video' -%}
+          <div class="mk-video-popup__item" {{ block.shopify_attributes }}>
+            {%- comment -%} 视频缩略图 {%- endcomment -%}
+            <button
+              type="button"
+              class="mk-video-popup__thumbnail"
+              data-video-url="{{ block.settings.video_url }}"
+              data-video-type="{{ block.settings.video_type | default: 'youtube' }}"
+              aria-label="{{ ss.play_button_text | default: '播放视频' }}"
+            >
+              {% if block.settings.thumbnail != blank %}
+                <img
+                  src="{{ block.settings.thumbnail | image_url: width: 800 }}"
+                  alt="{{ block.settings.title | default: '视频缩略图' }}"
+                  width="800"
+                  height="{{ 800 | divided_by: block.settings.thumbnail.aspect_ratio | round }}"
+                  loading="lazy"
+                  class="mk-video-popup__thumbnail-image"
+                >
+              {% else %}
+                <div class="mk-video-popup__thumbnail-placeholder">
+                  {{ 'video' | placeholder_svg_tag: '' }}
+                </div>
+              {% endif %}
+              
+              {%- comment -%} 播放按钮 {%- endcomment -%}
+              <div class="mk-video-popup__play">
+                {{- 'icon-play.svg' | inline_asset_content -}}
+              </div>
+              
+              {%- comment -%} 视频标题 {%- endcomment -%}
+              {% if block.settings.title != blank %}
+                <span class="mk-video-popup__title">{{ block.settings.title }}</span>
+              {% endif %}
+            </button>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+  
+  {%- comment -%} 视频弹窗 {%- endcomment -%}
+  <div class="mk-video-popup__modal" data-video-modal hidden>
+    <div class="mk-video-popup__modal-backdrop" data-video-close></div>
+    <div class="mk-video-popup__modal-content">
+      <button
+        type="button"
+        class="mk-video-popup__modal-close"
+        data-video-close
+        aria-label="{{ ss.close_button_text | default: '关闭' }}"
+      >
+        {{- 'icon-close.svg' | inline_asset_content -}}
+      </button>
+      <div class="mk-video-popup__video-wrapper" data-video-wrapper>
+        <iframe
+          data-video-iframe
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-video-popup__container {
+    max-width: var(--container-max-width, 1440px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  /* Heading */
+  .mk-video-popup__heading {
+    margin: 0 0 40px 0;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  /* Grid */
+  .mk-video-popup__grid {
+    display: grid;
+    gap: 24px;
+  }
+
+  @media (min-width: 480px) {
+    .mk-video-popup__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 990px) {
+    .mk-video-popup__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+  }
+
+  /* Item */
+  .mk-video-popup__item {
+    position: relative;
+  }
+
+  /* Thumbnail */
+  .mk-video-popup__thumbnail {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    background: none;
+  }
+
+  .mk-video-popup__thumbnail-image,
+  .mk-video-popup__thumbnail-placeholder {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  .mk-video-popup__thumbnail-placeholder {
+    background: var(--color-background-secondary, #333);
+  }
+
+  .mk-video-popup__thumbnail-placeholder svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Play Button */
+  .mk-video-popup__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  .mk-video-popup__play svg {
+    width: 28px;
+    height: 28px;
+    margin-left: 4px;
+    color: var(--color-primary, #000);
+  }
+
+  .mk-video-popup__thumbnail:hover .mk-video-popup__play {
+    transform: translate(-50%, -50%) scale(1.1);
+    background: #fff;
+  }
+
+  /* Title */
+  .mk-video-popup__title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  }
+
+  /* Modal */
+  .mk-video-popup__modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .mk-video-popup__modal[hidden] {
+    display: none;
+  }
+
+  .mk-video-popup__modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+  }
+
+  .mk-video-popup__modal-content {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  .mk-video-popup__modal-close {
+    position: absolute;
+    top: -48px;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #fff;
+    transition: background 0.2s ease;
+  }
+
+  .mk-video-popup__modal-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .mk-video-popup__modal-close svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mk-video-popup__video-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .mk-video-popup__video-wrapper iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class MKVideoPopup extends HTMLElement {
+    constructor() {
+      super();
+      this.modal = this.querySelector('.mk-video-popup__modal');
+      this.iframe = this.querySelector('[data-video-iframe]');
+      this.thumbnails = this.querySelectorAll('[data-video-url]');
+      
+      this.init();
+    }
+
+    init() {
+      this.thumbnails.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          this.openVideo(btn);
+        });
+      });
+
+      this.modal.querySelectorAll('[data-video-close]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          this.closeVideo();
+        });
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !this.modal.hidden) {
+          this.closeVideo();
+        }
+      });
+    }
+
+    openVideo(btn) {
+      const url = btn.dataset.videoUrl;
+      const type = btn.dataset.videoType || 'youtube';
+      
+      let embedUrl = '';
+      if (type === 'youtube') {
+        const videoId = this.extractYouTubeId(url);
+        embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+      } else if (type === 'vimeo') {
+        const videoId = this.extractVimeoId(url);
+        embedUrl = `https://player.vimeo.com/video/${videoId}?autoplay=1`;
+      } else {
+        embedUrl = url;
+      }
+
+      this.iframe.src = embedUrl;
+      this.modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+    }
+
+    closeVideo() {
+      this.iframe.src = '';
+      this.modal.hidden = true;
+      document.body.style.overflow = '';
+    }
+
+    extractYouTubeId(url) {
+      const match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+      return match ? match[1] : '';
+    }
+
+    extractVimeoId(url) {
+      const match = url.match(/vimeo\.com\/(\d+)/);
+      return match ? match[1] : '';
+    }
+  }
+
+  customElements.define('mk-video-popup', MKVideoPopup);
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK 视频弹窗",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "内容设置"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "标题"
+    },
+    {
+      "type": "text",
+      "id": "play_button_text",
+      "label": "播放按钮提示文字",
+      "default": "播放视频"
+    },
+    {
+      "type": "text",
+      "id": "close_button_text",
+      "label": "关闭按钮提示文字",
+      "default": "关闭"
+    },
+    {
+      "type": "header",
+      "content": "颜色设置"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景颜色",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文字颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "video",
+      "name": "视频",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "视频标题"
+        },
+        {
+          "type": "image_picker",
+          "id": "thumbnail",
+          "label": "缩略图"
+        },
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "label": "视频链接",
+          "info": "支持 YouTube 或 Vimeo 链接"
+        },
+        {
+          "type": "select",
+          "id": "video_type",
+          "label": "视频平台",
+          "options": [
+            { "value": "youtube", "label": "YouTube" },
+            { "value": "vimeo", "label": "Vimeo" }
+          ],
+          "default": "youtube"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 视频弹窗"
+    }
+  ]
+}
+{% endschema %}

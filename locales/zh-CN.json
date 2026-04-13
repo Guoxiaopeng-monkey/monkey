@@ -1,0 +1,227 @@
+{
+  "general": {
+    "name": "Monkey 主题",
+    "navigation": "导航",
+    "accessibility": {
+      "menu": "菜单",
+      "cart": "购物车",
+      "cart_count": "购物车数量",
+      "search": "搜索",
+      "close": "关闭",
+      "previous": "上一个",
+      "next": "下一个",
+      "loading": "加载中...",
+      "back_to_shopping": "返回购物"
+    }
+  },
+  "labels": {
+    "menu": "菜单",
+    "customer_account_menu": "客户账户菜单",
+    "page_width": "页面宽度",
+    "page_margin": "页面边距",
+    "background": "背景",
+    "foreground": "前景",
+    "input_corner_radius": "输入框圆角",
+    "fonts": "字体",
+    "primary": "主字体",
+    "header": "头部",
+    "footer": "底部"
+  },
+  "options": {
+    "page_width": {
+      "narrow": "窄版",
+      "wide": "宽版"
+    },
+    "full": "完整",
+    "left": "居左",
+    "center": "居中",
+    "right": "居右"
+  },
+  "products": {
+    "product": {
+      "on_sale": "促销",
+      "new": "新品",
+      "sold_out": "已售罄",
+      "unavailable": "不可用",
+      "add_to_cart": "添加到购物车",
+      "buy_now": "立即购买",
+      "learn_more": "了解更多",
+      "view_details": "查看详情"
+    },
+    "quantity": {
+      "label": "数量",
+      "increase": "增加数量",
+      "decrease": "减少数量"
+    },
+    "variant": {
+      "out_of_stock": "缺货",
+      "unavailable": "不可用"
+    }
+  },
+  "blog": {
+    "article_comments": "评论",
+    "article_metadata_html": "{{ date }} 作者：{{ author }}",
+    "comment_form_body": "评论内容",
+    "comment_form_email": "邮箱",
+    "comment_form_name": "姓名",
+    "comment_form_submit": "发布",
+    "comment_form_title": "添加评论"
+  },
+  "cart": {
+    "checkout": "结账",
+    "title": "购物车",
+    "update": "更新",
+    "remove": "移除",
+    "empty": "购物车是空的",
+    "empty_message": "您的购物车目前没有商品。",
+    "continue_shopping": "继续购物",
+    "subtotal": "小计",
+    "total": "总计",
+    "note": "添加备注",
+    "special_instructions": "特别说明"
+  },
+  "collections": {
+    "title": "产品集合",
+    "all": "全部",
+    "sort_by": "排序",
+    "filter_by": "筛选",
+    "products_count": "{{ count }} 个产品",
+    "no_products": "此集合中没有产品",
+    "loading": "加载中..."
+  },
+  "search": {
+    "title": "搜索",
+    "placeholder": "搜索文章、页面或产品...",
+    "submit": "搜索",
+    "no_results_html": "未找到与「{{ terms }}」相关的结果",
+    "results_for_html": "找到 {{ count }} 个与「{{ terms }}」相关的结果",
+    "products_results_html": "{{ count }} 个产品结果"
+  },
+  "contact": {
+    "form": {
+      "name": "姓名",
+      "email": "邮箱",
+      "phone": "电话",
+      "subject": "主题",
+      "message": "留言",
+      "submit": "发送消息",
+      "success_heading": "消息已发送！",
+      "success_message": "感谢您联系我们，我们会尽快回复您。"
+    }
+  },
+  "newsletter": {
+    "success": "感谢订阅！",
+    "email_placeholder": "输入您的邮箱地址",
+    "submit": "订阅"
+  },
+  "customers": {
+    "account": {
+      "title": "我的账户",
+      "dashboard": "账户概览",
+      "orders": "订单",
+      "addresses": "收货地址",
+      "logout": "退出登录"
+    },
+    "login": {
+      "email": "邮箱",
+      "password": "密码",
+      "submit": "登录",
+      "title": "登录",
+      "forgot_password": "忘记密码？",
+      "sign_up": "注册新账户"
+    },
+    "register": {
+      "title": "注册",
+      "first_name": "名",
+      "last_name": "姓",
+      "email": "邮箱",
+      "password": "密码",
+      "submit": "创建账户"
+    },
+    "orders": {
+      "title": "订单历史",
+      "order_number": "订单号",
+      "date": "日期",
+      "payment_status": "支付状态",
+      "fulfillment_status": "配送状态",
+      "total": "总计",
+      "none": "您还没有下过订单。"
+    }
+  },
+  "404": {
+    "title": "404",
+    "not_found": "页面未找到",
+    "back_to_shopping": "返回购物"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "添加到 Apple Wallet",
+    "card": "礼品卡",
+    "expired": "此礼品卡已过期",
+    "expires_on": "有效期至 {{ expires_on }}",
+    "use_at_checkout": "在结账时使用此礼品卡"
+  },
+  "password": {
+    "title": "此店铺为私密店铺",
+    "password": "密码",
+    "enter": "进入"
+  },
+  "sections": {
+    "header": {
+      "name": "导航头部",
+      "logo": "Logo 图片",
+      "logo_width": "Logo 宽度",
+      "menu": "主菜单",
+      "show_search": "显示搜索按钮",
+      "show_cart": "显示购物车按钮"
+    },
+    "footer": {
+      "name": "页脚",
+      "show_social": "显示社交媒体链接",
+      "show_payment_icons": "显示支付图标",
+      "show_locale_selector": "显示语言选择器",
+      "show_country_selector": "显示国家/地区选择器"
+    },
+    "announcement_bar": {
+      "name": "公告栏",
+      "message": "公告文本"
+    },
+    "featured_collection": {
+      "name": "推荐产品",
+      "heading": "标题",
+      "collection": "产品集合",
+      "products_to_show": "显示产品数量"
+    },
+    "newsletter": {
+      "name": "新闻订阅",
+      "heading": "标题",
+      "description": "描述"
+    },
+    "rich_text": {
+      "name": "富文本",
+      "heading": "标题",
+      "subheading": "副标题",
+      "content": "内容"
+    },
+    "image_banner": {
+      "name": "图片横幅",
+      "heading": "标题",
+      "subheading": "副标题"
+    },
+    "image_with_text": {
+      "name": "图片与文本",
+      "heading": "标题",
+      "text": "文本内容"
+    },
+    "faq": {
+      "name": "常见问题",
+      "heading": "标题",
+      "question": "问题",
+      "answer": "答案"
+    },
+    "testimonials": {
+      "name": "客户评价",
+      "heading": "标题",
+      "content": "评价内容"
+    }
+  }
+}

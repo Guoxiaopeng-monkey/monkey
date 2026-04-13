@@ -1,0 +1,104 @@
+{%- doc -%}
+  MK 产品徽章组件
+
+  渲染产品标签，如新品、促销、缺货等
+
+  @param {object} product - 产品对象
+  @param {object} variant - 变体对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-badge', product: product, variant: variant %}
+{%- enddoc -%}
+
+{% liquid
+  assign on_sale = false
+  assign sold_out = false
+  assign is_new = false
+
+  # 促销判断
+  if variant.compare_at_price > variant.price
+    assign on_sale = true
+  endif
+
+  # 缺货判断
+  if variant.available == false
+    assign sold_out = true
+  endif
+
+  # 新品判断（创建时间在30天内）
+  assign product_created_at = product.created_at | date: '%s'
+  assign days_since_creation = 'now' | date: '%s' | minus: product_created_at | divided_by: 86400
+  if days_since_creation <= 30
+    assign is_new = true
+  endif
+-%}
+
+<div class="mk-badge {{ class }}">
+  {%- if sold_out -%}
+    <span class="mk-badge__item mk-badge__item--sold-out">{{ 'products.sold_out' | t | default: '缺货' }}</span>
+  {%- elsif on_sale -%}
+    <span class="mk-badge__item mk-badge__item--sale">{{ 'products.on_sale' | t | default: '促销' }}</span>
+  {%- endif -%}
+
+  {%- if is_new and sold_out == false -%}
+    <span class="mk-badge__item mk-badge__item--new">{{ 'products.new' | t | default: '新品' }}</span>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .mk-badge {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 5;
+  }
+
+  .mk-badge__item {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+  }
+
+  .mk-badge__item--sale {
+    color: var(--color-on-sale, #fff);
+    background-color: var(--color-sale, #e53935);
+  }
+
+  .mk-badge__item--sold-out {
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-text-secondary, #666);
+  }
+
+  .mk-badge__item--new {
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+  }
+
+  /* 位置变体 */
+  .mk-badge--top-right {
+    top: 12px;
+    left: auto;
+    right: 12px;
+  }
+
+  .mk-badge--bottom-left {
+    top: auto;
+    bottom: 12px;
+  }
+
+  .mk-badge--bottom-right {
+    top: auto;
+    left: auto;
+    right: 12px;
+    bottom: 12px;
+  }
+{% endstylesheet %}

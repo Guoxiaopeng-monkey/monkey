@@ -1,0 +1,127 @@
+{%- doc -%}
+  MK 集合卡片组件
+
+  渲染一个集合卡片
+
+  @param {object} collection - 集合对象
+  @param {string} [image] - 图片
+  @param {string} [title] - 标题
+  @param {string} [description] - 描述
+
+  @example
+  {% render 'mk-collection-card', collection: collection %}
+{%- enddoc -%}
+
+{% liquid
+  assign collection = collection | default: nil
+  assign image = image | default: collection.image | default: collection.products.first.featured_image
+  assign title = title | default: collection.title
+  assign show_description = show_description | default: false
+-%}
+
+<div class="mk-collection-card">
+  <a href="{{ collection.url }}" class="mk-collection-card__link">
+    {%- if image != blank -%}
+      <div class="mk-collection-card__image">
+        {{ image | image_url: width: 600 | image_tag: class: 'mk-collection-card__img' }}
+      </div>
+    {%- else -%}
+      <div class="mk-collection-card__placeholder">
+        {{ 'collection' | placeholder_svg_tag: 'mk-collection-card__placeholder-svg' }}
+      </div>
+    {%- endif -%}
+
+    <div class="mk-collection-card__content">
+      <h3 class="mk-collection-card__title">{{ title }}</h3>
+      {%- if show_description and collection.description != blank -%}
+        <p class="mk-collection-card__description">{{ collection.description | truncate: 100 }}</p>
+      {%- endif -%}
+      <span class="mk-collection-card__count">{{ collection.all_products_count }} {{ 'products.count' | t | default: '件商品' }}</span>
+    </div>
+  </a>
+</div>
+
+{% stylesheet %}
+  .mk-collection-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-collection-card__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .mk-collection-card__image {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+  }
+
+  .mk-collection-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .mk-collection-card:hover .mk-collection-card__img {
+    transform: scale(1.05);
+  }
+
+  .mk-collection-card__placeholder {
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  .mk-collection-card__placeholder-svg {
+    width: 50%;
+    height: 50%;
+    opacity: 0.3;
+  }
+
+  .mk-collection-card__content {
+    padding: 16px;
+    text-align: center;
+  }
+
+  .mk-collection-card__title {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .mk-collection-card__description {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-collection-card__count {
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  /* 横向布局 */
+  .mk-collection-card--horizontal {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .mk-collection-card--horizontal .mk-collection-card__image {
+    width: 120px;
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
+  }
+
+  .mk-collection-card--horizontal .mk-collection-card__content {
+    flex: 1;
+    text-align: left;
+  }
+{% endstylesheet %}

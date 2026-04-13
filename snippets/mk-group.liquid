@@ -1,0 +1,110 @@
+{%- doc -%}
+  MK 群组块组件
+
+  渲染一个带有背景和内容的群组块
+
+  @param {string} [children] - 内部内容
+  @param {object} [settings] - 设置对象
+  @param {string} [class] - 额外CSS类名
+
+  @example
+  {% render 'mk-group', children: block.content, settings: block.settings %}
+{%- enddoc -%}
+
+{% liquid
+  assign settings = settings | default: {}
+  assign height = settings.height | default: 'medium'
+  assign width = settings.width | default: 'default'
+  assign link = settings.link | default: blank
+  assign open_in_new_tab = settings.open_in_new_tab | default: false
+-%}
+
+<div
+  class="mk-group mk-group--height-{{ height }} mk-group--width-{{ width }} {{ class }}"
+  style="
+    {% if settings.background_color %}
+      --group-bg: {{ settings.background_color }};
+    {% endif %}
+    {% if settings.padding_top %}
+      padding-top: {{ settings.padding_top }}px;
+    {% endif %}
+    {% if settings.padding_bottom %}
+      padding-bottom: {{ settings.padding_bottom }}px;
+    {% endif %}
+  "
+  {{ shopify_attributes }}
+>
+  {%- if link != blank -%}
+    <a
+      href="{{ link }}"
+      class="mk-group__link"
+      {% if open_in_new_tab %}
+        target="_blank"
+        rel="noopener"
+      {% endif %}
+    ></a>
+  {%- endif -%}
+
+  <div class="mk-group__content">
+    {{ children }}
+  </div>
+</div>
+
+{% stylesheet %}
+  .mk-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--group-bg, var(--color-background-secondary, #f5f5f5));
+  }
+
+  .mk-group__link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .mk-group__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 100%;
+    padding: 32px;
+    gap: 16px;
+  }
+
+  /* 高度变体 */
+  .mk-group--height-small {
+    min-height: 200px;
+  }
+
+  .mk-group--height-medium {
+    min-height: 320px;
+  }
+
+  .mk-group--height-large {
+    min-height: 480px;
+  }
+
+  .mk-group--height-full {
+    min-height: 100vh;
+  }
+
+  /* 宽度变体 */
+  .mk-group--width-default {
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+  }
+
+  /* 居中内容 */
+  .mk-group__content:empty {
+    display: none;
+  }
+{% endstylesheet %}

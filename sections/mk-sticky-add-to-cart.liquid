@@ -1,0 +1,349 @@
+{%- comment -%}
+  MK 粘性购买按钮组件
+
+  产品页面底部固定显示的购买按钮
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+  assign product = ss.source_product | default: section.settings.product
+  assign variant = product.selected_or_first_available_variant
+  assign show_sticky = true
+
+  if variant.available == false
+    assign show_sticky = ss.show_when_out_of_stock
+  endif
+-%}
+
+{% if show_sticky %}
+  <sticky-add-to-cart-component
+    id="mk-sticky-add-to-cart"
+    class="mk-sticky-add-to-cart color-{{ ss.color_scheme | default: 'background-1' }}"
+    data-product-id="{{ product.id }}"
+    data-variant-id="{{ variant.id }}"
+  >
+    <div class="mk-sticky-add-to-cart__container">
+      {%- comment -%} 产品信息 {%- endcomment -%}
+      <div class="mk-sticky-add-to-cart__info">
+        {% if ss.show_product_image and variant.image != blank %}
+          <img
+            src="{{ variant.image | image_url: width: 60 }}"
+            alt="{{ product.title }}"
+            class="mk-sticky-add-to-cart__image"
+            width="60"
+            height="60"
+          >
+        {% endif %}
+        <div class="mk-sticky-add-to-cart__text">
+          <p class="mk-sticky-add-to-cart__title">{{ product.title }}</p>
+          <div class="mk-sticky-add-to-cart__price">
+            {% if variant.compare_at_price > variant.price %}
+              <span class="mk-sticky-add-to-cart__price-compare">{{ variant.compare_at_price | money }}</span>
+            {% endif %}
+            <span class="mk-sticky-add-to-cart__price-current">{{ variant.price | money }}</span>
+          </div>
+        </div>
+      </div>
+
+      {%- comment -%} 购买按钮 {%- endcomment -%}
+      <div class="mk-sticky-add-to-cart__actions">
+        {% if variant.available %}
+          <button
+            type="button"
+            class="mk-sticky-add-to-cart__btn mk-sticky-add-to-cart__btn--primary"
+            data-action="add-to-cart"
+          >
+            {{ 'actions.add_to_cart' | t | default: '加入购物车' }}
+          </button>
+        {% else %}
+          <button type="button" class="mk-sticky-add-to-cart__btn mk-sticky-add-to-cart__btn--disabled" disabled>
+            {{ 'products.out_of_stock' | t | default: '缺货' }}
+          </button>
+        {% endif %}
+      </div>
+    </div>
+  </sticky-add-to-cart-component>
+{% endif %}
+
+{% stylesheet %}
+  .mk-sticky-add-to-cart {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background-color: var(--color-background);
+    border-top: 1px solid var(--color-border);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .mk-sticky-add-to-cart[data-visible="true"] {
+    transform: translateY(0);
+  }
+
+  .mk-sticky-add-to-cart[data-show="always"] {
+    transform: translateY(0);
+  }
+
+  .mk-sticky-add-to-cart__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+    padding: 12px 20px;
+  }
+
+  @media (max-width: 749px) {
+    .mk-sticky-add-to-cart__container {
+      padding: 12px 16px;
+    }
+  }
+
+  .mk-sticky-add-to-cart__info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .mk-sticky-add-to-cart__image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 749px) {
+    .mk-sticky-add-to-cart__image {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  .mk-sticky-add-to-cart__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .mk-sticky-add-to-cart__title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (max-width: 749px) {
+    .mk-sticky-add-to-cart__title {
+      font-size: 13px;
+    }
+  }
+
+  .mk-sticky-add-to-cart__price {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  .mk-sticky-add-to-cart__price-current {
+    font-weight: 600;
+    color: var(--color-primary, #000);
+  }
+
+  .mk-sticky-add-to-cart__price-compare {
+    font-weight: 400;
+    color: var(--color-text-secondary, #999);
+    text-decoration: line-through;
+  }
+
+  .mk-sticky-add-to-cart__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .mk-sticky-add-to-cart__btn {
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 749px) {
+    .mk-sticky-add-to-cart__btn {
+      padding: 12px 20px;
+      font-size: 13px;
+    }
+  }
+
+  .mk-sticky-add-to-cart__btn--primary {
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+  }
+
+  .mk-sticky-add-to-cart__btn--primary:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+
+  .mk-sticky-add-to-cart__btn--disabled {
+    color: var(--color-text-secondary, #999);
+    background-color: var(--color-background-secondary, #f5f5f5);
+    cursor: not-allowed;
+  }
+
+  /* 隐藏状态（滚动到顶部时） */
+  .mk-sticky-add-to-cart[data-hide-on-top="true"]:not([data-always-show="true"]) {
+    transform: translateY(100%);
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class StickyAddToCartComponent extends HTMLElement {
+    constructor() {
+      super();
+      this.scrollThreshold = 300; // 滚动超过此距离显示
+      this.lastScrollY = 0;
+      this.productForm = null;
+
+      this.init();
+    }
+
+    init() {
+      // 监听滚动
+      window.addEventListener('scroll', this.handleScroll.bind(this));
+
+      // 绑定按钮事件
+      const addToCartBtn = this.querySelector('[data-action="add-to-cart"]');
+      if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', this.handleAddToCart.bind(this));
+      }
+
+      // 初始状态
+      this.updateVisibility();
+    }
+
+    handleScroll() {
+      this.updateVisibility();
+      this.lastScrollY = window.scrollY;
+    }
+
+    updateVisibility() {
+      const alwaysShow = this.dataset.alwaysShow === 'true';
+      const scrollY = window.scrollY;
+
+      if (alwaysShow) {
+        this.dataset.visible = 'true';
+        return;
+      }
+
+      // 向下滚动且超过阈值，显示
+      if (scrollY > this.scrollThreshold && scrollY > this.lastScrollY) {
+        this.dataset.visible = 'true';
+      } else if (scrollY <= this.scrollThreshold) {
+        this.dataset.visible = 'false';
+      }
+    }
+
+    async handleAddToCart() {
+      const btn = this.querySelector('[data-action="add-to-cart"]');
+      const variantId = this.dataset.variantId;
+
+      if (!variantId) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Adding...';
+
+      try {
+        const response = await fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: variantId,
+            quantity: 1
+          })
+        });
+
+        if (response.ok) {
+          btn.textContent = 'Added!';
+          // 触发购物车更新事件
+          window.dispatchEvent(new CustomEvent('cart:updated'));
+          // 2秒后恢复按钮状态
+          setTimeout(() => {
+            btn.textContent = 'Add to Cart';
+            btn.disabled = false;
+          }, 2000);
+        } else {
+          throw new Error('Failed to add to cart');
+        }
+      } catch (error) {
+        console.error('Add to cart error:', error);
+        btn.textContent = 'Error - Try Again';
+        btn.disabled = false;
+      }
+    }
+  }
+
+  customElements.define('sticky-add-to-cart-component', StickyAddToCartComponent);
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK 粘性购买按钮",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "product",
+      "id": "source_product",
+      "label": "产品（留空使用当前产品）"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_image",
+      "label": "显示产品图片",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_when_out_of_stock",
+      "label": "缺货时也显示",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "always_show",
+      "label": "始终显示",
+      "default": false,
+      "info": "开启后将始终显示，不受滚动影响"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 粘性购买按钮"
+    }
+  ]
+}
+{% endschema %}

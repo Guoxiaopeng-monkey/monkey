@@ -1,0 +1,53 @@
+{%- doc -%}
+  MK 轮播幻灯片组件
+
+  渲染轮播图中的一个幻灯片
+
+  @param {number} index - 幻灯片索引
+  @param {string} [children] - 幻灯片内容
+  @param {string} [class] - 额外CSS类名
+  @param {boolean} [hidden] - 是否隐藏
+  @param {string} [media_fit] - 媒体适应方式：cover, contain
+
+  @example
+  {% render 'mk-slideshow-slide', index: 0, children: slideContent %}
+{%- enddoc -%}
+
+{% liquid
+  assign index = index | default: 0
+  assign hidden = hidden | default: false
+  assign media_fit = media_fit | default: 'cover'
+-%}
+
+<div
+  class="mk-slideshow-slide {% if hidden %}mk-slideshow-slide--hidden{% endif %} {{ class }}"
+  data-index="{{ index }}"
+  {% if hidden %}
+    hidden
+  {% endif %}
+  style="view-timeline-name: --slide-{{ index }}; --media-fit: {{ media_fit }};"
+>
+  {{ children }}
+</div>
+
+{% stylesheet %}
+  .mk-slideshow-slide {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .mk-slideshow-slide--hidden {
+    display: none;
+  }
+
+  .mk-slideshow-slide img,
+  .mk-slideshow-slide video {
+    width: 100%;
+    height: 100%;
+    object-fit: var(--media-fit, cover);
+    object-position: center;
+  }
+{% endstylesheet %}

@@ -1,0 +1,72 @@
+{%- doc -%}
+  MK 星级评分显示组件
+
+  渲染星级评分显示（用于评论等）
+
+  @param {number} rating - 评分值 (0-5)
+  @param {number} [max] - 最大评分
+  @param {string} [label] - 标签文字
+
+  @example
+  {% render 'mk-stars', rating: 4.5, label: '4.5 星' %}
+{%- enddoc -%}
+
+{% liquid
+  assign rating = rating | default: 0
+  assign max = max | default: 5
+  assign label = label | default: ''
+-%}
+
+<div class="mk-stars" aria-label="{{ rating }} {{ 'products.stars' | t }}">
+  <div class="mk-stars__rating" style="--rating: {{ rating }};">
+    {%- for i in (1..max) -%}
+      <span class="mk-stars__star {% if i <= rating %}mk-stars__star--full{% elsif i <= rating | ceil %}mk-stars__star--half{% else %}mk-stars__star--empty{% endif %}">
+        {{- 'icon-star.svg' | inline_asset_content -}}
+      </span>
+    {%- endfor -%}
+  </div>
+  {%- if label != blank -%}
+    <span class="mk-stars__label">{{ label }}</span>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .mk-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mk-stars__rating {
+    display: flex;
+    gap: 2px;
+  }
+
+  .mk-stars__star {
+    display: flex;
+    width: 16px;
+    height: 16px;
+  }
+
+  .mk-stars__star svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mk-stars__star--full svg {
+    fill: var(--color-star, #f5a623);
+  }
+
+  .mk-stars__star--half svg {
+    fill: url(#star-half-gradient);
+  }
+
+  .mk-stars__star--empty svg {
+    fill: var(--color-border, #ddd);
+  }
+
+  .mk-stars__label {
+    font-size: 13px;
+    color: var(--color-text-secondary, #666);
+  }
+{% endstylesheet %}

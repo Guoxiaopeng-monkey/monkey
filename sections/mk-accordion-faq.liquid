@@ -1,0 +1,395 @@
+{%- comment -%}
+  MK 手风琴 FAQ 组件
+  
+  功能：手风琴式 FAQ 展示，支持单个展开或多个展开
+  
+  作者：崽崽 (AI助手)
+  基于：spx-accordion-faq.liquid, whale ug-faq-section.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign ss = section.settings
+  assign bg_color = ss.background_color | default: '#ffffff'
+  
+  assign pt_mob = ss.padding_top_mobile | default: 48
+  assign pb_mob = ss.padding_bottom_mobile | default: 48
+  assign pt_desk = ss.padding_top_desktop | default: 80
+  assign pb_desk = ss.padding_bottom_desktop | default: 80
+  
+  assign single_open = ss.single_open
+  assign open_first = ss.open_first
+  assign layout = ss.layout | default: 'accordion'
+-%}
+
+<style>
+  #{{ section.id }} {
+    --accordion-bg: {{ bg_color }};
+    --accordion-pt-mob: {{ pt_mob }}px;
+    --accordion-pb-mob: {{ pb_mob }}px;
+    --accordion-pt-desk: {{ pt_desk }}px;
+    --accordion-pb-desk: {{ pb_desk }}px;
+    background-color: var(--accordion-bg);
+    padding: var(--accordion-pt-mob) 0 var(--accordion-pb-mob);
+  }
+  
+  @media (min-width: 750px) {
+    #{{ section.id }} {
+      padding: var(--accordion-pt-desk) 0 var(--accordion-pb-desk);
+    }
+  }
+</style>
+
+<section
+  id="{{ section.id }}"
+  class="mk-accordion-faq"
+  data-skip-node-update
+>
+  <div class="mk-accordion-faq__container">
+    
+    {%- comment -%} 标题区域 {%- endcomment -%}
+    <div class="mk-accordion-faq__header">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'title' -%}
+            <h2 class="mk-accordion-faq__title">{{ block.settings.text }}</h2>
+          {%- when 'description' -%}
+            <p class="mk-accordion-faq__description">{{ block.settings.text }}</p>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+    
+    {%- comment -%} 手风琴项目 {%- endcomment -%}
+    <div class="mk-accordion-faq__items mk-accordion-faq__items--{{ layout }}">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'accordion' -%}
+          <details 
+            class="mk-accordion-faq__item{% if open_first and forloop.first %} mk-accordion-faq__item--open{% endif %}"
+            data-single-open="{{ single_open }}"
+            {{ block.shopify_attributes }}
+          >
+            <summary class="mk-accordion-faq__question">
+              <span class="mk-accordion-faq__question-text">{{ block.settings.title }}</span>
+              <span class="mk-accordion-faq__icon">
+                {{- 'icon-caret.svg' | inline_asset_content -}}
+              </span>
+            </summary>
+            <div class="mk-accordion-faq__answer">
+              <div class="mk-accordion-faq__answer-inner">
+                {{ block.settings.description | newline_to_br }}
+              </div>
+            </div>
+          </details>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-accordion-faq__container {
+    max-width: var(--container-max-width, 1440px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  /* Header */
+  .mk-accordion-faq__header {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 48px auto;
+  }
+
+  .mk-accordion-faq__title {
+    margin: 0 0 16px 0;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .mk-accordion-faq__description {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    opacity: 0.85;
+  }
+
+  /* Items */
+  .mk-accordion-faq__items {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .mk-accordion-faq__items--two-columns {
+    display: grid;
+    gap: 24px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-accordion-faq__items--two-columns {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Item */
+  .mk-accordion-faq__item {
+    border-bottom: 1px solid rgba(var(--color-border), 0.15);
+  }
+
+  .mk-accordion-faq__items--accordion .mk-accordion-faq__item:first-child {
+    border-top: 1px solid rgba(var(--color-border), 0.15);
+  }
+
+  /* Question */
+  .mk-accordion-faq__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 0;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+
+  .mk-accordion-faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .mk-accordion-faq__question-text {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .mk-accordion-faq__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .mk-accordion-faq__item[open] .mk-accordion-faq__icon {
+    transform: rotate(180deg);
+  }
+
+  .mk-accordion-faq__icon svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* Answer */
+  .mk-accordion-faq__answer {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.32s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .mk-accordion-faq__item[open] .mk-accordion-faq__answer {
+    max-height: 1000px;
+  }
+
+  .mk-accordion-faq__answer-inner {
+    padding-bottom: 24px;
+    font-size: 15px;
+    line-height: 1.7;
+    opacity: 0.85;
+  }
+
+  .mk-accordion-faq__answer-inner p {
+    margin: 0 0 12px 0;
+  }
+
+  .mk-accordion-faq__answer-inner p:last-child {
+    margin-bottom: 0;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class MKAccordionFaq extends HTMLElement {
+    constructor() {
+      super();
+      this.items = this.querySelectorAll('.mk-accordion-faq__item');
+      this.init();
+    }
+
+    init() {
+      this.items.forEach((item) => {
+        item.addEventListener('toggle', () => {
+          if (item.dataset.singleOpen === 'true' && item.open) {
+            this.closeOthers(item);
+          }
+        });
+      });
+    }
+
+    closeOthers(currentItem) {
+      this.items.forEach((item) => {
+        if (item !== currentItem && item.open) {
+          item.open = false;
+        }
+      });
+    }
+  }
+
+  customElements.define('mk-accordion-faq', MKAccordionFaq);
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MK 手风琴 FAQ",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "布局设置"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "布局模式",
+      "options": [
+        { "value": "accordion", "label": "单列" },
+        { "value": "two_columns", "label": "双列" }
+      ],
+      "default": "accordion"
+    },
+    {
+      "type": "checkbox",
+      "id": "single_open",
+      "label": "同时只能展开一个",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first",
+      "label": "默认展开第一个",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "颜色设置"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "间距设置"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 80,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "title",
+      "name": "标题",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "标题文字",
+          "default": "常见问题"
+        }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "描述",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "描述文字"
+        }
+      ]
+    },
+    {
+      "type": "accordion",
+      "name": "问题项",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "问题",
+          "default": "这个产品如何工作？"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "答案",
+          "default": "这是答案的详细说明内容..."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 手风琴 FAQ",
+      "blocks": [
+        {
+          "type": "title",
+          "settings": {
+            "text": "常见问题"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "title": "这个产品如何工作？",
+            "description": "这是答案的详细说明内容..."
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "title": "你们提供退货服务吗？",
+            "description": "我们提供30天无理由退货服务。"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

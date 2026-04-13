@@ -1,0 +1,315 @@
+{%- comment -%}
+  MK 分屏展示板块
+
+  左右分屏展示图片和内容
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+  assign image_position = ss.image_position | default: 'left'
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-split-screen mk-split-screen--{{ image_position }} color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-split-screen__container">
+    {%- comment -%} 图片侧 {%- endcomment -%}
+    <div class="mk-split-screen__media">
+      {%- if ss.image != blank -%}
+        {{ ss.image | image_url: width: 1200 | image_tag: class: 'mk-split-screen__image' }}
+      {%- else -%}
+        <div class="mk-split-screen__placeholder">
+          {{ 'image' | placeholder_svg_tag: 'mk-split-screen__placeholder-svg' }}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} 内容侧 {%- endcomment -%}
+    <div class="mk-split-screen__content">
+      {%- if ss.subtitle != blank -%}
+        <p class="mk-split-screen__subtitle">{{ ss.subtitle }}</p>
+      {%- endif -%}
+
+      {%- if ss.title != blank -%}
+        <h2 class="mk-split-screen__title">{{ ss.title }}</h2>
+      {%- endif -%}
+
+      {%- if ss.text != blank -%}
+        <div class="mk-split-screen__text">{{ ss.text }}</div>
+      {%- endif -%}
+
+      {%- if ss.button_text != blank -%}
+        <a href="{{ ss.button_link | default: '#' }}" class="mk-split-screen__button">
+          {{ ss.button_text }}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-split-screen {
+    overflow: hidden;
+  }
+
+  .mk-split-screen__container {
+    display: grid;
+    grid-template-columns: 1fr;
+    min-height: 500px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-split-screen__container {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* 图片在左侧 */
+  .mk-split-screen--left .mk-split-screen__media {
+    order: 1;
+  }
+
+  .mk-split-screen--left .mk-split-screen__content {
+    order: 2;
+  }
+
+  /* 图片在右侧 */
+  .mk-split-screen--right .mk-split-screen__media {
+    order: 2;
+  }
+
+  .mk-split-screen--right .mk-split-screen__content {
+    order: 1;
+  }
+
+  .mk-split-screen__media {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-background-secondary, #f5f5f5);
+  }
+
+  @media (min-width: 750px) {
+    .mk-split-screen__media {
+      min-height: 500px;
+    }
+  }
+
+  .mk-split-screen__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mk-split-screen__placeholder {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (min-width: 750px) {
+    .mk-split-screen__placeholder {
+      height: 100%;
+      min-height: 500px;
+    }
+  }
+
+  .mk-split-screen__placeholder-svg {
+    width: 50%;
+    height: 50%;
+    opacity: 0.3;
+  }
+
+  .mk-split-screen__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: {{ ss.padding_top_mobile | default: 48 }}px var(--container-padding, 32px) {{ ss.padding_bottom_mobile | default: 48 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-split-screen__content {
+      padding: {{ ss.padding_top_desktop | default: 64 }}px {{ ss.padding_right_desktop | default: 64 }}px {{ ss.padding_bottom_desktop | default: 64 }}px {{ ss.padding_left_desktop | default: 64 }}px;
+    }
+  }
+
+  .mk-split-screen__subtitle {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-split-screen__title {
+    margin: 0 0 16px 0;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  @media (min-width: 750px) {
+    .mk-split-screen__title {
+      font-size: 36px;
+    }
+  }
+
+  .mk-split-screen__text {
+    margin: 0 0 24px 0;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--color-text-secondary, #666);
+  }
+
+  .mk-split-screen__text p {
+    margin: 0 0 16px 0;
+  }
+
+  .mk-split-screen__text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .mk-split-screen__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-on-primary, #fff);
+    background-color: var(--color-primary, #000);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    align-self: flex-start;
+  }
+
+  .mk-split-screen__button:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 分屏展示",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "图片位置",
+      "options": [
+        { "value": "left", "label": "左侧" },
+        { "value": "right", "label": "右侧" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "图片"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "副标题"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "分屏展示标题"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "文本内容"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "按钮文字"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "按钮链接"
+    },
+    {
+      "type": "header",
+      "content": "间距"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_left_desktop",
+      "label": "左侧边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_right_desktop",
+      "label": "右侧边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 分屏展示"
+    }
+  ]
+}
+{% endschema %}

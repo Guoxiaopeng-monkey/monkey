@@ -1,0 +1,337 @@
+{%- comment -%}
+  MK 文本列板块
+
+  展示多列文本内容（特点、功能等）
+
+  作者：崽崽 (AI助手)
+{%- endcomment -%}
+
+{% liquid
+  assign ss = section.settings
+-%}
+
+<section
+  id="{{ section.id }}"
+  class="mk-text-columns color-{{ ss.color_scheme | default: 'background-1' }}"
+>
+  <div class="mk-text-columns__container">
+    {%- if ss.title != blank -%}
+      <h2 class="mk-text-columns__title">{{ ss.title }}</h2>
+    {%- endif -%}
+
+    {%- if ss.subtitle != blank -%}
+      <p class="mk-text-columns__subtitle">{{ ss.subtitle }}</p>
+    {%- endif -%}
+
+    <div class="mk-text-columns__grid" style="--columns-count: {{ ss.columns_count | default: 3 }};">
+      {%- for i in (1..6) -%}
+        {%- assign icon_setting = 'icon_' | append: i -%}
+        {%- assign title_setting = 'title_' | append: i -%}
+        {%- assign text_setting = 'text_' | append: i -%}
+        {%- assign icon = ss[icon_setting] -%}
+        {%- assign title = ss[title_setting] -%}
+        {%- assign text = ss[text_setting] -%}
+
+        {%- if title != blank -%}
+          <div class="mk-text-columns__item">
+            {%- if icon != blank -%}
+              <div class="mk-text-columns__icon">
+                {{ icon | image_url: width: 64 | image_tag }}
+              </div>
+            {%- endif -%}
+
+            {%- if title != blank -%}
+              <h3 class="mk-text-columns__item-title">{{ title }}</h3>
+            {%- endif -%}
+
+            {%- if text != blank -%}
+              <p class="mk-text-columns__item-text">{{ text }}</p>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .mk-text-columns {
+    padding: {{ ss.padding_top_mobile | default: 48 }}px 0 {{ ss.padding_bottom_mobile | default: 48 }}px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-text-columns {
+      padding: {{ ss.padding_top_desktop | default: 64 }}px 0 {{ ss.padding_bottom_desktop | default: 64 }}px;
+    }
+  }
+
+  .mk-text-columns__container {
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+    padding: 0 var(--container-padding, 32px);
+  }
+
+  .mk-text-columns__title {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .mk-text-columns__subtitle {
+    margin: 0 0 32px 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+    text-align: center;
+  }
+
+  .mk-text-columns__grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 24px;
+  }
+
+  @media (min-width: 480px) {
+    .mk-text-columns__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 750px) {
+    .mk-text-columns__grid {
+      grid-template-columns: repeat(var(--columns-count, 3), 1fr);
+      gap: 32px;
+    }
+  }
+
+  .mk-text-columns__item {
+    text-align: center;
+    padding: 24px;
+  }
+
+  @media (min-width: 750px) {
+    .mk-text-columns__item {
+      padding: 32px;
+    }
+  }
+
+  .mk-text-columns__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+  }
+
+  .mk-text-columns__icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .mk-text-columns__item-title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .mk-text-columns__item-text {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-text-secondary, #666);
+    line-height: 1.6;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MK 文本列",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "副标题"
+    },
+    {
+      "type": "range",
+      "id": "columns_count",
+      "label": "列数",
+      "min": 2,
+      "max": 4,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "列 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_1",
+      "label": "图标"
+    },
+    {
+      "type": "text",
+      "id": "title_1",
+      "label": "标题"
+    },
+    {
+      "type": "textarea",
+      "id": "text_1",
+      "label": "文本"
+    },
+    {
+      "type": "header",
+      "content": "列 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_2",
+      "label": "图标"
+    },
+    {
+      "type": "text",
+      "id": "title_2",
+      "label": "标题"
+    },
+    {
+      "type": "textarea",
+      "id": "text_2",
+      "label": "文本"
+    },
+    {
+      "type": "header",
+      "content": "列 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_3",
+      "label": "图标"
+    },
+    {
+      "type": "text",
+      "id": "title_3",
+      "label": "标题"
+    },
+    {
+      "type": "textarea",
+      "id": "text_3",
+      "label": "文本"
+    },
+    {
+      "type": "header",
+      "content": "列 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_4",
+      "label": "图标"
+    },
+    {
+      "type": "text",
+      "id": "title_4",
+      "label": "标题"
+    },
+    {
+      "type": "textarea",
+      "id": "text_4",
+      "label": "文本"
+    },
+    {
+      "type": "header",
+      "content": "列 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_5",
+      "label": "图标"
+    },
+    {
+      "type": "text",
+      "id": "title_5",
+      "label": "标题"
+    },
+    {
+      "type": "textarea",
+      "id": "text_5",
+      "label": "文本"
+    },
+    {
+      "type": "header",
+      "content": "列 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_6",
+      "label": "图标"
+    },
+    {
+      "type": "text",
+      "id": "title_6",
+      "label": "标题"
+    },
+    {
+      "type": "textarea",
+      "id": "text_6",
+      "label": "文本"
+    },
+    {
+      "type": "header",
+      "content": "间距"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "上边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "下边距 (移动端)",
+      "min": 0,
+      "max": 120,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "上边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "下边距 (PC端)",
+      "min": 0,
+      "max": 200,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "颜色方案",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MK 文本列"
+    }
+  ]
+}
+{% endschema %}

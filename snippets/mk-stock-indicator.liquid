@@ -1,0 +1,110 @@
+{%- doc -%}
+  MK 库存指示器组件
+
+  渲染库存状态指示器，显示产品库存数量或状态
+
+  @param {object} variant - 产品变体对象
+  @param {number} [threshold] - 低库存阈值，默认 10
+  @param {string} [show_quantity] - 是否显示具体数量：'always'、'low'、'never'
+
+  @example
+  {% render 'mk-stock-indicator', variant: product.selected_or_first_available_variant, threshold: 10 %}
+{%- enddoc -%}
+
+{% liquid
+  assign threshold = threshold | default: 10
+  assign show_quantity = show_quantity | default: 'low'
+  assign inventory_quantity = variant.inventory_quantity | default: 0
+  assign inventory_policy = variant.inventory_policy
+
+  # 确定库存状态
+  if variant.available == false
+    assign status = 'out_of_stock'
+    assign status_text = 'products.out_of_stock' | t | default: '缺货'
+    assign status_class = 'mk-stock--out'
+  elsif inventory_quantity <= 0 and inventory_policy == 'continue'
+    assign status = 'out_of_stock'
+    assign status_text = 'products.out_of_stock' | t | default: '缺货'
+    assign status_class = 'mk-stock--out'
+  elsif inventory_quantity <= threshold
+    assign status = 'low_stock'
+    assign status_class = 'mk-stock--low'
+    if show_quantity == 'always' or show_quantity == 'low'
+      assign status_text = 'products.low_stock_with_count' | t: count: inventory_quantity | default: '仅剩 ' | append: inventory_quantity | append: ' 件'
+    else
+      assign status_text = 'products.low_stock' | t | default: '库存紧张'
+    endif
+  else
+    assign status = 'in_stock'
+    assign status_text = 'products.in_stock' | t | default: '有货'
+    assign status_class = 'mk-stock--in'
+    if show_quantity == 'always'
+      assign status_text = 'products.in_stock_with_count' | t: count: inventory_quantity | default: '库存 ' | append: inventory_quantity
+    endif
+  endif
+%}
+
+<div class="mk-stock-indicator {{ status_class }}" data-status="{{ status }}" data-quantity="{{ inventory_quantity }}">
+  <span class="mk-stock-indicator__dot"></span>
+  <span class="mk-stock-indicator__text">{{ status_text }}</span>
+</div>
+
+{% stylesheet %}
+  .mk-stock-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .mk-stock-indicator__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .mk-stock-indicator__text {
+    line-height: 1;
+  }
+
+  /* In Stock */
+  .mk-stock--in .mk-stock-indicator__dot {
+    background-color: var(--color-success, #2e7d32);
+  }
+
+  .mk-stock--in .mk-stock-indicator__text {
+    color: var(--color-success, #2e7d32);
+  }
+
+  /* Low Stock */
+  .mk-stock--low .mk-stock-indicator__dot {
+    background-color: var(--color-warning, #f57c00);
+    animation: mk-stock-pulse 1.5s ease-in-out infinite;
+  }
+
+  .mk-stock--low .mk-stock-indicator__text {
+    color: var(--color-warning, #f57c00);
+  }
+
+  /* Out of Stock */
+  .mk-stock--out .mk-stock-indicator__dot {
+    background-color: var(--color-error, #e53935);
+  }
+
+  .mk-stock--out .mk-stock-indicator__text {
+    color: var(--color-error, #e53935);
+  }
+
+  @keyframes mk-stock-pulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.6;
+      transform: scale(1.2);
+    }
+  }
+{% endstylesheet %}
